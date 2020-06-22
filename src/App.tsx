@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavButton } from './components/NavButton/NavButton';
 
-const button: Button = {text: "Get Started"};
+const button: Button = {text: "Get Started", to: ""};
 
 function App() {
   return (

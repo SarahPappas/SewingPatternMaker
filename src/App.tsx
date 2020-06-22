@@ -81,7 +81,7 @@ function App() {
 
   return (
     <React.Fragment>
-      <CanvasObject context= {context} canvasRef = {canvasRef}/>
+      <CanvasObject canvasRef = {canvasRef}/>
       <NavButton button = {button}/>
     </React.Fragment>
     

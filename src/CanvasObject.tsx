@@ -1,11 +1,10 @@
 import React from 'react';
 
 interface CanvasObjectProps {
-    context: CanvasRenderingContext2D | null;
     canvasRef: React.RefObject<HTMLCanvasElement>;
 }
 
-export const CanvasObject: React.FC<CanvasObjectProps> = ({context, canvasRef}) => {
+export const CanvasObject: React.FC<CanvasObjectProps> = ({canvasRef}) => {
     return <div style={{textAlign: 'center',}}>
     <canvas
       id="canvas"

@@ -18,11 +18,6 @@ function App() {
     function handleMouseDown(evt: MouseEvent) {
       mouseDown = true;
 
-      start = {
-        x: evt.clientX - canvasOffsetLeft,
-        y: evt.clientY - canvasOffsetTop,
-      };
-
       end = {
         x: evt.clientX - canvasOffsetLeft,
         y: evt.clientY - canvasOffsetTop,

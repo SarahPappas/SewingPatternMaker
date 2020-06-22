@@ -1,0 +1,14 @@
+.navButton {
+    border: solid 1px #707070;
+    background-color: white;
+    width: 300px;
+    height: 75px;
+    position: relative;
+}
+
+.navButton .label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

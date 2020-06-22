@@ -1,9 +1,11 @@
 import React from 'react';
+import { NavButton } from './NavButton';
 
+const button: Button = {text: "Get Started"};
 
 function App() {
   return (
-   <div>Hello world</div>
+   <NavButton button={button}/>
   );
 }
 

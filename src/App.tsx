@@ -2,11 +2,12 @@ import React from 'react';
 import { NavButton } from './NavButton';
 import { CanvasObject } from './CanvasObject';
 
-const button: Button = {text: "Get Started"};
+const button: Button = {text: " canvas"};
 
 function App() {
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const [context, setContext] = React.useState<CanvasRenderingContext2D | null>(null);
+  const [wrapped, setWrapped] = React.useState<Boolean>(false);
 
   React.useEffect(() => {
     let mouseDown: boolean = false;
@@ -76,8 +77,8 @@ function App() {
 
   return (
     <React.Fragment>
-      <CanvasObject canvasRef = {canvasRef}/>
-      <NavButton button = {button}/>
+      <CanvasObject canvasRef={canvasRef} wrapped={wrapped}/>
+      <NavButton button={button} wrapped={wrapped} setWrap={setWrapped}/>
     </React.Fragment>
     
   );

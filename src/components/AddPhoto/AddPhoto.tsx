@@ -3,6 +3,6 @@ import './AddPhoto.css';
 
 export const AddPhoto: React.FC = () => {
     return (
-        <div>Add Photo page</div>
+        <div className='addPhoto'>Add Photo page</div>
     );
 }

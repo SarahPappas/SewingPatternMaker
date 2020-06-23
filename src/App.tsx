@@ -1,11 +1,12 @@
 import React from 'react';
-import { NavButton } from './components/NavButton/NavButton';
-
-const button: Button = {text: "Get Started", to: ""};
+import { Main } from './components/Main/Main';
+import { BrowserRouter as Router } from "react-router-dom";
 
 function App() {
   return (
-   <NavButton button={button}/>
+  <Router>
+        <Main />
+  </Router>
   );
 }
 

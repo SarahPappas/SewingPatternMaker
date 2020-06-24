@@ -1,8 +1,8 @@
 import React from 'react';
 import './Main.css';
 import { Route } from 'react-router-dom';
-import { GetStarted } from '../GetStarted/GetStarted';
-import { AddPhoto } from '../AddPhoto/AddPhoto';
+import { GetStarted } from 'pages/GetStarted/GetStarted';
+import { AddPhoto } from 'pages/AddPhoto/AddPhoto';
 
 export const Main: React.FC= () => {
     return <div className='mainContainer'>

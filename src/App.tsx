@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavButton } from './NavButton';
-import { Canvas } from './Canvas';
-import { LoadButton } from './LoadButton';
+import { CanvasDiv } from './CanvasDiv';
 
 const button: Button = {text: " canvas"};
 
@@ -18,7 +17,7 @@ function App() {
   // }
 
   function renderCanvas() {
-    return <Canvas ></Canvas>
+    return <CanvasDiv ></CanvasDiv>
   }
 
   function renderWrappedCanvas() {
@@ -32,7 +31,6 @@ function App() {
   return (
     <React.Fragment>
       {renderWrappedCanvas()}
-      <LoadButton></LoadButton>
       <NavButton button={button} wrapped={wrapped} setWrap={setWrapped}/>
     </React.Fragment>
     

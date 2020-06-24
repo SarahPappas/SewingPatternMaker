@@ -19,6 +19,11 @@ let start: Point = { x: 0, y: 0 };
 let end: Point = { x: 0, y: 0 };
 let canvasOffsetLeft: number =  8 // body has a margin of 8
 let canvasOffsetTop: number = 8 // body has a margin of 8
+if (canvasElement.parentElement) {
+    canvasOffsetLeft += canvasElement.parentElement.offsetLeft;
+    canvasOffsetTop += canvasElement.parentElement.offsetTop;
+    console.log("hello")
+}
 
 console.log(canvasOffsetLeft, canvasOffsetTop)
 

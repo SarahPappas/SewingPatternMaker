@@ -17,22 +17,15 @@ if (context) {
 let mouseDown: boolean = false;
 let start: Point = { x: 0, y: 0 };
 let end: Point = { x: 0, y: 0 };
-let canvasOffsetLeft: number =  8 // body has a margin of 8
-let canvasOffsetTop: number = 8 // body has a margin of 8
-if (canvasElement.parentElement) {
-    canvasOffsetLeft += canvasElement.parentElement.offsetLeft;
-    canvasOffsetTop += canvasElement.parentElement.offsetTop;
-    console.log("hello")
-}
-
-console.log(canvasOffsetLeft, canvasOffsetTop)
+let canvasOffsetLeft: number = 0 
+let canvasOffsetTop: number = 0 
 
 function handleMouseDown(evt: MouseEvent) {
     mouseDown = true;
 
     end = {
-        x: evt.clientX - canvasOffsetLeft,
-        y: evt.clientY - canvasOffsetTop,
+        x: evt.offsetX - canvasOffsetLeft,
+        y: evt.offsetY - canvasOffsetTop,
     };    
 }
 
@@ -48,8 +41,8 @@ function handleMouseMove(evt: MouseEvent) {
         };
 
         end = {
-            x: evt.clientX - canvasOffsetLeft,
-            y: evt.clientY - canvasOffsetTop,
+            x: evt.offsetX - canvasOffsetLeft,
+            y: evt.offsetY - canvasOffsetTop,
         }
 
         context.beginPath();

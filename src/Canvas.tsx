@@ -3,7 +3,6 @@ import React from 'react'
 const canvasElement = document.createElement("canvas");
 
 canvasElement.style.border = '2px solid #000'
-canvasElement.style.marginTop = '10'
 canvasElement.height = 500
 canvasElement.width = 500
 
@@ -18,9 +17,11 @@ if (context) {
 let mouseDown: boolean = false;
 let start: Point = { x: 0, y: 0 };
 let end: Point = { x: 0, y: 0 };
-let canvasOffsetLeft: number = canvasElement.offsetLeft;
-let canvasOffsetTop: number = canvasElement.offsetTop;
-    
+let canvasOffsetLeft: number =  8 // body has a margin of 8
+let canvasOffsetTop: number = 8 // body has a margin of 8
+
+console.log(canvasOffsetLeft, canvasOffsetTop)
+
 function handleMouseDown(evt: MouseEvent) {
     mouseDown = true;
 

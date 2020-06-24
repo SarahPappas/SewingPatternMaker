@@ -17,7 +17,7 @@ export const NavButton: React.FC<NavButtonProps> = ({ button, setWrap, wrapped }
     }
     
     return (
-        <div style={{textAlign: 'center',}}>
+        <div>
             <button onClick={toggleWrap} className='navButton'>
                 <div className='label'> 
                     {displayWrapped(wrapped) + button.text}

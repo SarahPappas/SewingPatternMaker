@@ -1,5 +1,6 @@
 import React from "react";
 import { canvasElement } from "./Canvas";
+import './CanvasDiv.css';
 
 interface CanvasDivProps {
     
@@ -12,7 +13,7 @@ const CanvasDiv: React.FC<CanvasDivProps> = () => {
     canvasContainerRef.current.appendChild(canvasElement);
   }, [])
 
-  return <div style={{textAlign: 'center',}} ref={canvasContainerRef}></div>
+  return <div className='canvasDiv' ref={canvasContainerRef}></div>
 }
 
 export { CanvasDiv };

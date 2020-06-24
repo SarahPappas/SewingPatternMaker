@@ -47,8 +47,6 @@ export const CanvasObject: React.FC<CanvasObjectProps> = ({draw}) => {
     
   // }, [draw])
 
-  console.log(locations);
-
   return (
     <div style={{textAlign: 'center',}}>
       <canvas

@@ -27,6 +27,7 @@ function handleMouseDown(evt: MouseEvent) {
 function handleMouseUp(evt: MouseEvent) {
     mouseDown = false;
     points = [];
+    lastLength = 0;
 }
 
 function handleMouseMove(evt: MouseEvent) {

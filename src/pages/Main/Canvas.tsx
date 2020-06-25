@@ -1,5 +1,3 @@
-
-
 const canvasElement = document.createElement("canvas");
 
 canvasElement.style.border = '2px solid #000'

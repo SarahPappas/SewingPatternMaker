@@ -3,12 +3,12 @@ import './Main.css';
 import { Route } from 'react-router-dom';
 import { GetStarted } from 'pages/GetStarted/GetStarted';
 import { AddPhoto } from 'pages/AddPhoto/AddPhoto';
-import { CanvasDiv } from './CanvasDiv';
+import { CanvasContainer } from './CanvasContainer';
 
 export const Main: React.FC= () => {
 
     function renderCanvas() {
-        return <CanvasDiv ></CanvasDiv>
+        return <CanvasContainer ></CanvasContainer>
     }
 
     return <div className='mainContainer'>

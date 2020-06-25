@@ -16,6 +16,10 @@ if (context) {
 let mouseDown: boolean = false;
 let points: Point[] = [];
 let lastLength: number = 0;
+let memCanvas = document.createElement("canvas");
+memCanvas.height = 500;
+memCanvas.width = 500;
+const memContext = memCanvas.getContext('2d');
 
 requestAnimationFrame(draw);
 
@@ -28,6 +32,8 @@ function handleMouseUp(evt: MouseEvent) {
     mouseDown = false;
     points = [];
     lastLength = 0;
+    memContext?.clearRect(0, 0, 500, 500);
+    memContext?.drawImage(canvasElement, 0, 0);
 }
 
 function handleMouseMove(evt: MouseEvent) {
@@ -46,6 +52,8 @@ function draw() {
         lastLength = length;
 
         if (length > 3) {
+            context.clearRect(0, 0, 500, 500);
+            context.drawImage(memCanvas, 0, 0);
             context.beginPath();
             context.moveTo(points[0].x, points[0].y);
             let i: number;

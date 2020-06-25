@@ -51,7 +51,7 @@ function draw() {
         }
         lastLength = length;
 
-        if (length > 3) {
+        if (length > 2) {
             context.clearRect(0, 0, 500, 500);
             context.drawImage(memCanvas, 0, 0);
             context.beginPath();

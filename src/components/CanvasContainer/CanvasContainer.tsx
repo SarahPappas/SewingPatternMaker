@@ -5,7 +5,7 @@ import './CanvasContainer.css';
 const CanvasContainer: React.FC = () => {
   const canvasContainerRef = React.useRef(document.createElement("div"));
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     canvasContainerRef.current.appendChild(canvasElement);
   }, [])
 

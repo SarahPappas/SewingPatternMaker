@@ -45,6 +45,7 @@ function handleMouseMove(evt: MouseEvent) {
 function draw() {
     if (context) {
         let length = points.length;
+        // this avoids re-drawing when no new points were drawn on the canvas
         if (length === lastLength) {
             requestAnimationFrame(draw);
             return;

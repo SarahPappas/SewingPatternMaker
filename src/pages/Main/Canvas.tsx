@@ -21,15 +21,17 @@ requestAnimationFrame(draw);
 
 function handleMouseDown(evt: MouseEvent) {
     mouseDown = true;
+    points.push({x: evt.offsetX, y: evt.offsetY});
 }
 
 function handleMouseUp(evt: MouseEvent) {
     mouseDown = false;
+    points = [];
 }
 
 function handleMouseMove(evt: MouseEvent) {
     if (mouseDown) {
-        points.push({x: evt.offsetX, y: evt.offsetY})
+        points.push({x: evt.offsetX, y: evt.offsetY});
     }
 }
 

@@ -15,7 +15,7 @@ if (context) {
 
 let mouseDown: boolean = false;
 let points: Point[] = [];
-let lastLength = 0;
+let lastLength: number = 0;
 
 requestAnimationFrame(draw);
 
@@ -43,16 +43,21 @@ function draw() {
             requestAnimationFrame(draw);
             return;
         }
+        lastLength = length;
 
-        var point = points[lastLength];
-        context.beginPath();
-        context.moveTo(point.x, point.y);
-        for (var i = lastLength; i < length; i++ ) {
-            point = points[i];
-            context.lineTo(point.x, point.y);
+        if (length > 3) {
+            context.beginPath();
+            context.moveTo(points[0].x, points[0].y);
+            let i: number;
+            for (i = 1; i < length - 2; i++ ) {
+                var c = (points[i].x + points[i + 1].x) / 2,
+                    d = (points[i].y + points[i + 1].y) / 2;
+                context.quadraticCurveTo(points[i].x, points[i].y, c, d)
+            }
+            context.quadraticCurveTo(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y)
+            context.stroke();
+            context.closePath();
         }
-        context.stroke();
-        context.closePath();
 
         requestAnimationFrame(draw);
     }

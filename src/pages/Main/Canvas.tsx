@@ -1,5 +1,4 @@
 
-
 const canvasElement = document.createElement("canvas");
 
 canvasElement.style.border = '2px solid #000'
@@ -15,18 +14,13 @@ if (context) {
 }
 
 let mouseDown: boolean = false;
-let start: Point = { x: 0, y: 0 };
-let end: Point = { x: 0, y: 0 };
-let canvasOffsetLeft: number = 0 
-let canvasOffsetTop: number = 0 
+let points: Point[] = [];
+let lastLength = 0;
+
+requestAnimationFrame(draw);
 
 function handleMouseDown(evt: MouseEvent) {
     mouseDown = true;
-
-    end = {
-        x: evt.offsetX - canvasOffsetLeft,
-        y: evt.offsetY - canvasOffsetTop,
-    };    
 }
 
 function handleMouseUp(evt: MouseEvent) {
@@ -34,24 +28,30 @@ function handleMouseUp(evt: MouseEvent) {
 }
 
 function handleMouseMove(evt: MouseEvent) {
-    if (mouseDown && context) {
-        start = {
-            x: end.x,
-            y: end.y,
-        };
+    if (mouseDown) {
+        points.push({x: evt.offsetX, y: evt.offsetY})
+    }
+}
 
-        end = {
-            x: evt.offsetX - canvasOffsetLeft,
-            y: evt.offsetY - canvasOffsetTop,
+function draw() {
+    if (context) {
+        let length = points.length;
+        if (length === lastLength) {
+            requestAnimationFrame(draw);
+            return;
         }
 
+        var point = points[lastLength];
         context.beginPath();
-        context.moveTo(start.x, start.y);
-        context.lineTo(end.x, end.y);
-        context.strokeStyle = '#00f';
-        context.lineWidth = 3;
+        context.moveTo(point.x, point.y);
+        for (var i = lastLength; i < length; i++ ) {
+            point = points[i];
+            context.lineTo(point.x, point.y);
+        }
         context.stroke();
         context.closePath();
+
+        requestAnimationFrame(draw);
     }
 }
 

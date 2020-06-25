@@ -13,7 +13,7 @@ const CanvasDiv: React.FC<CanvasDivProps> = () => {
     canvasContainerRef.current.appendChild(canvasElement);
   }, [])
 
-  return <div className='canvasDiv' ref={canvasContainerRef}></div>
+  return <div className='canvasContainer' ref={canvasContainerRef}></div>
 }
 
 export { CanvasDiv };

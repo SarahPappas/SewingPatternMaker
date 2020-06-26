@@ -57,7 +57,7 @@ function handleMouseUp(evt: MouseEvent) {
 function handleMouseMove(evt: MouseEvent) {
     const newPoint = {x: evt.offsetX, y: evt.offsetY};
     if (mouseDown) {
-        if (squaredDistance(newPoint, points[points.length - 1]) > 1000) {
+        if (squaredDistance(newPoint, points[points.length - 1]) > 500) {
             points.push(newPoint);
             tempPoints = [];
             tempLastLength = 0;

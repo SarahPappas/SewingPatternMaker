@@ -21,17 +21,22 @@ if (context) {
 
 let mouseDown = false;
 let points: Point[] = [];
+let tempPoints: Point[] = [];
 let lastLength = 0;
 
 requestAnimationFrame(draw);
 
 function handleMouseDown(evt: MouseEvent) {
     mouseDown = true;
-    points.push({x: evt.offsetX, y: evt.offsetY});
+    const start = {x: evt.offsetX, y: evt.offsetY};
+    points.push(start);
+    tempPoints = [];
+    tempPoints.push(start);
 }
 
 function handleMouseUp(evt: MouseEvent) {
     points.push({x: evt.offsetX, y: evt.offsetY});
+    tempPoints = [];
     setTimeout(() => {
         mouseDown = false;
         points = [];
@@ -45,8 +50,13 @@ function handleMouseUp(evt: MouseEvent) {
 
 function handleMouseMove(evt: MouseEvent) {
     const newPoint = {x: evt.offsetX, y: evt.offsetY};
+    if (mouseDown) {
+        tempPoints.push(newPoint);
+    }
+    
     if (mouseDown && (squaredDistance(newPoint, points[points.length - 1]) > 1000)) {
         points.push(newPoint);
+        tempPoints = [];
     }
 }
 
@@ -57,6 +67,16 @@ function squaredDistance(p1: Point, p2: Point): number {
 function draw() {
     if (context) {
         const length = points.length;
+
+        if (tempPoints.length > 1) {
+            context.beginPath();
+            context.moveTo(tempPoints[0].x, tempPoints[0].y);
+            for (let i = 1;i < tempPoints.length;i++) {
+                context.lineTo(tempPoints[i].x, tempPoints[i].y);
+            }
+            context.stroke();
+            context.closePath();
+        }
 
         // This avoids re-drawing when no new points were drawn on the canvas
         if (length === lastLength) {

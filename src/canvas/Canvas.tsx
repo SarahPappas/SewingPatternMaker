@@ -1,9 +1,5 @@
 const canvasElement = document.createElement("canvas");
 
-canvasElement.style.border = '2px solid #000'
-canvasElement.height = 500
-canvasElement.width = 500
-
 const context = canvasElement.getContext('2d');
 
 if (context) {

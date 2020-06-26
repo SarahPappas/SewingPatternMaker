@@ -10,12 +10,12 @@ export const Main: React.FC = () => {
         return <CanvasContainer ></CanvasContainer>
     }
 
-    return <div className='mainContainer'>
+    return <div className='pageContainer'><div className='mainContainer'>
         {/* Add route here to make component visible*/}
         <React.Fragment>
             {renderCanvas()}
         </React.Fragment>
         <Route exact path="/" component={GetStarted} />
-        <Route exact path="/AddPhoto" component={AddPhoto} />
+        <Route exact path="/AddPhoto" component={AddPhoto} /></div>
     </div>
 }

@@ -16,6 +16,7 @@ if (context) {
     canvasElement.addEventListener('mousedown', handleMouseDown);
     canvasElement.addEventListener('mouseup', handleMouseUp);
     canvasElement.addEventListener('mousemove', handleMouseMove);
+    canvasElement.addEventListener('mouseout', handleMouseUp);
 }
 
 let mouseDown = false;

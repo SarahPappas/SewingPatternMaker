@@ -5,7 +5,7 @@ import { GetStarted } from 'pages/GetStarted/GetStarted';
 import { AddPhoto } from 'pages/AddPhoto/AddPhoto';
 import { CanvasContainer } from '../../components/CanvasContainer/CanvasContainer';
 
-export const Main: React.FC= () => {
+export const Main: React.FC = () => {
     function renderCanvas() {
         return <CanvasContainer ></CanvasContainer>
     }

@@ -12,11 +12,11 @@ if (context) {
     canvasElement.addEventListener('mousemove', handleMouseMove);
 }
 
-let mouseDown: boolean = false;
+let mouseDown = false;
 let start: Point = { x: 0, y: 0 };
 let end: Point = { x: 0, y: 0 };
-let canvasOffsetLeft: number = 0 
-let canvasOffsetTop: number = 0 
+const canvasOffsetLeft = 0 
+const canvasOffsetTop = 0 
 
 function handleMouseDown(evt: MouseEvent) {
     mouseDown = true;

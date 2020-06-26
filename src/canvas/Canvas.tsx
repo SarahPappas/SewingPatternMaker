@@ -1,8 +1,8 @@
 const canvasElement = document.createElement("canvas");
 
-canvasElement.style.border = '2px solid #000'
-canvasElement.height = 500
-canvasElement.width = 500
+canvasElement.style.border = '2px solid #000';
+canvasElement.height = 500;
+canvasElement.width = 500;
 
 const context = canvasElement.getContext('2d');
 
@@ -12,10 +12,10 @@ if (context) {
     canvasElement.addEventListener('mousemove', handleMouseMove);
 }
 
-let mouseDown: boolean = false;
+let mouseDown = false;
 let points: Point[] = [];
-let lastLength: number = 0;
-let memCanvas = document.createElement("canvas");
+let lastLength = 0;
+const memCanvas = document.createElement("canvas");
 memCanvas.height = 500;
 memCanvas.width = 500;
 const memContext = memCanvas.getContext('2d');
@@ -43,8 +43,8 @@ function handleMouseMove(evt: MouseEvent) {
 
 function draw() {
     if (context) {
-        let length = points.length;
-        // this avoids re-drawing when no new points were drawn on the canvas
+        const length = points.length;
+        // This avoids re-drawing when no new points were drawn on the canvas
         if (length === lastLength) {
             requestAnimationFrame(draw);
             return;
@@ -57,12 +57,12 @@ function draw() {
             context.beginPath();
             context.moveTo(points[0].x, points[0].y);
             let i: number;
-            for (i = 1; i < length - 2; i++ ) {
-                var c = (points[i].x + points[i + 1].x) / 2,
+            for (i = 1;i < length - 2;i++ ) {
+                const c = (points[i].x + points[i + 1].x) / 2,
                     d = (points[i].y + points[i + 1].y) / 2;
-                context.quadraticCurveTo(points[i].x, points[i].y, c, d)
+                context.quadraticCurveTo(points[i].x, points[i].y, c, d);
             }
-            context.quadraticCurveTo(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y)
+            context.quadraticCurveTo(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
             context.stroke();
             context.closePath();
         }
@@ -71,4 +71,4 @@ function draw() {
     }
 }
 
-export { canvasElement }
+export { canvasElement };

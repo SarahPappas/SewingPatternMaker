@@ -7,7 +7,7 @@ import { CanvasContainer } from '../../components/CanvasContainer/CanvasContaine
 
 export const Main: React.FC = () => {
     function renderCanvas() {
-        return <CanvasContainer ></CanvasContainer>
+        return <CanvasContainer ></CanvasContainer>;
     }
 
     return <div className='mainContainer'>
@@ -17,5 +17,5 @@ export const Main: React.FC = () => {
         </React.Fragment>
         <Route exact path="/" component={GetStarted} />
         <Route exact path="/AddPhoto" component={AddPhoto} />
-    </div>
-}
+    </div>;
+};

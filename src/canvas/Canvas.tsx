@@ -31,19 +31,27 @@ function handleMouseDown(evt: MouseEvent) {
 }
 
 function handleMouseUp(evt: MouseEvent) {
-    mouseDown = false;
-    points = [];
-    lastLength = 0;
-    if (memContext) {
-        memContext.clearRect(0, 0, canvasWidth, canvasHeight);
-        memContext.drawImage(canvasElement, 0, 0);
-    }
+    points.push({x: evt.offsetX, y: evt.offsetY});
+    setTimeout(() => {
+        mouseDown = false;
+        points = [];
+        lastLength = 0;
+        if (memContext) {
+            memContext.clearRect(0, 0, canvasWidth, canvasHeight);
+            memContext.drawImage(canvasElement, 0, 0);
+        }
+    }, 100);    
 }
 
 function handleMouseMove(evt: MouseEvent) {
-    if (mouseDown) {
-        points.push({x: evt.offsetX, y: evt.offsetY});
+    const newPoint = {x: evt.offsetX, y: evt.offsetY};
+    if (mouseDown && (squaredDistance(newPoint, points[points.length - 1]) > 1000)) {
+        points.push(newPoint);
     }
+}
+
+function squaredDistance(p1: Point, p2: Point): number {
+    return (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y);
 }
 
 function draw() {

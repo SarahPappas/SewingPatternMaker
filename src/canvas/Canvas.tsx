@@ -12,11 +12,14 @@ canvasElement.style.border = '2px solid #000';
 const context = canvasElement.getContext('2d');
 const memContext = memCanvas.getContext('2d');
 
+
 if (context) {
     canvasElement.addEventListener('mousedown', handleMouseDown);
     canvasElement.addEventListener('mouseup', handleMouseUp);
     canvasElement.addEventListener('mousemove', handleMouseMove);
     canvasElement.addEventListener('mouseout', handleMouseUp);
+    context.lineCap = 'round';
+    context.lineWidth = 3;
 }
 
 let mouseDown = false;
@@ -75,10 +78,7 @@ function draw() {
         const tempLength = tempPoints.length;
 
         if (tempLength > tempLastLength) {
-            console.log("im in");
             context.beginPath();
-            context.lineCap = 'round';
-            context.lineWidth = 3;
             const start = Math.max(0, tempLastLength - 1);
             context.moveTo(tempPoints[start].x, tempPoints[start].y);
             for (let i = start + 1;i < tempLength;i++) {

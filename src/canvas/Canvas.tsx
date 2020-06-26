@@ -62,6 +62,8 @@ function draw() {
             context.drawImage(memCanvas, 0, 0);
             context.beginPath();
             context.moveTo(points[0].x, points[0].y);
+            context.lineCap = 'round';
+            context.lineWidth = 3;
             let i: number;
             for (i = 1;i < length - 2;i++ ) {
                 //Compute the middle point

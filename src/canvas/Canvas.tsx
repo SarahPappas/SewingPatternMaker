@@ -21,8 +21,9 @@ if (context) {
 
 let mouseDown = false;
 let points: Point[] = [];
-let tempPoints: Point[] = [];
 let lastLength = 0;
+let tempPoints: Point[] = [];
+let tempLastLength = 0;
 
 requestAnimationFrame(draw);
 
@@ -31,12 +32,14 @@ function handleMouseDown(evt: MouseEvent) {
     const start = {x: evt.offsetX, y: evt.offsetY};
     points.push(start);
     tempPoints = [];
+    tempLastLength = 0;
     tempPoints.push(start);
 }
 
 function handleMouseUp(evt: MouseEvent) {
     points.push({x: evt.offsetX, y: evt.offsetY});
     tempPoints = [];
+    tempLastLength = 0;
     setTimeout(() => {
         mouseDown = false;
         points = [];
@@ -51,12 +54,14 @@ function handleMouseUp(evt: MouseEvent) {
 function handleMouseMove(evt: MouseEvent) {
     const newPoint = {x: evt.offsetX, y: evt.offsetY};
     if (mouseDown) {
-        tempPoints.push(newPoint);
-    }
-    
-    if (mouseDown && (squaredDistance(newPoint, points[points.length - 1]) > 1000)) {
-        points.push(newPoint);
-        tempPoints = [];
+        if (squaredDistance(newPoint, points[points.length - 1]) > 1000) {
+            points.push(newPoint);
+            tempPoints = [];
+            tempLastLength = 0;
+        } else {
+            tempPoints.push(newPoint);
+        }
+        
     }
 }
 
@@ -67,15 +72,21 @@ function squaredDistance(p1: Point, p2: Point): number {
 function draw() {
     if (context) {
         const length = points.length;
+        const tempLength = tempPoints.length;
 
-        if (tempPoints.length > 1) {
+        if (tempLength > tempLastLength) {
+            console.log("im in");
             context.beginPath();
-            context.moveTo(tempPoints[0].x, tempPoints[0].y);
-            for (let i = 1;i < tempPoints.length;i++) {
+            context.lineCap = 'round';
+            context.lineWidth = 3;
+            const start = Math.max(0, tempLastLength - 1);
+            context.moveTo(tempPoints[start].x, tempPoints[start].y);
+            for (let i = start + 1;i < tempLength;i++) {
                 context.lineTo(tempPoints[i].x, tempPoints[i].y);
             }
             context.stroke();
             context.closePath();
+            tempLastLength = tempLength;
         }
 
         // This avoids re-drawing when no new points were drawn on the canvas
@@ -90,8 +101,6 @@ function draw() {
             context.drawImage(memCanvas, 0, 0);
             context.beginPath();
             context.moveTo(points[0].x, points[0].y);
-            context.lineCap = 'round';
-            context.lineWidth = 3;
             let i: number;
             for (i = 1;i < length - 2;i++ ) {
                 //Compute the middle point

@@ -7,4 +7,4 @@ export const GetStarted: React.FC = () => {
     return (
         <NavButton button={button}/>
     );
-}
+};

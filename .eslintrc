@@ -80,6 +80,7 @@
         "prefer-const": 2,
         "no-var": 2,
         "semi-spacing": [2, {"before": false, "after": false}],
-        "@typescript-eslint/explicit-function-return-type": 0
+        "@typescript-eslint/explicit-function-return-type": 0,
+        "semi": 2
     }
 }

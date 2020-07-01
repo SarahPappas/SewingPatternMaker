@@ -8,6 +8,7 @@ import { CanvasContainer } from '../../components/CanvasContainer/CanvasContaine
 
 export const Main: React.FC = () => {
     return <div className='pageContainer'><div className='mainContainer'>
+
         {/* Add route here to make component visible*/}
         <Route
             path="/trace/:slug"
@@ -19,4 +20,4 @@ export const Main: React.FC = () => {
         <Route exact path="/AddPhoto" component={AddPhoto} />
         <Route exact path="/Trace/Instructions" component={Instructions} />
     </div></div>
-}
+};

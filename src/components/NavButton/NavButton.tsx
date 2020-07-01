@@ -17,4 +17,4 @@ export const NavButton: React.FC<NavButtonProps> = ({ button }) => {
         </Link>
         <Route exact path={button.to} />
     </>);
-}
+};

@@ -9,9 +9,7 @@ const CanvasContainer: React.FC = () => {
     canvasContainerRef.current.appendChild(canvasElement);
   }, [])
 
-  return <div className='page'>
-      <div className='canvasContainer' ref={canvasContainerRef}></div>
-    </div>
+  return <div className='canvasContainer' ref={canvasContainerRef}></div>
 }
 
-export { CanvasContainer };
+export { CanvasContainer};

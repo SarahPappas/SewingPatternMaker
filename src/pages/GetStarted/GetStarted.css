@@ -1,0 +1,10 @@
+.getStartedContainer {
+    width: inherit;
+    height: inherit;
+    background-image: url(https://images.unsplash.com/photo-1578353022142-09264fd64295?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=3058&q=80);
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}

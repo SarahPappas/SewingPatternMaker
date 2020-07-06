@@ -11,4 +11,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    color: #707070;
+    font-size: 1.5em;
+    white-space: nowrap;
 }

@@ -4,7 +4,7 @@ type Button = {
 };
 
 type InstructModal = {
-    text: string;
+    text: string[];
 }
 
 type Point = {

@@ -8,3 +8,7 @@
     justify-content: space-around;
     width: inherit;
 }
+
+.introSteps .instructionModal {
+    font-size: 1em;
+}

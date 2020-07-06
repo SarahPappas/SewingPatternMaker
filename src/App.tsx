@@ -4,9 +4,12 @@ import { BrowserRouter as Router } from "react-router-dom";
 
 function App() {
   return (
-  <Router>
+    <>
+      <Router>
         <Main />
-  </Router>
+      </Router>
+      <link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap" rel="stylesheet" />
+    </>
   );
 }
 

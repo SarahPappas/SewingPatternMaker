@@ -2,7 +2,7 @@ import React from 'react';
 import { NavButton } from 'components/NavButton/NavButton';
 import './GetStarted.css';
 
-const button: Button = {text: "Get Started", to: "/AddPhoto" };
+const button: Button = {text: "GET STARTED", to: "/AddPhoto" };
 
 export const GetStarted: React.FC = () => {
     return (

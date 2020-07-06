@@ -12,4 +12,4 @@ const CanvasContainer: React.FC = () => {
   return <div className='canvasContainer' ref={canvasContainerRef}></div>;
 };
 
-export { CanvasContainer};
+export { CanvasContainer };

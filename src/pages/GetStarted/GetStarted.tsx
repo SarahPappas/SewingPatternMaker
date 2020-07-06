@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavButton } from 'components/NavButton/NavButton';
 import { InstructionModal } from 'components/InstructionModal/InstructionModal';
+import backgroundArrow from '../../assets/background-arrow.svg';
 import './GetStarted.css';
 
 const button: Button = {text: "GET STARTED", to: "/AddPhoto" };
@@ -9,11 +10,13 @@ const steps: InstructModal = {text: ["1. Upload photo", "2. Trace pattern", "3. 
 
 
 export const GetStarted: React.FC = () => {
-    return (
-        <div className={'getStartedContainer'}>
+    return (<>
+        <div className={'backgroundImageTop'}></div>
+        <img className={'backgroundImageBottom'} src={backgroundArrow}></img>
+        <div className={'getStartedContainer'}> 
             <InstructionModal instructModal={intro}/>
-            <div className="introSteps"><InstructionModal instructModal={steps}/></div>
+            <div className={'introSteps'}><InstructionModal instructModal={steps}/></div>
             <NavButton button={button}/>
-        </div>
-    );
+        </div>  
+    </>);
 };

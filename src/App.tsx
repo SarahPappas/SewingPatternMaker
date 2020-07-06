@@ -8,7 +8,6 @@ function App() {
       <Router>
         <Main />
       </Router>
-      <link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap" rel="stylesheet" />
     </>
   );
 }

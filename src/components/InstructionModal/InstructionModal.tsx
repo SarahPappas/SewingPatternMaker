@@ -1,5 +1,4 @@
 import React from 'react';
-import {Link, Route} from 'react-router-dom';
 import './InstructionModal.css';
 
 interface InstructModalProps {
@@ -7,8 +6,8 @@ interface InstructModalProps {
 }
 
 export const InstructionModal: React.FC<InstructModalProps> = ({ instructModal }) => {
-    const messages = instructModal.text.map((message) =>
-        <div className='instructionItem'>{message}</div>
+    const messages = instructModal.text.map((message, i) =>
+        <div className='instructionItem' key={i}>{message}</div>
     );
     
     return (<>

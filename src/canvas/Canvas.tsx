@@ -7,7 +7,6 @@ canvasElement.height = canvasHeight;
 canvasElement.width = canvasWidth;
 memCanvas.height = canvasHeight;
 memCanvas.width = canvasWidth;
-canvasElement.style.border = '2px solid #000';
 
 const context = canvasElement.getContext('2d');
 const memContext = memCanvas.getContext('2d');

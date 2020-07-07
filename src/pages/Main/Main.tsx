@@ -13,11 +13,11 @@ export const Main: React.FC = () => {
         <Route
             path="/trace/:slug"
             render={({match}) => {
-                return <CanvasContainer></CanvasContainer>
+                return <CanvasContainer></CanvasContainer>;
             }}
         />
         <Route exact path="/" component={GetStarted} />
         <Route exact path="/AddPhoto" component={AddPhoto} />
         <Route exact path="/Trace/Instructions" component={Instructions} />
-    </div></div>
+    </div></div>;
 };

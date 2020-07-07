@@ -6,4 +6,4 @@ export const Instructions: React.FC = () => {
     return (
         <div>Instructions</div>
     );
-}
+};

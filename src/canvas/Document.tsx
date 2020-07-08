@@ -1,9 +1,10 @@
 import { PatternPath } from './PatternPath';
 import { PatternPathType } from './PatternPathType';
+import { PatternPathName, PatternPathColor } from './Enums';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
-    patternPathType: {Fold: PatternPathType; Edge: PatternPathType; Seam: PatternPathType;};
+    patternPathType: {Fold: PatternPathType; Edge: PatternPathType; Seam: PatternPathType};
 
     constructor () {
         this._patternPaths = new Array<PatternPath>();

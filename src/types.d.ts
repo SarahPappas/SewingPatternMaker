@@ -10,7 +10,7 @@ type InstructModal = {
 
 /* CANVAS TYPES */
 type IDocument = {
-    patternPathType: {Fold: PatternPathType, Edge: PatternPathType, Seam: PatternPathType};
+    patternPathType: {Fold: PatternPathType; Edge: PatternPathType; Seam: PatternPathType};
 
     getPatternPaths: () => PatternPath[];
     addPatternPath: (patternPath: PatternPath) => boolean;

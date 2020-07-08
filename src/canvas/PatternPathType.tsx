@@ -1,3 +1,5 @@
+import { PatternPathName, PatternPathColor} from './Enums';
+
 export class PatternPathType implements IPatternPathType {
     private _name: PatternPathName;
     private _color: PatternPathColor;

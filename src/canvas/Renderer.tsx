@@ -1,14 +1,20 @@
+import { PatternPath } from "./PatternPath";
+import { Document } from './Document';
+import { Point } from "./Point";
+
 class Renderer implements IRenderer {
     private _canvas: HTMLCanvasElement;
     private _context: CanvasRenderingContext2D | null;
     private _document: Document;
     private _isTracing: boolean;
+    private _currPath: PatternPath | null;
 
     constructor () {
         this._canvas = document.createElement('canvas');
         this._context = this._canvas.getContext('2d');
         this._document = new Document();
         this._isTracing = false;
+        this._currPath = null;
     }
 
     init = (): HTMLCanvasElement => {
@@ -16,31 +22,33 @@ class Renderer implements IRenderer {
 
         this._canvas.onmousedown = (e) => {
             this._isTracing = true;
-            // TODO update with custom path types
-            // this.path = new Path2D();
-            // this.path.moveTo(e.offsetX, e.offsetY);
+            
+            this._currPath = new PatternPath(this._document.patternPathType.Seam);
+            this._currPath.addPoint(new Point(e.offsetX, e.offsetY));
         };
 
         this._canvas.onmousemove = (e) => {
-            if (this._isTracing) {
-                // this.path?.lineTo(e.offsetX, e.offsetY);
+            if (this._isTracing && this._currPath) {
+                this._currPath.addPoint(new Point(e.offsetX, e.offsetY));
             }
         };
         
         this._canvas.onmouseup = (e) => {
             this._isTracing = false;  
+            this._currPath = null;
         };
 
         return this._canvas;
     }
 
-    _draw  = (): void => {
+    private _draw = (): void => {
         if (!this._context) {
             return;
         }
     
         this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
     
+        this._drawPatternPaths();
         // Todo drawpatternpath
         // if (this.path) {
         //     this._context.lineWidth = 3;
@@ -48,14 +56,35 @@ class Renderer implements IRenderer {
         // }
     }
 
-    _tick = (): void => {
+    private _drawPatternPaths = (): void => {
+        if (!this._context) {
+            return;
+        }
+        
+        const context = this._context;
+
+        context.lineWidth = 3;
+        
+        const paths = this._document.getPatternPaths();
+        paths.forEach(path => {
+            const currPath2D = path.getPathCanvas2D();
+
+            context.strokeStyle = path.getType().getColor();
+
+            if (currPath2D) {
+                context.stroke(currPath2D);
+            }
+        });
+    }
+
+    private _tick = (): void => {
         this._update();
         this._draw();
     
         requestAnimationFrame(this._tick);
     }
 
-    _update = (): void => {
+    private _update = (): void => {
         console.log(this);
     }
 }

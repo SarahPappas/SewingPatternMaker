@@ -37,11 +37,9 @@ type PatternPathTypeInterface = {
     new (name: PatternPathName, color: PatternPathColor);
 }
 
-type PointInterface = {
-    private x: number;
-    private y: number;
-
-    new (x: number, y: number);
+type IPoint = {
+    getX: () => number;
+    getY: () => number;
 };
 
 type IRenderer = {

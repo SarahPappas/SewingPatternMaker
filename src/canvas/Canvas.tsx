@@ -1,12 +1,36 @@
-// Setup canvas element.
-const canvas = document.createElement("canvas");
+class Renderer implements RendererInterface {
+    private _canvas: HTMLCanvasElement;
+    private _context: CanvasRenderingContext2D | null;
+    private _document: Document;
+    private _isTracing: boolean;
 
-// Get context.
-const context = canvas.getContext('2d');
+    constructor () {
+        this._canvas = document.createElement('canvas');
+        this._context = this._canvas.getContext('2d');
+        this._document = new Document();
+        this._isTracing = false;
+    };
 
-let path: Path2D;
+    _draw  = () : void => {
+        if (!this._context) {
+            return;
+        }
+    
+        this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    
+        // Todo drawpatternpath
+        // if (path) {
+        //     context.lineWidth = 3;
+        //     context?.stroke(path);
+        // }
+    }
+}
 
-let isTracing = false;
+const render = new Renderer();
+
+export { render };
+
+/* MOVE TO CLASS */
 
 canvas.onmousedown = (e) => {
     isTracing = true;
@@ -28,19 +52,6 @@ function update () {
     console.log(path);
 }
 
-function draw() {
-    if (!context) {
-        return;
-    }
-
-    context.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (path) {
-        context.lineWidth = 3;
-        context?.stroke(path);
-    }
-
-}
 
 function tick() {
     update();
@@ -138,4 +149,4 @@ tick();
 //     }
 // }
 
-export { canvas };
+//export { canvas };

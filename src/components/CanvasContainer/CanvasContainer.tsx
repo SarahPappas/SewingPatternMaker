@@ -1,5 +1,5 @@
 import React from "react";
-import { renderer } from "../../canvas/Canvas";
+import { renderer } from "../../canvas/Renderer";
 import './CanvasContainer.css';
 
 const CanvasContainer: React.FC = () => {

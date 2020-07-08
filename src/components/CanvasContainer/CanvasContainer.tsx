@@ -1,9 +1,10 @@
 import React from "react";
-import { canvas } from "../../canvas/Canvas";
+import { renderer } from "../../canvas/Canvas";
 import './CanvasContainer.css';
 
 const CanvasContainer: React.FC = () => {
   const canvasContainerRef = React.useRef(document.createElement("div"));
+  const canvas = renderer.init();
 
   React.useEffect(() => {
     canvasContainerRef.current.appendChild(canvas);

@@ -60,9 +60,9 @@ class Renderer implements RendererInterface {
     }
 }
 
-const render = new Renderer();
+const renderer = new Renderer();
 
-export { render };
+export { renderer };
 
 /* MOVE TO CLASS */
 

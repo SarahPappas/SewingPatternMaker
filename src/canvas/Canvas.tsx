@@ -11,6 +11,29 @@ class Renderer implements RendererInterface {
         this._isTracing = false;
     };
 
+    init = () : HTMLCanvasElement => {
+        this._tick();
+
+        this._canvas.onmousedown = (e) => {
+            this._isTracing = true;
+            // TODO update with custom path types
+            // path = new Path2D();
+            // path.moveTo(e.offsetX, e.offsetY);
+        };
+
+        this._canvas.onmousemove = (e) => {
+            if (this._isTracing) {
+                //path.lineTo(e.offsetX, e.offsetY);
+            }
+        };
+        
+        this._canvas.onmouseup = (e) => {
+            this._isTracing = false;  
+        };
+
+        return this._canvas;
+    }
+
     _draw  = () : void => {
         if (!this._context) {
             return;
@@ -24,6 +47,17 @@ class Renderer implements RendererInterface {
         //     context?.stroke(path);
         // }
     }
+
+    _tick = () : void => {
+        this._update();
+        this._draw();
+    
+        requestAnimationFrame(this._tick);
+    }
+
+    _update = () : void => {
+        console.log(this);
+    }
 }
 
 const render = new Renderer();
@@ -31,36 +65,6 @@ const render = new Renderer();
 export { render };
 
 /* MOVE TO CLASS */
-
-canvas.onmousedown = (e) => {
-    isTracing = true;
-    path = new Path2D();
-    path.moveTo(e.offsetX, e.offsetY);
-};
-
-canvas.onmousemove = (e) => {
-    if (isTracing) {
-        path.lineTo(e.offsetX, e.offsetY);
-    }
-};
-
-canvas.onmouseup = (e) => {
-    isTracing = false;  
-};
-
-function update () {
-    console.log(path);
-}
-
-
-function tick() {
-    update();
-    draw();
-
-    requestAnimationFrame(tick);
-}
-
-tick();
 
 // function computeMiddle() {
 

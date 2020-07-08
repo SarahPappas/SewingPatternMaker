@@ -30,11 +30,9 @@ type PatternPathInterface = {
     addPoint: (point: Point) => Point[];
 }
 
-type PatternPathTypeInterface = {
-    private name: PatternPathName;
-    private color: PatternPathColor;
-
-    new (name: PatternPathName, color: PatternPathColor);
+type IPatternPathType = {
+    getColor: () => PatternPathColor;
+    getName: () => PatternPathName;
 }
 
 type IPoint = {

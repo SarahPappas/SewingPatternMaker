@@ -17,13 +17,7 @@ type Document = {
     addPatternPath: (patternPath: PatternPath) => PatternPath[];
 }
 
-type PatternPathInterface = {
-    private _points: Point[];
-    private _type: PatternPathType;
-    private _pathCanvas2D: Path2D | null;
-    private _isPathCanvas2DInvalid: boolean;
-
-    new (type: PatternPathType);
+type IPatternPath = {
     getPoints: () => Point[];
     getType: () => PatternPathType;
     getPathCanvas2D: () => Path2D | null;

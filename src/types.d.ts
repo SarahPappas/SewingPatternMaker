@@ -26,3 +26,15 @@ type Point = {
     x: number;
     y: number;
 };
+
+type Renderer = {
+    canvas: HTMLCanvasElement;
+    context: CanvasRenderingContext2D;
+    document: Document;
+    isTracing: boolean;
+
+    draw: () => void;
+    init: () => HTMLCanvasElement;
+    update: () => void;
+    tick: () => void;
+}

@@ -44,15 +44,6 @@ type PointInterface = {
     new (x: number, y: number);
 };
 
-type RendererInterface = {
-    private _canvas: HTMLCanvasElement;
-    private _context: CanvasRenderingContext2D | null;
-    private _document: Document;
-    private _isTracing: boolean;
-
-    new ();
+type IRenderer = {
     init: () => HTMLCanvasElement;
-    private _draw: () => void;
-    private _tick: () => void;
-    private _update: () => void;
 }

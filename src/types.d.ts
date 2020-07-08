@@ -1,25 +1,37 @@
+/* COMPONENT TYPES */
 type Button = {
     text: string;
     to: string;
 };
 
-type Document = {
-    paths: PatternPath[];
-}
-
 type InstructModal = {
     text: string[];
 }
 
-type PatternPath = {
-    points: Point[];
-    type: PatternPathType;
-    
+/* CANVAS TYPES */
+type Document = {
+    private patternPaths: PatternPath[];
+
+    getPatternPaths: () => PatternPath[];
+    addPatternPath: (patternPath: PatternPath) => PatternPath[];
+}
+
+type PatternPathInterface = {
+    private _points: Point[];
+    private _type: PatternPathType;
+    private _pathCanvas2D: Path2D | null;
+    private _isPathCanvas2DInvalid: boolean;
+
+    new (type: PatternPathType);
+    getPoints: () => Point[];
+    getType: () => PatternPathType;
+    getPathCanvas2D: () => Path2D | null;
+    addPoint: (point: Point) => Point[];
 }
 
 type PatternPathType = {
-    name: PatternPathName;
-    color: PatternPathColor;
+    private name: PatternPathName;
+    private color: PatternPathColor;
 }
 
 type Point = {
@@ -27,12 +39,13 @@ type Point = {
     y: number;
 };
 
-type Renderer = {
+type RendererInterface = {
     private _canvas: HTMLCanvasElement;
-    private _context: CanvasRenderingContext2D;
+    private _context: CanvasRenderingContext2D | null;
     private _document: Document;
     private _isTracing: boolean;
 
+    new ();
     private _draw: () => void;
     init: () => HTMLCanvasElement;
     private _update: () => void;

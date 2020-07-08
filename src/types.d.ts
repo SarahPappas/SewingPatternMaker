@@ -10,6 +10,8 @@ type InstructModal = {
 
 /* CANVAS TYPES */
 type IDocument = {
+    patternPathType: {Fold: PatternPathType, Edge: PatternPathType, Seam: PatternPathType};
+
     getPatternPaths: () => PatternPath[];
     addPatternPath: (patternPath: PatternPath) => boolean;
     removePatternPath: () => boolean;
@@ -19,7 +21,7 @@ type IPatternPath = {
     getPoints: () => Point[];
     getType: () => PatternPathType;
     getPathCanvas2D: () => Path2D | null;
-    addPoint: (point: Point) => Point[];
+    addPoint: (point: Point) => boolean;
 }
 
 type IPatternPathType = {
@@ -30,6 +32,7 @@ type IPatternPathType = {
 type IPoint = {
     getX: () => number;
     getY: () => number;
+    equals: (o: Point) => boolean;
 };
 
 type IRenderer = {

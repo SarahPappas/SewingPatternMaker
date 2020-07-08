@@ -9,12 +9,10 @@ type InstructModal = {
 }
 
 /* CANVAS TYPES */
-type Document = {
-    private patternPaths: PatternPath[];
-    private patternPathType: {PatterPathType};
-
+type IDocument = {
     getPatternPaths: () => PatternPath[];
-    addPatternPath: (patternPath: PatternPath) => PatternPath[];
+    addPatternPath: (patternPath: PatternPath) => boolean;
+    removePatternPath: () => boolean;
 }
 
 type IPatternPath = {

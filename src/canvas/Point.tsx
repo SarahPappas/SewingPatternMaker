@@ -14,4 +14,8 @@ export class Point implements IPoint {
     getY = (): number => {
         return this._x;
     }
+
+    equals = (o: Point): boolean => {
+        return this._x == o.getX() && this._y == o.getY();
+    }
 }

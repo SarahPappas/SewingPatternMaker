@@ -51,8 +51,8 @@ type RendererInterface = {
     private _isTracing: boolean;
 
     new ();
-    private _draw: () => void;
     init: () => HTMLCanvasElement;
-    private _update: () => void;
+    private _draw: () => void;
     private _tick: () => void;
+    private _update: () => void;
 }

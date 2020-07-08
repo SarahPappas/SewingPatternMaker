@@ -11,6 +11,7 @@ type InstructModal = {
 /* CANVAS TYPES */
 type Document = {
     private patternPaths: PatternPath[];
+    private patternPathType: {PatterPathType};
 
     getPatternPaths: () => PatternPath[];
     addPatternPath: (patternPath: PatternPath) => PatternPath[];
@@ -29,14 +30,18 @@ type PatternPathInterface = {
     addPoint: (point: Point) => Point[];
 }
 
-type PatternPathType = {
+type PatternPathTypeInterface = {
     private name: PatternPathName;
     private color: PatternPathColor;
+
+    new (name: PatternPathName, color: PatternPathColor);
 }
 
-type Point = {
-    x: number;
-    y: number;
+type PointInterface = {
+    private x: number;
+    private y: number;
+
+    new (x: number, y: number);
 };
 
 type RendererInterface = {

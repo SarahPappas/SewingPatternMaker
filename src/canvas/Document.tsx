@@ -3,15 +3,15 @@ import { PatternPathType } from './PatternPathType';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
-    private _patternPathType: {};
+    patternPathType: {Fold: PatternPathType; Edge: PatternPathType; Seam: PatternPathType;};
 
     constructor () {
-        this._patternPaths = new Array<PatternPath> ();
-        this._patternPathType = {
+        this._patternPaths = new Array<PatternPath>();
+        this.patternPathType = {
             Fold: new PatternPathType(PatternPathName.Fold, PatternPathColor.Green),
             Edge: new PatternPathType(PatternPathName.Edge, PatternPathColor.Yellow),
             Seam: new PatternPathType(PatternPathName.Seam, PatternPathColor.Blue)
-        }
+        };
     }
 
     getPatternPaths = (): PatternPath[] => {
@@ -19,7 +19,7 @@ export class Document implements IDocument {
     };
 
     addPatternPath = (patternPath: PatternPath): boolean => {
-        let originalPatternPathslength = this._patternPaths.length;
+        const originalPatternPathslength = this._patternPaths.length;
         
         if (this._patternPaths.push(patternPath) > originalPatternPathslength) {
             return true;

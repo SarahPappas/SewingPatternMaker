@@ -28,13 +28,13 @@ type Point = {
 };
 
 type Renderer = {
-    canvas: HTMLCanvasElement;
-    context: CanvasRenderingContext2D;
-    document: Document;
-    isTracing: boolean;
+    private _canvas: HTMLCanvasElement;
+    private _context: CanvasRenderingContext2D;
+    private _document: Document;
+    private _isTracing: boolean;
 
-    draw: () => void;
+    private _draw: () => void;
     init: () => HTMLCanvasElement;
-    update: () => void;
-    tick: () => void;
+    private _update: () => void;
+    private _tick: () => void;
 }

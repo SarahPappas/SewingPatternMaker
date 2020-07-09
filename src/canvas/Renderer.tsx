@@ -73,6 +73,7 @@ class Renderer implements IRenderer {
                 throw new Error("Could not get path color for " + path.getType().toString());
             }
 
+            // The color set before stroke will be the color used by the context to stroke the path.
             context.strokeStyle = pathColor;
             context.stroke(path2D);
         });

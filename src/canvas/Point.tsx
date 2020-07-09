@@ -16,6 +16,6 @@ export class Point implements IPoint {
     }
 
     equals = (o: Point): boolean => {
-        return this._x == o.getX() && this._y == o.getY();
+        return this._x === o.getX() && this._y === o.getY();
     }
 }

@@ -12,7 +12,7 @@ export class Point implements IPoint {
     }
 
     getY = (): number => {
-        return this._x;
+        return this._y;
     }
 
     equals = (o: Point): boolean => {

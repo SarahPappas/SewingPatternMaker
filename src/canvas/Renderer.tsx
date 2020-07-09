@@ -1,17 +1,25 @@
-import { PatternPath } from "./PatternPath";
+import { PatternPath } from './PatternPath';
 import { Document } from './Document';
-import { Point } from "./Point";
+import { Point } from './Point';
+import { PatternPathColor } from './PatterPathColor';
+import { PatternPathType } from './Enums';
 
 class Renderer implements IRenderer {
     private _canvas: HTMLCanvasElement;
-    private _context: CanvasRenderingContext2D | null;
+    private _context: CanvasRenderingContext2D;
     private _document: Document;
     private _isTracing: boolean;
     private _currPath: PatternPath | null;
 
     constructor () {
         this._canvas = document.createElement('canvas');
-        this._context = this._canvas.getContext('2d');
+
+        const contextOrNull = this._canvas.getContext('2d');
+        if (!contextOrNull) {
+            throw new Error("Could not create 2D context for canvas.");
+        }
+
+        this._context = contextOrNull;
         this._document = new Document();
         this._isTracing = false;
         this._currPath = null;
@@ -23,7 +31,8 @@ class Renderer implements IRenderer {
         this._canvas.onmousedown = (e) => {
             this._isTracing = true;
             
-            this._currPath = new PatternPath(this._document.patternPathType.Seam);
+            this._currPath = new PatternPath(PatternPathType.Seam);
+            this._document.addPatternPath(this._currPath);
             this._currPath.addPoint(new Point(e.offsetX, e.offsetY));
         };
 
@@ -42,10 +51,6 @@ class Renderer implements IRenderer {
     }
 
     private _draw = (): void => {
-        if (!this._context) {
-            return;
-        }
-    
         this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
     
         this._drawPatternPaths();
@@ -57,22 +62,22 @@ class Renderer implements IRenderer {
     }
 
     private _drawPatternPaths = (): void => {
-        if (!this._context) {
-            return;
-        }
-        
         const context = this._context;
 
         context.lineWidth = 3;
         
         const paths = this._document.getPatternPaths();
         paths.forEach(path => {
-            const currPath2D = path.getPathCanvas2D();
+            const path2D = path.getPathCanvas2D();
+            const pathColor = PatternPathColor.get(path.getType());
+            if (!pathColor) {
+                throw new Error("Could not get path color for " + path.getType().toString());
+            }
 
-            context.strokeStyle = path.getType().getColor();
+            context.strokeStyle = pathColor;
 
-            if (currPath2D) {
-                context.stroke(currPath2D);
+            if (path2D) {
+                context.stroke(path2D);
             }
         });
     }
@@ -85,7 +90,7 @@ class Renderer implements IRenderer {
     }
 
     private _update = (): void => {
-        console.log(this);
+        console.log("update");
     }
 }
 

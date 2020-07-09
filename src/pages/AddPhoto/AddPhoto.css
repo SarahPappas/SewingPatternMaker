@@ -3,3 +3,14 @@
     height: 500px;
     background-color: grey;
 }
+
+.photoContainer {
+    height: 400px;
+    width: 400px;
+    border: 2px dashed black;
+}
+
+.photo {
+    width: 100%;
+    position: relative;
+}

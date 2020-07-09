@@ -21,11 +21,8 @@ export const AddPhoto: React.FC = () => {
         <div className='addPhoto'>
             <h2>Add Photo page</h2>
             <input type="file" accept="image/*" onChange={handleImageUpload} multiple={false}/>
-            <div style={{height: "200px",
-                        width: "200px",
-                        border: "2px dashed black"}}>
-                <img alt="your garment" style={{width: "100%",
-                                        position: "absolute"}} ref={uploadedImage}/>
+            <div className='photoContainer'>
+                <img className='photo' alt="your garment" ref={uploadedImage}/>
             </div>
         </div>
     );

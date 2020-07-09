@@ -21,10 +21,13 @@ export const UploadPhoto: React.FC = () => {
     
     return (
         <div className='uploadPhotoContainer'>
-            <input type="file" accept="image/*" onChange={handleImageUpload} multiple={false}/>
-            <div className='photoContainer'>
-                <img className='photo' src={defaultPhoto} alt="your garment" ref={uploadedImage}/>
-            </div>
+            <label htmlFor='photo-input'>
+                <div className='photoContainer'>
+                    <img className='photo' alt='your garment' src={defaultPhoto} ref={uploadedImage}/>
+                </div>
+            </label>
+            
+            <input id='photo-input' type='file' accept='image/*' onChange={handleImageUpload} multiple={false}/>
         </div>
     );
 };

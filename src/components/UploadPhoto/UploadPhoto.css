@@ -16,3 +16,7 @@
     width: 100%;
     position: relative;
 }
+
+.uploadPhotoContainer>input {
+    display: none;
+}

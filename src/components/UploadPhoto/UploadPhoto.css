@@ -2,7 +2,7 @@
     align-items: center;
     display: flex;
     flex-direction: column;
-    height: 50%;  
+    height: inherit;  
     justify-content: space-around;
     width: inherit;
 }

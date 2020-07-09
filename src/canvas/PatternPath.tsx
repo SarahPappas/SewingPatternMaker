@@ -81,7 +81,7 @@ export class PatternPath implements IPatternPath {
         return new Point(middleX, middleY);
     }
 
-    private _updatePath2DWithQuadraticCurve = ():void => {
+    private _updatePath2DWithQuadraticCurve = (): void => {
         const currPoint = this._points[this._points.length - 1];
         const prevPoint = this._points[this._lastIndexAddedToPath2D];
 

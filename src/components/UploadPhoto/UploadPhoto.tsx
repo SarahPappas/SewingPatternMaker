@@ -1,21 +1,24 @@
 import React, { ChangeEvent } from 'react';
 import defaultPhoto from '../../assets/defaultPhoto.jpg';
 import './UploadPhoto.css';
+import { canvasElement } from 'canvas/Canvas';
 
-export const UploadPhoto: React.FC = () => {
+const UploadPhoto: React.FC = () => {
     const uploadedImage = React.useRef(document.createElement("img"));
 
     const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
         const fileList: FileList | null = e.target.files;
 
-        if (fileList) {
+        if (fileList && fileList[0]) {
+            const file = fileList[0];
             const reader = new FileReader();
             reader.onload = () => {
                 if (reader.result) {
                     uploadedImage.current.src = reader.result.toString();
+                    canvasElement.style.backgroundImage = 'url(' + reader.result.toString() + ')';
                 }
             };
-            reader.readAsDataURL(fileList[0]);
+            reader.readAsDataURL(file);
         }
     };
     
@@ -31,3 +34,5 @@ export const UploadPhoto: React.FC = () => {
         </div>
     );
 };
+
+export { UploadPhoto };

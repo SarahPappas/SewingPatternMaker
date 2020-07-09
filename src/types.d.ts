@@ -18,7 +18,7 @@ type IDocument = {
 type IPatternPath = {
     getPoints: () => Point[];
     getType: () => PatternPathType;
-    getPathCanvas2D: () => Path2D;
+    getPath2D: () => Path2D;
     addPoint: (point: Point) => boolean;
 }
 

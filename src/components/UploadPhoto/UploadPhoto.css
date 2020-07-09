@@ -1,7 +1,15 @@
+.uploadPhotoContainer {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 50%;  
+    justify-content: space-around;
+    width: inherit;
+}
+
 .photoContainer {
-    height: 400px;
-    width: 400px;
-    border: 2px dashed black;
+    height: 300px;
+    width: 300px;
 }
 
 .photo {

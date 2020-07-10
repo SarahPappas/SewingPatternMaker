@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import defaultPhoto from '../../assets/defaultPhoto.jpg';
 import './UploadPhoto.css';
+import '../NavButton/NavButton.css';
 
 interface UploadPhotoProps {
     setUploadedFileData: React.Dispatch<React.SetStateAction<string>>;
@@ -30,7 +31,7 @@ export const UploadPhoto: React.FC<UploadPhotoProps> = ({setUploadedFileData}) =
             <input id='photo-input' type='file' accept='image/*' onChange={handleImageUpload} multiple={false}/>
 
             {/* Use button component here ? */}
-            <label htmlFor='photo-input' className='uploadButton'>
+            <label htmlFor='photo-input' className='navButton uploadButton'>
                 <div className='label'>
                     UPLOAD PHOTO
                 </div>

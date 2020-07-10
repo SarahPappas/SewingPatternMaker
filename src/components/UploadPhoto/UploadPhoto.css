@@ -1,0 +1,13 @@
+.photo {
+    height: 400px;
+    width: 300px;
+    object-fit: contain;
+}
+
+#photo-input {
+    display: none;
+}
+
+.uploadButton {
+    cursor: pointer;
+}

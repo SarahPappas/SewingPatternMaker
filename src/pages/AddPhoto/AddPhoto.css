@@ -1,5 +1,10 @@
-.addPhoto {
-    width: 100px;
-    height: 100px;
-    background-color: blueviolet;
+.addPhotoContainer {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: inherit;  
+    justify-content: space-around;
+    margin: 1.5rem;
+    width: inherit;
 }
+

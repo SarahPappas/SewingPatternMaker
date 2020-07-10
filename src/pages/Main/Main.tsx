@@ -19,7 +19,7 @@ export const Main: React.FC = () => {
             }}
         />
         <Route exact path="/" component={GetStarted} />
-        <Route exact path="/AddPhoto" render={() => {return <AddPhoto setUploadedFileData={setUploadedFileData}></AddPhoto>;}} />
+        <Route exact path="/AddPhoto" render={() => {return <AddPhoto uploadedFileData={uploadedFileData} setUploadedFileData={setUploadedFileData}></AddPhoto>;}} />
         <Route exact path="/Trace/Instructions" component={Instructions} />
     </div></div>;
 };

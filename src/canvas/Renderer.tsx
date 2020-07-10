@@ -13,6 +13,8 @@ class Renderer implements IRenderer {
 
     constructor () {
         this._canvas = document.createElement('canvas');
+        this._canvas.width = 300;
+        this._canvas.height = 400;
 
         const contextOrNull = this._canvas.getContext('2d');
         if (!contextOrNull) {

@@ -2,5 +2,7 @@
     width: auto;
     height: auto;
     border: solid 1px black;
-    background-size: cover;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }

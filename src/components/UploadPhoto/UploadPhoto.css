@@ -1,20 +1,7 @@
-.uploadPhotoContainer {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    height: inherit;  
-    justify-content: space-around;
-    width: inherit;
-}
-
-.photoContainer {
+.photo {
     height: 400px;
     width: 300px;
-}
-
-.photo {
-    width: 100%;
-    position: relative;
+    object-fit: contain;
 }
 
 #photo-input {

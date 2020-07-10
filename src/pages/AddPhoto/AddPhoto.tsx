@@ -5,11 +5,15 @@ import { UploadPhoto } from 'components/UploadPhoto/UploadPhoto';
 
 const button: Button = {text: "UPLOAD PHOTO", to: "/trace/instructions" };
 
-export const AddPhoto: React.FC = () => {
+interface AddPhotoProps {
+    canvasContainerRef: React.RefObject<HTMLDivElement>;
+}
+
+export const AddPhoto: React.FC<AddPhotoProps> = ({canvasContainerRef}) => {
     return (
         <div className='addPhotoContainer'>
             <NavButton button={button}/>
-            <UploadPhoto></UploadPhoto>
+            <UploadPhoto canvasContainerRef={canvasContainerRef}></UploadPhoto>
         </div>
     );
 };

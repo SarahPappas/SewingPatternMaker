@@ -1,17 +1,20 @@
-import React, { MutableRefObject } from "react";
+import React from "react";
 import { canvasElement } from "../../canvas/Canvas";
 import './CanvasContainer.css';
 
-let canvasContainerRef: MutableRefObject<HTMLDivElement>;
+interface CanvasContainerProps {
+  canvasContainerRef: React.RefObject<HTMLDivElement>;
+}
 
-const CanvasContainer: React.FC = () => {
-  canvasContainerRef = React.useRef(document.createElement("div"));
+const CanvasContainer: React.FC<CanvasContainerProps> = ({canvasContainerRef}) => {
 
   React.useEffect(() => {
-    canvasContainerRef.current.appendChild(canvasElement);
-  }, []);
+    if (canvasContainerRef.current) {
+      canvasContainerRef.current.appendChild(canvasElement);
+    }
+  }, [canvasContainerRef]);
 
   return <div className='canvasContainer' ref={canvasContainerRef}></div>;
 };
 
-export { CanvasContainer, canvasContainerRef };
+export { CanvasContainer };

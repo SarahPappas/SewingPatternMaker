@@ -27,13 +27,20 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({setUploadedFileData}) => {
     
     return (
         <div className='uploadPhotoContainer'>
+            <input id='photo-input' type='file' accept='image/*' onChange={handleImageUpload} multiple={false}/>
+
+            {/* Use button component here */}
+            <label htmlFor='photo-input' className='uploadButton'>
+                <div className='label'>
+                    UPLOAD PHOTO
+                </div>
+            </label>
+
             <label htmlFor='photo-input'>
                 <div className='photoContainer'>
                     <img className='photo' alt='your garment' src={defaultPhoto} ref={uploadedImage}/>
                 </div>
-            </label>
-            
-            <input id='photo-input' type='file' accept='image/*' onChange={handleImageUpload} multiple={false}/>
+            </label>            
         </div>
     );
 };

@@ -20,3 +20,22 @@
 .uploadPhotoContainer>input {
     display: none;
 }
+
+.uploadButton {
+    border: solid 1px #707070;
+    background-color: white;
+    width: 300px;
+    height: 75px;
+    position: relative;
+    cursor: pointer;
+}
+
+.uploadButton .label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #707070;
+    font-size: 1.5em;
+    white-space: nowrap;
+}

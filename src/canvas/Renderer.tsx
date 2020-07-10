@@ -43,14 +43,25 @@ class Renderer implements IRenderer {
         };
         
         this._canvas.onmouseup = (e) => {
-            if (this._isTracing && this._currPath) {
-                this._currPath.addPoint(new Point(e.offsetX, e.offsetY));
-            }
-            this._isTracing = false;  
-            this._currPath = null;
+            const position = new Point(e.offsetX, e.offsetY);
+            this._endTracing(position);
+        };
+
+        // If the user draws off the canvas, we will stop adding to the path.
+        this._canvas.onmouseout = (e) => {
+            const position = new Point(e.offsetX, e.offsetY);
+            this._endTracing(position);
         };
 
         return this._canvas;
+    }
+
+    private _endTracing = (position: Point): void => {
+        if (this._isTracing && this._currPath) {
+            this._currPath.addPoint(position);
+        }
+        this._isTracing = false;  
+        this._currPath = null;
     }
 
     private _draw = (): void => {

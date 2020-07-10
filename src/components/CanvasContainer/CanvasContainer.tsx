@@ -1,13 +1,14 @@
 import React from "react";
-import { canvasElement } from "../../canvas/Canvas";
+import { renderer } from "../../canvas/Renderer";
 import './CanvasContainer.css';
 
 const CanvasContainer: React.FC = () => {
   const canvasContainerRef = React.useRef(document.createElement("div"));
+  const canvas = renderer.init();
 
   React.useEffect(() => {
-    canvasContainerRef.current.appendChild(canvasElement);
-  }, []);
+    canvasContainerRef.current.appendChild(canvas);
+  }, [canvas]);
 
   return <div className='canvasContainer' ref={canvasContainerRef}></div>;
 };

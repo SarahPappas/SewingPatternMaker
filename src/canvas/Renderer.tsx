@@ -1,7 +1,7 @@
 import { PatternPath } from './PatternPath';
 import { Document } from './Document';
 import { Point } from './Point';
-import { PatternPathColor } from './PatterPathColor';
+import { PatternPathColor } from './PatternPathColor';
 import { PatternPathType } from './Enums';
 
 class Renderer implements IRenderer {

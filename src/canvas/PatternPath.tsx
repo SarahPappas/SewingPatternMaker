@@ -81,6 +81,11 @@ export class PatternPath implements IPatternPath {
         return new Point(middleX, middleY);
     }
 
+    /* 
+    * The algorithm for starting and ending the line is not quite right. The line will not end on the exact 
+    * last point. Instead, it will end on the middle of the last two points. We decided this is okay for now,
+    * but may need to be updated in the future.
+    */
     private _updatePath2DWithQuadraticCurve = (): void => {
         const currPoint = this._points[this._points.length - 1];
         const prevPoint = this._points[this._lastIndexAddedToPath2D];

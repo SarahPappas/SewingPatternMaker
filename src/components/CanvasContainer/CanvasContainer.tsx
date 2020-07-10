@@ -1,9 +1,12 @@
 import React from "react";
 import { canvasElement } from "../../canvas/Canvas";
 import './CanvasContainer.css';
-import { uploadedFileData } from "components/UploadPhoto/UploadPhoto";
 
-const CanvasContainer: React.FC = () => {
+interface CanvasContainerProps {
+  uploadedFileData: string;
+}
+
+const CanvasContainer: React.FC<CanvasContainerProps> = ({uploadedFileData}) => {
   const canvasContainerRef = React.useRef(document.createElement("div"));
 
   React.useEffect(() => {
@@ -11,7 +14,7 @@ const CanvasContainer: React.FC = () => {
       canvasContainerRef.current.appendChild(canvasElement);
       canvasContainerRef.current.style.backgroundImage = "url(" + uploadedFileData + ")";
     }
-  }, [canvasContainerRef]);
+  }, [canvasContainerRef, uploadedFileData]);
 
   return <div className='canvasContainer' ref={canvasContainerRef}></div>;
 };

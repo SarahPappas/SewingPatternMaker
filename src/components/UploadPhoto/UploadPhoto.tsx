@@ -2,9 +2,11 @@ import React, { ChangeEvent } from 'react';
 import defaultPhoto from '../../assets/defaultPhoto.jpg';
 import './UploadPhoto.css';
 
-let uploadedFileData: string;
+interface UploadPhotoProps {
+    setUploadedFileData: React.Dispatch<React.SetStateAction<string>>;
+}
 
-const UploadPhoto: React.FC = () => {
+const UploadPhoto: React.FC<UploadPhotoProps> = ({setUploadedFileData}) => {
     const uploadedImage = React.useRef(document.createElement("img"));
 
     const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -15,8 +17,8 @@ const UploadPhoto: React.FC = () => {
             const reader = new FileReader();
             reader.onload = () => {
                 if (reader.result) {
+                    setUploadedFileData(reader.result.toString());
                     uploadedImage.current.src = reader.result.toString();
-                    uploadedFileData = reader.result.toString();
                 }
             };
             reader.readAsDataURL(file);
@@ -36,4 +38,4 @@ const UploadPhoto: React.FC = () => {
     );
 };
 
-export { UploadPhoto, uploadedFileData };
+export { UploadPhoto };

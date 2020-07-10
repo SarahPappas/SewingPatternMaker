@@ -5,11 +5,15 @@ import { UploadPhoto } from 'components/UploadPhoto/UploadPhoto';
 
 const button: Button = {text: "UPLOAD PHOTO", to: "/trace/instructions" };
 
-export const AddPhoto: React.FC = () => {
+interface AddPhotoProps {
+    setUploadedFileData: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const AddPhoto: React.FC<AddPhotoProps> = ({setUploadedFileData}) => {
     return (
         <div className='addPhotoContainer'>
             <NavButton button={button}/>
-            <UploadPhoto></UploadPhoto>
+            <UploadPhoto setUploadedFileData={setUploadedFileData}></UploadPhoto>
         </div>
     );
 };

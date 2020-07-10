@@ -7,17 +7,19 @@ import { Instructions } from 'pages/Trace/Instructions/Instructions';
 import { CanvasContainer } from '../../components/CanvasContainer/CanvasContainer';
 
 export const Main: React.FC = () => {
+    const [uploadedFileData, setUploadedFileData] = React.useState<string>("");
+
     return <div className='pageContainer'><div className='mainContainer'>
 
         {/* Add route here to make component visible*/}
         <Route
             path="/trace/:slug"
             render={({match}) => {
-                return <CanvasContainer></CanvasContainer>;
+                return <CanvasContainer uploadedFileData={uploadedFileData}></CanvasContainer>;
             }}
         />
         <Route exact path="/" component={GetStarted} />
-        <Route exact path="/AddPhoto" component={AddPhoto}/>
+        <Route exact path="/AddPhoto" render={() => {return <AddPhoto setUploadedFileData={setUploadedFileData}></AddPhoto>;}} />
         <Route exact path="/Trace/Instructions" component={Instructions} />
     </div></div>;
 };

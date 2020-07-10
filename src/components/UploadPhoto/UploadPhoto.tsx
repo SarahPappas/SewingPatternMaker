@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import defaultPhoto from '../../assets/defaultPhoto.jpg';
 import './UploadPhoto.css';
+import { canvasElement } from 'canvas/Canvas';
 
 interface UploadPhotoProps {
     canvasContainerRef: React.RefObject<HTMLDivElement>;
@@ -17,11 +18,13 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ( {canvasContainerRef} ) => {
             reader.onload = () => {
                 if (reader.result) {
                     uploadedImage.current.src = reader.result.toString();
-                    console.log("out");
-                    if(canvasContainerRef.current) {
-                        console.log("in");
-                        canvasContainerRef.current.style.backgroundImage = 'url(' + reader.result.toString() + ')';
+                    if(canvasElement && canvasElement.parentElement){
+                        canvasElement.parentElement.style.backgroundImage = 'url(' + reader.result.toString() + ')';
                     }
+                    
+                    // if(canvasContainerRef.current) {
+                    //     canvasContainerRef.current.style.backgroundImage = 'url(' + reader.result.toString() + ')';
+                    // }
                 }
             };
             reader.readAsDataURL(file);

@@ -10,7 +10,6 @@ export const Main: React.FC = () => {
     const [uploadedFileData, setUploadedFileData] = React.useState<string>("");
 
     return <div className='pageContainer'><div className='mainContainer'>
-
         {/* Add route here to make component visible*/}
         <Route
             path="/trace/:slug"
@@ -19,7 +18,12 @@ export const Main: React.FC = () => {
             }}
         />
         <Route exact path="/" component={GetStarted} />
-        <Route exact path="/AddPhoto" render={() => {return <AddPhoto uploadedFileData={uploadedFileData} setUploadedFileData={setUploadedFileData}></AddPhoto>;}} />
+        <Route 
+            exact path="/AddPhoto" 
+            render={() => {
+                return <AddPhoto uploadedFileData={uploadedFileData} setUploadedFileData={setUploadedFileData}></AddPhoto>;
+            }}
+        />
         <Route exact path="/Trace/Instructions" component={Instructions} />
     </div></div>;
 };

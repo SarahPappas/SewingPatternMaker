@@ -6,7 +6,7 @@ interface CanvasContainerProps {
   uploadedFileData: string;
 }
 
-const CanvasContainer: React.FC<CanvasContainerProps> = ({uploadedFileData}) => {
+export const CanvasContainer: React.FC<CanvasContainerProps> = ({ uploadedFileData }) => {
   const canvasContainerRef = React.useRef(document.createElement("div"));
 
   React.useEffect(() => {
@@ -18,5 +18,3 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({uploadedFileData}) => 
 
   return <div className='canvasContainer' ref={canvasContainerRef}></div>;
 };
-
-export { CanvasContainer };

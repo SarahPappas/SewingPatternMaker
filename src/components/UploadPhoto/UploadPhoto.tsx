@@ -6,7 +6,7 @@ interface UploadPhotoProps {
     setUploadedFileData: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const UploadPhoto: React.FC<UploadPhotoProps> = ({setUploadedFileData}) => {
+export const UploadPhoto: React.FC<UploadPhotoProps> = ({setUploadedFileData}) => {
     const uploadedImage = React.useRef(document.createElement("img"));
 
     const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -44,5 +44,3 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({setUploadedFileData}) => {
         </div>
     );
 };
-
-export { UploadPhoto };

@@ -82,9 +82,10 @@ export class PatternPath implements IPatternPath {
     }
 
     /* 
-    * The algorithm for starting and ending the line is not quite right. The line will not end on the exact 
-    * last point. Instead, it will end on the middle of the last two points. We decided this is okay for now,
-    * but may need to be updated in the future.
+    * The algorithm for starting and ending the line is not quite right. The first segment of the path will be 
+    * a straight line because a bezier curve with a control point equal to one of is extremities points will 
+    * just be a line. Additionally, The line will not end on the exact last point. Instead, it will end on the 
+    * middle of the last two points. We decided this is okay for now, but may need to be updated in the future.
     */
     private _updatePath2DWithQuadraticCurve = (): void => {
         const currPoint = this._points[this._points.length - 1];

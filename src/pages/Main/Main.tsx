@@ -13,7 +13,7 @@ export const Main: React.FC = () => {
 
         {/* Add route here to make component visible*/}
         <Route
-            path="/trace/:slug"
+            path="/AddPhoto"
             render={({match}) => {
                 return <CanvasContainer canvasContainerRef={canvasContainerRef}></CanvasContainer>;
             }}

@@ -19,7 +19,7 @@ export const AddPhoto: React.FC<AddPhotoProps> = ({ setUploadedFileData, uploade
     return (
         <div className='addPhotoContainer'>
             <UploadPhoto setUploadedFileData={setUploadedFileData}></UploadPhoto>
-            {/* Use generic button here */}
+            {/* TODO: Use generic button here */}
             {displayButton}
         </div>
     );

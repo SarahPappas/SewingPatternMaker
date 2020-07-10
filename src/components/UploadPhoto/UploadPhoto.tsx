@@ -30,7 +30,7 @@ export const UploadPhoto: React.FC<UploadPhotoProps> = ({setUploadedFileData}) =
         <>
             <input id='photo-input' type='file' accept='image/*' onChange={handleImageUpload} multiple={false}/>
 
-            {/* Use button component here ? */}
+            {/* TODO: Use button component here ? */}
             <label htmlFor='photo-input' className='navButton uploadButton'>
                 <div className='label'>
                     UPLOAD PHOTO

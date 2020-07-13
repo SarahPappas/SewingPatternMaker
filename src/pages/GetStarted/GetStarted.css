@@ -1,0 +1,21 @@
+.backgroundImageTop {
+    height: 65%;
+    width: 100%;
+    background-image: linear-gradient(0deg, rgba(112, 112, 112, .7), rgba(112, 112, 112, .7)), url(https://images.unsplash.com/photo-1578353022142-09264fd64295?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=3058&q=80);
+    background-size: cover;
+    top: 0;
+    position: absolute;
+    z-index: -1;
+}
+
+.backgroundImageBottom {
+    height: 15%;
+    background-size: 30%;
+    top: 62%;
+    position: absolute;
+    z-index: -2;
+}
+
+.introSteps .instructionModal {
+    font-size: 1em;
+}

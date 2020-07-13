@@ -1,7 +1,8 @@
 .canvasContainer {
-    position: relative;
-    top: 50px;
-    left: 50px;
-    height:600px;
-    width: 600px;
+    width: 300px;
+    height: 400px;
+    border: solid 1px black;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }

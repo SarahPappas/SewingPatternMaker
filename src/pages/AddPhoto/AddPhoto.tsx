@@ -17,10 +17,10 @@ export const AddPhoto: React.FC<AddPhotoProps> = ({ setUploadedFileData, uploade
     }
     
     return (
-        <div className='addPhotoContainer'>
+        <>
             <UploadPhoto setUploadedFileData={setUploadedFileData}></UploadPhoto>
             {/* TODO: Use generic button here */}
             {displayButton}
-        </div>
+        </>
     );
 };

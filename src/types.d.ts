@@ -12,7 +12,7 @@ type Input = {
     id: string;
     type: string;
     accept: string;
-    class: string;
+    className: string;
 }
 
 /* CANVAS TYPES */

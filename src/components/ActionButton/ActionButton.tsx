@@ -3,7 +3,7 @@ import './ActionButton.css';
 
 interface ActionButtonProps {
     button: Button;
-    action: (...args: any[]) => any;
+    action: (...args: any[]) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
     input?: Input;
 }
 

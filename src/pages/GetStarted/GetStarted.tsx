@@ -12,10 +12,8 @@ export const GetStarted: React.FC = () => {
     return (<>
         <div className={'backgroundImageTop'}></div>
         <img className={'backgroundImageBottom'} src={backgroundArrow} alt='down arrow'></img>
-        <div className={'getStartedContainer'}> 
-            <InstructionModal instructModal={intro}/>
-            <div className={'introSteps'}><InstructionModal instructModal={steps}/></div>
-            <NavButton button={button}/>
-        </div>  
+        <InstructionModal instructModal={intro}/>
+        <div className={'introSteps'}><InstructionModal instructModal={steps}/></div>
+        <NavButton button={button}/> 
     </>);
 };

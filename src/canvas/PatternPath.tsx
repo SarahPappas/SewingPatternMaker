@@ -62,9 +62,9 @@ export class PatternPath implements IPatternPath {
             return true;
         }
 
-        // Otherwise, we check if the if the point we want to add is equal to the last point that was added.
+        // Otherwise, we check if the if the point we want to add far enough from the last point we added.
         const prevPoint = this._points[this._points.length - 1];
-        if (prevPoint.equals(point)) {
+        if (this._isTooClose(point, prevPoint)) {
             return false;
         }
 
@@ -73,6 +73,13 @@ export class PatternPath implements IPatternPath {
         this._isPath2DValid = false;
         return true;
     };
+
+    private _isTooClose = (point: Point, prevPoint: Point): boolean => {
+        const deltaX  = point.getX() - prevPoint.getX();
+        const deltaY: number = point.getY() - prevPoint.getY();
+        const threshold = 500;
+        return deltaX * deltaX + deltaY * deltaY < threshold;
+    }
 
     private _computeMiddlePoint = (point1: Point, point2: Point): Point => {
         const middleX = (point1.getX() + point2.getX()) / 2;

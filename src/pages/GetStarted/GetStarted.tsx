@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavButton } from 'components/NavButton/NavButton';
 import { InstructionModal } from 'components/InstructionModal/InstructionModal';
-import backgroundArrow from '../../assets/background-arrow.svg';
+import backgroundArrow from '../../assets/background-arrow-grey.svg';
 import './GetStarted.css';
 
 const button: Button = {text: "GET STARTED", to: "/AddPhoto" };

@@ -2,7 +2,7 @@ import React from 'react';
 import './ActionButton.css';
 
 interface ActionButtonProps {
-    text: String;
+    text: string;
     action: (...args: any[]) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
     input?: Input;
 }

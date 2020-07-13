@@ -1,0 +1,19 @@
+.backgroundGrey {
+    height: 100%;
+    width: 100%;
+    background-color: rgba(112, 112, 112, .7);
+    position: absolute;
+    z-index: -2;
+}
+
+.backgroundArrow {
+    height: 40%;
+    width: 80%;
+    background-size: 20%;
+    top: 62%;
+    position: absolute;
+    background-image: url('../../../assets/background-arrow-white.svg');
+    background-repeat: repeat-x;
+    background-position: center;
+    z-index: -1;
+}

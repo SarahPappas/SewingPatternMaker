@@ -8,6 +8,13 @@ type InstructModal = {
     text: string[];
 }
 
+type Input = {
+    id: string;
+    type: string;
+    accept: string;
+    class: string;
+}
+
 /* CANVAS TYPES */
 type IDocument = {
     getPatternPaths: () => PatternPath[];

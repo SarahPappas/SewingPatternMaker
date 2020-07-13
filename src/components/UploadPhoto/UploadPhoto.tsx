@@ -1,4 +1,5 @@
 import React, { ChangeEvent } from 'react';
+import { ActionButton } from 'components/ActionButton/ActionButton';
 import defaultPhoto from '../../assets/defaultPhoto.jpg';
 import './UploadPhoto.css';
 import '../NavButton/NavButton.css';
@@ -25,17 +26,13 @@ export const UploadPhoto: React.FC<UploadPhotoProps> = ({setUploadedFileData}) =
             reader.readAsDataURL(file);
         }
     };
+
+    const uploadImageButton = { text: 'UPLOAD PHOTO', to: '' };
+    const uploadImageInput = { id: 'photo-input', type: 'file', accept: 'image/*', className: 'navButton uploadButton'};
     
     return (
         <>
-            <input id='photo-input' type='file' accept='image/*' onChange={handleImageUpload} multiple={false}/>
-
-            {/* TODO: Use button component here ? */}
-            <label htmlFor='photo-input' className='navButton uploadButton'>
-                <div className='label'>
-                    UPLOAD PHOTO
-                </div>
-            </label>
+            <ActionButton button={uploadImageButton} action={handleImageUpload} input={uploadImageInput}></ActionButton>
 
             <label htmlFor='photo-input'>
                 <img className='photo' alt='your garment' src={defaultPhoto} ref={uploadedImage}/>

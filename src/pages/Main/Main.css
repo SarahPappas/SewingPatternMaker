@@ -18,7 +18,8 @@ body {
     height: 800px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     flex-direction: column;
     position:absolute;
+    margin: 1.5rem;
 }

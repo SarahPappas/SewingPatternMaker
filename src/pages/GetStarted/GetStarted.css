@@ -1,13 +1,3 @@
-.getStartedContainer {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    height: inherit;  
-    justify-content: space-around;
-    margin: 1.5rem;
-    width: inherit;
-}
-
 .backgroundImageTop {
     height: 65%;
     width: 100%;

@@ -11,16 +11,14 @@ interface AddPhotoProps {
 }
 
 export const AddPhoto: React.FC<AddPhotoProps> = ({ setUploadedFileData, uploadedFileData }) => {
-    let displayButton = <></>;
-    if (uploadedFileData !== "") {
-        displayButton = <NavButton button={button}></NavButton>;
-    }
+    const isVisible = uploadedFileData !== "";
     
     return (
         <>
             <UploadPhoto setUploadedFileData={setUploadedFileData}></UploadPhoto>
-            {/* TODO: Use generic button here */}
-            {displayButton}
+            <div style={{visibility: isVisible ? 'visible' : 'hidden'}}>
+                <NavButton button={button}></NavButton>
+            </div>
         </>
     );
 };

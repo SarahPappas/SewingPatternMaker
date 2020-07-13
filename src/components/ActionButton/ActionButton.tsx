@@ -2,15 +2,15 @@ import React from 'react';
 import './ActionButton.css';
 
 interface ActionButtonProps {
-    button: Button;
+    text: String;
     action: (...args: any[]) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
     input?: Input;
 }
 
-export const ActionButton: React.FC<ActionButtonProps> = ({ button, action, input }) => {    
+export const ActionButton: React.FC<ActionButtonProps> = ({ text, action, input }) => {    
     const buttonLabel = <> 
         <div className='label'> 
-            {button.text}
+            {text}
         </div>
     </>;
 

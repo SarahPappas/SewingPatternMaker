@@ -27,12 +27,12 @@ export const UploadPhoto: React.FC<UploadPhotoProps> = ({setUploadedFileData}) =
         }
     };
 
-    const uploadImageButton = { text: 'UPLOAD PHOTO', to: '' };
+    const uploadImageButtonText = 'UPLOAD PHOTO';
     const uploadImageInput = { id: 'photo-input', type: 'file', accept: 'image/*', className: 'navButton uploadButton'};
     
     return (
         <>
-            <ActionButton button={uploadImageButton} action={handleImageUpload} input={uploadImageInput}></ActionButton>
+            <ActionButton text={uploadImageButtonText} action={handleImageUpload} input={uploadImageInput}></ActionButton>
 
             <label htmlFor='photo-input'>
                 <img className='photo' alt='your garment' src={defaultPhoto} ref={uploadedImage}/>

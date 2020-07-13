@@ -3,7 +3,7 @@ import {Link, Route} from 'react-router-dom';
 import './NavButton.css';
 
 interface NavButtonProps {
-    button: Button;
+    button: NavButton;
 }
 
 export const NavButton: React.FC<NavButtonProps> = ({ button }) => {

@@ -1,5 +1,5 @@
 /* COMPONENT TYPES */
-type Button = {
+type NavButton = {
     text: string;
     to: string;
 };

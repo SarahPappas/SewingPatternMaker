@@ -1,34 +1,34 @@
 import React from 'react';
-import {Link, Route} from 'react-router-dom';
 import './ActionButton.css';
 
 interface ActionButtonProps {
     button: Button;
-    action: () => any;
-    input: Input | null;
+    action: (...args: any[]) => any;
+    input?: Input;
 }
 
-export const ActionButton: React.FC<ActionButtonProps> = ({ button, action, input }) => {
+export const ActionButton: React.FC<ActionButtonProps> = ({ button, action, input }) => {    
     const buttonLabel = <> 
         <div className='label'> 
             {button.text}
         </div>
-    </>
+    </>;
 
-    return (<>
-        if ({input}) {
-            <>
-                <input id={input?.id} type={input?.type} accept={input?.accept} onChange={action} multiple={false}/>
+    const hasInput = Boolean({input});
 
-                <label htmlFor={input?.id} className={input?.class}>
-                    {buttonLabel}
-                </label>
-            </>
+    if (hasInput) {
+        return (<>
+            <input id={input?.id} type={input?.type} accept={input?.accept} onChange={action} multiple={false}/>
 
-        } else {
+            <label htmlFor={input?.id} className={input?.className}> 
+                {buttonLabel}
+            </label>
+        </>);
+    } else {
+        return(<>
             <div className='actionButton' onClick= {action}>
                 {buttonLabel}
             </div>
-        }
-    </>);
+        </>);
+    }
 };

@@ -1,0 +1,12 @@
+.flexGrid {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    position: absolute;
+    bottom: 0;
+}
+
+.col {
+    width: 33.333%;
+}

@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface NavButtonProps {
+interface ButtonProps {
     label: string;
     className: string;
 }
 
-export const Button: React.FC<NavButtonProps> = ({ label, className }) => {
+export const Button: React.FC<ButtonProps> = ({ label, className }) => {
     return (
         <div className={className}>
             <div className='label'> 

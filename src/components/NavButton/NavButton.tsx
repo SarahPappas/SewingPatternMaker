@@ -7,12 +7,10 @@ interface NavButtonProps {
     button: NavButton;
 }
 
-export const NavButton: React.FC<NavButtonProps> = ({ button }) => {
-    const buttonProps: Button = {label: button.label, className: 'navButton'};
-    
+export const NavButton: React.FC<NavButtonProps> = ({ button }) => {    
     return (<>
         <Link to={button.to}>
-             <Button button={buttonProps}></Button>
+             <Button label={button.label} className='navButton'></Button>
         </Link>
         <Route exact path={button.to} />
     </>);

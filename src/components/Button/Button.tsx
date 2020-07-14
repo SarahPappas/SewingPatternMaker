@@ -1,14 +1,15 @@
 import React from 'react';
 
 interface NavButtonProps {
-    button: Button;
+    label: string;
+    className: string;
 }
 
-export const Button: React.FC<NavButtonProps> = ({ button }) => {
+export const Button: React.FC<NavButtonProps> = ({ label, className }) => {
     return (
-        <div className={button.className}>
+        <div className={className}>
             <div className='label'> 
-                {button.label}
+                {label}
             </div>
         </div>
     );

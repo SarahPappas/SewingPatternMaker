@@ -16,11 +16,9 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
             </div>
         );
     } else {
-        const buttonProps:Button = {label:props.button.label, className:'actionButton'};
-
         return(
             <div onClick={props.button.action}>
-                <Button button={buttonProps}></Button>
+                <Button label={props.button.label} className='actionButton'></Button>
             </div>
         );
     }

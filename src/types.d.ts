@@ -1,9 +1,4 @@
 /* COMPONENT TYPES */
-type Button = {
-    label: string;
-    className: string;
-}
-
 type NavButton = {
     label: string;
     to: string;

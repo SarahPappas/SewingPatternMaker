@@ -6,6 +6,7 @@ export class PatternPath implements IPatternPath {
     private _points: Point[];
     private _type: PatternPathType;
     private _path2D: Path2D;
+    private _tempPath2D: Path2D;
     private _isPath2DValid: boolean;
     private _lastIndexAddedToPath2D: number;
 
@@ -14,6 +15,7 @@ export class PatternPath implements IPatternPath {
         this._rawPoints = new Array<Point>();
         this._points = new Array<Point>();
         this._path2D = new Path2D();
+        this._tempPath2D = new Path2D();
         this._isPath2DValid = false;
         this._lastIndexAddedToPath2D = -1;
     }
@@ -29,7 +31,10 @@ export class PatternPath implements IPatternPath {
     getPath2D = (): Path2D => {
         // If the Path2D is already valid, return it.
         if (this._isPath2DValid) {
-            return this._path2D;
+            const returnPath = new Path2D();
+            returnPath.addPath(this._path2D);
+            returnPath.addPath(this._tempPath2D);
+            return returnPath;
         }
 
         // If it is the first time we are adding a point to the Path2D, use moveTo.
@@ -42,7 +47,10 @@ export class PatternPath implements IPatternPath {
         // then the path is valid and we can return it.
         if (this._lastIndexAddedToPath2D === 0 && this._points.length === 1) {
             this._isPath2DValid = true;
-            return this._path2D;
+            const returnPath = new Path2D();
+            returnPath.addPath(this._path2D);
+            returnPath.addPath(this._tempPath2D);
+            return returnPath;
         }
 
         // Otherwise, continue adding to the Path2D. We do not need to loop through all of the points.
@@ -52,8 +60,14 @@ export class PatternPath implements IPatternPath {
 
         this._lastIndexAddedToPath2D = this._points.length - 1;
         this._isPath2DValid = true;
+        this._tempPath2D = new Path2D();
+        const start = this._computeMiddlePoint(this._points[this._lastIndexAddedToPath2D], this._points[this._lastIndexAddedToPath2D - 1]);
+        this._tempPath2D.moveTo(start.getX(), start.getY());
     
-        return this._path2D;
+        const returnPath = new Path2D();
+        returnPath.addPath(this._path2D);
+        returnPath.addPath(this._tempPath2D);
+        return returnPath;
     };
 
     addPoint = (point: Point): boolean => {
@@ -64,16 +78,17 @@ export class PatternPath implements IPatternPath {
             this._isPath2DValid = false;
             return true;
         }
-
+        
         // Otherwise, we check if the if the point we want to add is equal to the last point that was added.
         const prevPoint = this._rawPoints[this._rawPoints.length - 1];
         if (prevPoint.equals(point)) {
             return false;
         }
         this._rawPoints.push(point);
-
+    
         // only keep one out of 10 points to smooth the line
         if (this._rawPoints.length % 10 !== 0) {
+            this._tempPath2D.lineTo(point.getX(), point.getY());
             return false;
         }
 
@@ -103,4 +118,12 @@ export class PatternPath implements IPatternPath {
         const midPoint = this._computeMiddlePoint(prevPoint, currPoint);
         this._path2D.quadraticCurveTo(prevPoint.getX(), prevPoint.getY(), midPoint.getX(), midPoint.getY());
     }
+
+    public finalize = (): void => {
+        console.log(this._points);
+        const currPoint = this._rawPoints[this._rawPoints.length - 1];
+        this._path2D.lineTo(currPoint.getX(), currPoint.getY());
+        this._tempPath2D = new Path2D();
+    }
+
 }

@@ -1,19 +1,16 @@
 import React from 'react';
 import {Link, Route} from 'react-router-dom';
+import {Button} from 'components/Button/Button';
 import './NavButton.css';
 
 interface NavButtonProps {
-    button: Button;
+    button: NavButton;
 }
 
-export const NavButton: React.FC<NavButtonProps> = ({ button }) => {
+export const NavButton: React.FC<NavButtonProps> = ({ button }) => {    
     return (<>
         <Link to={button.to}>
-             <div className='navButton'>
-                 <div className='label'> 
-                     {button.text}
-                 </div>
-             </div>
+             <Button label={button.label} className='navButton'></Button>
         </Link>
         <Route exact path={button.to} />
     </>);

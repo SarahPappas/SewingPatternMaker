@@ -13,20 +13,30 @@ export const Instructions: React.FC = () => {
         <div className={'instructionsConatainer'}>
             <NavButton button={button}/> 
             <InstructionModal instructModal={instruction}/>
+            </div>
             <div className="flexGrid">
                 <div className="col">
                     <div className={'arrow'}></div>
-                    <div></div>
+                    <div className={'seam'}>
+                        <div className={'colorBlock'}></div>
+                        <div className={'pathButtonLabel'}>Seam</div>
+                    </div>
+                    
                 </div>
                 <div className="col">
                     <div className={'arrow'}></div>
-                    <div></div>
+                    <div className={'fold'}>
+                        <div className={'colorBlock'}></div>
+                        <div className={'pathButtonLabel'}>Fold</div>
+                    </div>
                 </div>  
                 <div className="col">
                     <div className={'arrow'}></div>
-                    <div></div>
+                    <div className={'edge'}>
+                        <div className={'colorBlock'}></div>
+                        <div className={'pathButtonLabel'}>Edge</div>
+                    </div>
                 </div>
             </div>
-        </div>
     </>);
 };

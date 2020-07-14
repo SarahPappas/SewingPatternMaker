@@ -7,6 +7,7 @@ export class PatternPath implements IPatternPath {
     private _path2D: Path2D;
     private _isPath2DValid: boolean;
     private _lastIndexAddedToPath2D: number;
+    private n: number;
 
     constructor (pathType: PatternPathType) {
         this._type = pathType;
@@ -14,6 +15,7 @@ export class PatternPath implements IPatternPath {
         this._path2D = new Path2D();
         this._isPath2DValid = false;
         this._lastIndexAddedToPath2D = -1;
+        this.n = 0;
     }
 
     getPoints = (): Point[] => {
@@ -57,14 +59,15 @@ export class PatternPath implements IPatternPath {
     addPoint = (point: Point): boolean => {
         // If the points array is empty, we can just add the point.
         if (!this._points.length) {
+            this.n=0;
             this._points.push(point);
             this._isPath2DValid = false;
             return true;
         }
+        this.n++;
 
-        // Otherwise, we check if the if the point we want to add far enough from the last point we added.
-        const prevPoint = this._points[this._points.length - 1];
-        if (this._isTooClose(point, prevPoint)) {
+        // only keep one out of 10 points to smooth the line
+        if (this.n % 10 !== 0) {
             return false;
         }
 
@@ -73,13 +76,6 @@ export class PatternPath implements IPatternPath {
         this._isPath2DValid = false;
         return true;
     };
-
-    private _isTooClose = (point: Point, prevPoint: Point): boolean => {
-        const deltaX  = point.getX() - prevPoint.getX();
-        const deltaY: number = point.getY() - prevPoint.getY();
-        const threshold = 500;
-        return deltaX * deltaX + deltaY * deltaY < threshold;
-    }
 
     private _computeMiddlePoint = (point1: Point, point2: Point): Point => {
         const middleX = (point1.getX() + point2.getX()) / 2;

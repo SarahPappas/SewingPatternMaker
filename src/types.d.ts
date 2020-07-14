@@ -1,7 +1,17 @@
 /* COMPONENT TYPES */
+type Button = {
+    label: string;
+    className: string;
+}
+
 type NavButton = {
-    text: string;
+    label: string;
     to: string;
+};
+
+type ActionButton = {
+    label: string;
+    action: (...args: any[]) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
 type InstructModal = {

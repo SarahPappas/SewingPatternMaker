@@ -1,34 +1,27 @@
 import React from 'react';
+import {Button} from 'components/Button/Button';
 import './ActionButton.css';
 
 interface ActionButtonProps {
-    text: string;
-    action: (...args: any[]) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
-    input?: Input;
+    button: ActionButton
 }
 
-export const ActionButton: React.FC<ActionButtonProps> = ({ text, action, input }) => {    
-    const buttonLabel = <> 
-        <div className='label'> 
-            {text}
-        </div>
-    </>;
+export const ActionButton: React.FC<ActionButtonProps> = (props) => {    
+    const hasChildren = React.Children.count(props.children);
 
-    const hasInput = Boolean({input});
-
-    if (hasInput) {
-        return (<>
-            <input id={input?.id} type={input?.type} accept={input?.accept} onChange={action} multiple={false}/>
-
-            <label htmlFor={input?.id} className={input?.className}> 
-                {buttonLabel}
-            </label>
-        </>);
-    } else {
-        return(<>
-            <div className='actionButton' onClick={action}>
-                {buttonLabel}
+    if (hasChildren) {
+        return (
+            <div onClick={props.button.action}>
+                {props.children}
             </div>
-        </>);
+        );
+    } else {
+        const buttonProps:Button = {label:props.button.label, className:'actionButton'};
+
+        return(
+            <div onClick={props.button.action}>
+                <Button button={buttonProps}></Button>
+            </div>
+        );
     }
 };

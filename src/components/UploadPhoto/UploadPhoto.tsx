@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react';
-import { ActionButton } from 'components/ActionButton/ActionButton';
+import { InputButton } from 'components/InputButton/InputButton';
 import defaultPhoto from '../../assets/defaultPhoto.jpg';
 import './UploadPhoto.css';
 import '../NavButton/NavButton.css';
@@ -27,12 +27,12 @@ export const UploadPhoto: React.FC<UploadPhotoProps> = ({setUploadedFileData}) =
         }
     };
 
-    const uploadImageButtonText = 'UPLOAD PHOTO';
+    const buttonProps: ActionButton = {label: 'UPLOAD PHOTO', action: handleImageUpload};
     const uploadImageInput = { id: 'photo-input', type: 'file', accept: 'image/*', className: 'navButton uploadButton'};
     
     return (
         <>
-            <ActionButton text={uploadImageButtonText} action={handleImageUpload} input={uploadImageInput}></ActionButton>
+            <InputButton button={buttonProps} input={uploadImageInput}></InputButton>
 
             <label htmlFor='photo-input'>
                 <img className='photo' alt='your garment' src={defaultPhoto} ref={uploadedImage}/>

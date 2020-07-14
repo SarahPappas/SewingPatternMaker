@@ -2,20 +2,20 @@ import { Point } from './Point';
 import { PatternPathType } from './Enums';
 
 export class PatternPath implements IPatternPath {
+    private _rawPoints: Point[];
     private _points: Point[];
     private _type: PatternPathType;
     private _path2D: Path2D;
     private _isPath2DValid: boolean;
     private _lastIndexAddedToPath2D: number;
-    private n: number;
 
     constructor (pathType: PatternPathType) {
         this._type = pathType;
+        this._rawPoints = new Array<Point>();
         this._points = new Array<Point>();
         this._path2D = new Path2D();
         this._isPath2DValid = false;
         this._lastIndexAddedToPath2D = -1;
-        this.n = 0;
     }
 
     getPoints = (): Point[] => {
@@ -40,14 +40,14 @@ export class PatternPath implements IPatternPath {
 
         // If the path2D only has 1 item in it and there are not more points to add to the path2D, 
         // then the path is valid and we can return it.
-        if (!this._lastIndexAddedToPath2D && this._lastIndexAddedToPath2D === this._points.length - 1) {
+        if (this._lastIndexAddedToPath2D === 0 && this._points.length === 1) {
             this._isPath2DValid = true;
             return this._path2D;
         }
 
         // Otherwise, continue adding to the Path2D. We do not need to loop through all of the points.
         // Instead we can approximate the curve from the last point that was added to the path2D and the
-        // most recent point added to the paths array.
+        // Most recent point added to the paths array.
         this._updatePath2DWithQuadraticCurve();
 
         this._lastIndexAddedToPath2D = this._points.length - 1;
@@ -58,16 +58,22 @@ export class PatternPath implements IPatternPath {
 
     addPoint = (point: Point): boolean => {
         // If the points array is empty, we can just add the point.
-        if (!this._points.length) {
-            this.n=0;
+        if (!this._rawPoints.length) {
             this._points.push(point);
+            this._rawPoints.push(point);
             this._isPath2DValid = false;
             return true;
         }
-        this.n++;
+
+        // Otherwise, we check if the if the point we want to add is equal to the last point that was added.
+        const prevPoint = this._rawPoints[this._rawPoints.length - 1];
+        if (prevPoint.equals(point)) {
+            return false;
+        }
+        this._rawPoints.push(point);
 
         // only keep one out of 10 points to smooth the line
-        if (this.n % 10 !== 0) {
+        if (this._rawPoints.length % 10 !== 0) {
             return false;
         }
 

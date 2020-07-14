@@ -99,7 +99,7 @@ class Renderer implements IRenderer {
         requestAnimationFrame(this._tick);
     }
 
-    // private _update = (): void => {
+    //S private _update = (): void => {
     //     console.log("update");
     // }
 }

@@ -4,7 +4,7 @@ import { InstructionModal } from 'components/InstructionModal/InstructionModal';
 import backgroundArrow from '../../assets/background-arrow-grey.svg';
 import './GetStarted.css';
 
-const button: Button = {text: "GET STARTED", to: "/AddPhoto" };
+const button: NavButton = {label: "GET STARTED", to: "/AddPhoto" };
 const intro: InstructModal = {text: ["Let’s Make a \npattern in 3 \nsteps"]};
 const steps: InstructModal = {text: ["1. Upload photo", "2. Trace pattern", "3. Print pdf"]};
 

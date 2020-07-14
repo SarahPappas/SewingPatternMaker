@@ -10,8 +10,23 @@ export const Instructions: React.FC = () => {
 
     return (<>
         <div className={'backgroundGrey'}></div>
-        <div className={'backgroundArrow'}></div>
-        <NavButton button={button}/> 
-        {/*<InstructionModal instructModal={instruction}/>*/}
+        <div className={'instructionsConatainer'}>
+            <NavButton button={button}/> 
+            <InstructionModal instructModal={instruction}/>
+            <div className="flexGrid">
+                <div className="col">
+                    <div className={'arrow'}></div>
+                    <div></div>
+                </div>
+                <div className="col">
+                    <div className={'arrow'}></div>
+                    <div></div>
+                </div>  
+                <div className="col">
+                    <div className={'arrow'}></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
     </>);
 };

@@ -26,7 +26,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({ text, action, input 
         </>);
     } else {
         return(<>
-            <div className='actionButton' onClick= {action}>
+            <div className='actionButton' onClick={action}>
                 {buttonLabel}
             </div>
         </>);

@@ -5,21 +5,21 @@ import { PatternPathType } from 'canvas/Enums';
 
 interface PathTypeButtonGridProps {
     isEnabled: boolean;
-    selectedType: PatternPathType;
-    to: string;
+    curPathType: PatternPathType;
+    setPathType: React.Dispatch<React.SetStateAction<PatternPathType>>;
 }
 
-export const PathTypeButtonGrid: React.FC<PathTypeButtonGridProps> = ({isEnabled, selectedType, to}) => {
+export const PathTypeButtonGrid: React.FC<PathTypeButtonGridProps> = ({isEnabled, curPathType, setPathType}) => {
     return (
         <div className="flexGrid">
             <div className="col">
-                <PathButton type={PatternPathType.Seam} isEnabled={isEnabled}/>
+                <PathButton type={PatternPathType.Seam} isEnabled={isEnabled} curPathType={curPathType} setPathType={setPathType}/>
             </div>
             <div className="col">
-                <PathButton type={PatternPathType.Fold} isEnabled={isEnabled}/>
+                <PathButton type={PatternPathType.Fold} isEnabled={isEnabled} curPathType={curPathType} setPathType={setPathType}/>
             </div>  
             <div className="col">
-                <PathButton type={PatternPathType.Edge} isEnabled={isEnabled}/>
+                <PathButton type={PatternPathType.Edge} isEnabled={isEnabled} curPathType={curPathType} setPathType={setPathType}/>
             </div>
         </div>
     );

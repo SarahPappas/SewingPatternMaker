@@ -13,6 +13,7 @@ export const Instructions: React.FC = () => {
     return (<>
         <div className={'backgroundGrey'}></div>
         <div className={'instructionsConatainer'}>
+            {/* TODO: only show Done button when an enclosed shape exists */}
             <NavButton button={button}/> 
             <InstructionModal instructModal={instruction}/>
         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './PathButton.css';
 import { PatternPathType } from 'canvas/Enums';
  import { ActionButton } from 'components/ActionButton/ActionButton';
@@ -14,14 +14,14 @@ export const PathButton: React.FC<PathButtonProps> = ({type}) => {
         detail: { pathType: type }
     });
 
-    let canvasEl: HTMLCanvasElement | null = null;
+    const canvasRef = useRef(document.querySelector('canvas'));
     useEffect(() => {
-        canvasEl = document.querySelector('canvas');
-    }, [canvasEl]);
+        canvasRef.current = document.querySelector('canvas');
+    }, [canvasRef]);
     
 
     const handleSetPathType = () => {
-        canvasEl?.dispatchEvent(setPathType);
+        canvasRef.current?.dispatchEvent(setPathType);
     };
 
     const buttonProps = {label: typeName, action: handleSetPathType};

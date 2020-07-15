@@ -25,6 +25,19 @@
     margin-bottom: 15px;
 }
 
-.canvasContainer {
+.canvasContainerBackground {
     z-index: -2;
+}
+
+.arrowFlexGrid {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    position: absolute;
+    bottom: 7%;
+}
+
+.arrowCol {
+    width: 33.333%;
 }

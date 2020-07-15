@@ -33,9 +33,13 @@ class Renderer implements IRenderer {
         this._tick();
 
         this._canvas.onmousedown = (e) => {
+            if (!this._pathType) {
+                throw new Error("Path type not set");
+            }
+
             this._isTracing = true;
             
-            this._currPath = new PatternPath(PatternPathType.Seam);
+            this._currPath = new PatternPath(this._pathType);
             this._document.addPatternPath(this._currPath);
             this._currPath.addPoint(new Point(e.offsetX, e.offsetY));
         };

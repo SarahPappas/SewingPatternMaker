@@ -5,6 +5,7 @@ import { GetStarted } from 'pages/GetStarted/GetStarted';
 import { AddPhoto } from 'pages/AddPhoto/AddPhoto';
 import { Instructions } from 'pages/Trace/Instructions/Instructions';
 import { CanvasContainer } from '../../components/CanvasContainer/CanvasContainer';
+import { AddPath } from 'pages/Trace/AddPath/AddPath';
 
 export const Main: React.FC = () => {
     const [uploadedFileData, setUploadedFileData] = React.useState<string>("");
@@ -25,5 +26,6 @@ export const Main: React.FC = () => {
             }}
         />
         <Route exact path="/Trace/Instructions" component={Instructions} />
+        <Route exact path="/Trace/AddPath" component={AddPath} />
     </div></div>;
 };

@@ -14,10 +14,10 @@ export const PathButton: React.FC<PathButtonProps> = ({type}) => {
         detail: { pathType: type }
     });
 
-    let canvasEl: HTMLCanvasElement | null;
+    let canvasEl: HTMLCanvasElement | null = null;
     useEffect(() => {
         canvasEl = document.querySelector('canvas');
-    });
+    }, [canvasEl]);
     
 
     const handleSetPathType = () => {

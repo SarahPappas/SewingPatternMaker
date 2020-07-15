@@ -5,6 +5,7 @@
     flex-direction: row;
     position: absolute;
     bottom: 0;
+    left: 0;
 }
 
 .col {

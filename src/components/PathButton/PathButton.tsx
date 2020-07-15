@@ -5,9 +5,10 @@ import { PatternPathType } from 'canvas/Enums';
 
 interface PathButtonProps {
     type: PatternPathType;
+    isEnabled: boolean;
 }
 
-export const PathButton: React.FC<PathButtonProps> = ({type}) => {
+export const PathButton: React.FC<PathButtonProps> = ({type, isEnabled}) => {
     const typeName = PatternPathType[type];
     const className = typeName.toLowerCase();
     const setPathType = new CustomEvent('setPathType', {
@@ -21,6 +22,10 @@ export const PathButton: React.FC<PathButtonProps> = ({type}) => {
     
 
     const handleSetPathType = () => {
+        if (!isEnabled) {
+            return;
+        }
+        
         canvasRef.current?.dispatchEvent(setPathType);
     };
 

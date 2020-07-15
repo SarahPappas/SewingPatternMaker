@@ -4,6 +4,7 @@ import { NavButton } from 'components/NavButton/NavButton';
 import { InstructionModal } from 'components/InstructionModal/InstructionModal';
 import { PathTypeButtonGrid } from 'components/PathTypeButtonGrid/PathTypeButtonGrid';
 import './Instructions.css';
+import { PatternPathType } from 'canvas/Enums';
 
 export const Instructions: React.FC = () => {
     const button: NavButton = {label: 'DONE', to: '/AddMeasurement' };
@@ -15,6 +16,6 @@ export const Instructions: React.FC = () => {
             <NavButton button={button}/> 
             <InstructionModal instructModal={instruction}/>
         </div>
-        <PathTypeButtonGrid />
+        <PathTypeButtonGrid isEnabled={true} selectedType={PatternPathType.UNDEFINED}/>
     </>);
 };

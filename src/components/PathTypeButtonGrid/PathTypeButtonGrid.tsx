@@ -3,20 +3,25 @@ import './PathTypeButtonGrid.css';
 import { PathButton } from 'components/PathButton/PathButton';
 import { PatternPathType } from 'canvas/Enums';
 
-export const PathTypeButtonGrid: React.FC = () => {
+interface PathTypeButtonGridProps {
+    isEnabled: boolean;
+    selectedType: PatternPathType;
+}
+
+export const PathTypeButtonGrid: React.FC<PathTypeButtonGridProps> = ({isEnabled, selectedType}) => {
     return (
         <div className="flexGrid">
             <div className="col">
                 <div className={'arrow'}></div>
-                <PathButton type={PatternPathType.Seam}></PathButton>
+                <PathButton type={PatternPathType.Seam} isEnabled={isEnabled}/>
             </div>
             <div className="col">
                 <div className={'arrow'}></div>
-                <PathButton type={PatternPathType.Fold}></PathButton>
+                <PathButton type={PatternPathType.Fold} isEnabled={isEnabled}/>
             </div>  
             <div className="col">
                 <div className={'arrow'}></div>
-                <PathButton type={PatternPathType.Edge}></PathButton>
+                <PathButton type={PatternPathType.Edge} isEnabled={isEnabled}/>
             </div>
         </div>
     );

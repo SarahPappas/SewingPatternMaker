@@ -5,7 +5,12 @@ import { PathTypeButtonGrid } from 'components/PathTypeButtonGrid/PathTypeButton
 import './Instructions.css';
 import { PatternPathType } from 'canvas/Enums';
 
-export const Instructions: React.FC = () => {
+interface InstructionsProps {
+    curPathType: PatternPathType;
+    setPathType: React.Dispatch<React.SetStateAction<PatternPathType>>;
+}
+
+export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathType}) => {
     const doneButton: NavButton = {label: 'DONE', to: '/AddMeasurement' };
     const addPathButton: NavButton = {label:'', to: 'AddPath'};
     const instruction: InstructModal = {text: ['Choose seam, fold, or edge to add to your pattern']};
@@ -35,7 +40,7 @@ export const Instructions: React.FC = () => {
             </div>
         </div>
         <NavButton button={addPathButton}>
-            <PathTypeButtonGrid isEnabled={true} selectedType={PatternPathType.UNDEFINED} to={''}/>
+            <PathTypeButtonGrid isEnabled={true} curPathType={curPathType} setPathType={setPathType}/>
         </NavButton>
     </>);
 };

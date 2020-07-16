@@ -33,7 +33,7 @@ export const PathButton: React.FC<PathButtonProps> = ({type, isEnabled, curPathT
     };
 
     let buttonLabelClass = 'pathButtonLabel';
-    buttonLabelClass = (curPathType && curPathType != type) ? buttonLabelClass + ' notActive' : buttonLabelClass;
+    buttonLabelClass = (curPathType && curPathType !== type) ? buttonLabelClass + ' notActive' : buttonLabelClass;
 
     const buttonProps = {label: typeName, action: handleSetPathType};
     return (<>

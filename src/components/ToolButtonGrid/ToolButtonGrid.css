@@ -4,14 +4,3 @@
     justify-content: center;
     flex-direction: row;
 }
-
-.toolContainer {
-    margin: 10px 15px;
-    padding: 10px;
-    border: #707070 dashed .5px;
-    border-radius: 15px;
-}
-
-.straightLineTool {
-    padding: 10px 20px;
-}

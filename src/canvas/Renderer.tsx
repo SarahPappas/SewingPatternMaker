@@ -110,15 +110,11 @@ class Renderer implements IRenderer {
         requestAnimationFrame(this._tick);
     }
 
-<<<<<<< HEAD
-    //S private _update = (): void => {
-=======
     private _setPathType = (type: number) => {
         this._pathType = type;
     }
 
     // private _update = (): void => {
->>>>>>> master
     //     console.log("update");
     // }
 }

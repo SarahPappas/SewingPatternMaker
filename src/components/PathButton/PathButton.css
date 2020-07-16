@@ -1,0 +1,33 @@
+.colorBlock {
+    height: 25px;
+}
+
+.seam .colorBlock {
+    background-color: #248EA6;
+}
+
+.pathButtonLabel {
+    font-size: 28px;
+    padding: 10px;
+    text-align: center;
+    border: #707070 1px solid;
+    background-color: white;
+}
+
+.seam .pathButtonLabel {
+    border-right: .5px;
+}
+
+.fold .pathButtonLabel {
+    border-right: .5px;
+}.edge .colorBlock {
+    background-color: #F2E74B;
+}
+
+.fold .colorBlock {
+    background-color: #84BFA4;
+}
+
+.notActive {
+    background-color: rgba(112, 112, 112, .7);
+}

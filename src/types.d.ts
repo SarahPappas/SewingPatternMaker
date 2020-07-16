@@ -1,11 +1,23 @@
 /* COMPONENT TYPES */
-type Button = {
-    text: string;
+type NavButton = {
+    label: string;
     to: string;
+};
+
+type ActionButton = {
+    label: string;
+    action: (...args: any[]) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
 type InstructModal = {
     text: string[];
+}
+
+type Input = {
+    id: string;
+    type: string;
+    accept: string;
+    className: string;
 }
 
 /* CANVAS TYPES */

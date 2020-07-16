@@ -5,9 +5,12 @@ import { GetStarted } from 'pages/GetStarted/GetStarted';
 import { AddPhoto } from 'pages/AddPhoto/AddPhoto';
 import { Instructions } from 'pages/Trace/Instructions/Instructions';
 import { CanvasContainer } from '../../components/CanvasContainer/CanvasContainer';
+import { AddPath } from 'pages/Trace/AddPath/AddPath';
+import { PatternPathType } from 'canvas/Enums';
 
 export const Main: React.FC = () => {
     const [uploadedFileData, setUploadedFileData] = React.useState<string>("");
+    const [curPathType, setPathType] = React.useState<PatternPathType>(PatternPathType.UNDEFINED);
 
     return <div className='pageContainer'><div className='mainContainer'>
         {/* Add route here to make component visible*/}
@@ -24,6 +27,17 @@ export const Main: React.FC = () => {
                 return <AddPhoto uploadedFileData={uploadedFileData} setUploadedFileData={setUploadedFileData}></AddPhoto>;
             }}
         />
-        <Route exact path="/Trace/Instructions" component={Instructions} />
+        <Route 
+            exact path="/Trace/Instructions" 
+            render={() => {
+                return <Instructions curPathType={curPathType} setPathType={setPathType}/>;
+            }}
+        />
+        <Route 
+            exact path="/Trace/AddPath" 
+            render={() => {
+                return <AddPath curPathType={curPathType} setPathType={setPathType}/>;
+            }}
+        />
     </div></div>;
 };

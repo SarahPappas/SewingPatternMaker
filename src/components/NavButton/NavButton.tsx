@@ -1,20 +1,31 @@
 import React from 'react';
 import {Link, Route} from 'react-router-dom';
+import {Button} from 'components/Button/Button';
 import './NavButton.css';
 
 interface NavButtonProps {
-    button: Button;
+    button: NavButton;
 }
 
-export const NavButton: React.FC<NavButtonProps> = ({ button }) => {
-    return (<>
-        <Link to={button.to}>
-             <div className='navButton'>
-                 <div className='label'> 
-                     {button.text}
-                 </div>
-             </div>
-        </Link>
-        <Route exact path={button.to} />
-    </>);
+export const NavButton: React.FC<NavButtonProps> = ( props ) => {    
+    const hasChildren = React.Children.count(props.children);
+
+    if (hasChildren) {
+        return (<>
+            <Link to={props.button.to}>
+                {props.children}
+            </Link>
+            <Route exact path={props.button.to} />
+        </>);
+    } else {
+        return (<>
+            <Link to={props.button.to}>
+                <Button label={props.button.label} className='navButton'></Button>
+            </Link>
+            <Route exact path={props.button.to} />
+        </>);
+    }
+
+
+
 };

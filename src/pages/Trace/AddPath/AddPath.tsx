@@ -26,6 +26,7 @@ export const AddPath: React.FC<AddPathProps> = ({curPathType, setPathType}) => {
         };
     }
     
+    // Do not show free line tool if path type is a fold.
     let freeLineTool = <></>;
     if (curPathType !== PatternPathType.Fold) {
         freeLineTool = <>
@@ -37,7 +38,7 @@ export const AddPath: React.FC<AddPathProps> = ({curPathType, setPathType}) => {
 
     return (<>
         <div className='toolBar'>
-            <div className='toolContainer'>
+            <div className='toolContainer' >
                 <StraightLineToolIcon style={iconStyle} />
             </div>
             {freeLineTool}

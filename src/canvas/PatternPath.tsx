@@ -114,6 +114,7 @@ export class PatternPath implements IPatternPath {
             result.push(this._points[0]);
             let lastIndexTaken = 0;
             for(let i = 0;i < this._points.length - 1;i++) {
+                // Discard points that are too close in index or in distance to the last added point
                 if (i - lastIndexTaken > MIN_SKIPPED_POINTS && 
                         this._squaredDistance(this._points[i], this._points[lastIndexTaken]) 
                         > MIN_SQUARED_DISTANCE_BETWEEN_POINTS) {

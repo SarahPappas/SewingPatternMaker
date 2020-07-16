@@ -106,6 +106,7 @@ export class PatternPath implements IPatternPath {
         return dx*dx + dy*dy;
     }
 
+    // Returns a selection of points from the _points array that sum up the points
     private _selectPoints = (): Point[] => {
         const result = new Array<Point>();
         if (this._points.length > 2) {
@@ -126,16 +127,13 @@ export class PatternPath implements IPatternPath {
         return result;
     }
 
-    public smoothLine = (): void => {
+    // Replaces the path2D of the patternPath with a smoothed path
+    public smoothPath = (): void => {
         this._smoothPoints = this._selectPoints();
         // Do not smooth lines that have less than 3 reference points
         if (this._smoothPoints.length > 2) {
             this._path2D = new Path2D();
             this._isPath2DValid = true;
-
-            console.log("points has " + this._points.length + " points");
-            console.log("smoothPoints has " + this._smoothPoints.length + " points");
-            
             this._path2D.moveTo(this._smoothPoints[0].getX(), this._smoothPoints[0].getY());
             let i: number;
             for (i = 1;i < this._smoothPoints.length - 2;i++) {

@@ -18,11 +18,21 @@ export const AddPath: React.FC<AddPathProps> = ({curPathType, setPathType}) => {
         canvasRef.current.classList.remove('canvasContainerBackground');
     }, [canvasRef]);
 
+    // Sets the correct color for the svg path icon 
     let iconStyle = {};
     if (curPathType) {
         iconStyle = {
             stroke: PatternPathColor.get(curPathType)
         };
+    }
+    
+    let freeLineTool = <></>;
+    if (curPathType !== PatternPathType.Fold) {
+        freeLineTool = <>
+            <div className='toolContainer'>
+                <FreeLineToolIcon style={iconStyle} />
+            </div>
+        </>;
     }
 
     return (<>
@@ -30,9 +40,7 @@ export const AddPath: React.FC<AddPathProps> = ({curPathType, setPathType}) => {
             <div className='toolContainer'>
                 <StraightLineToolIcon style={iconStyle} />
             </div>
-            <div className='toolContainer'>
-                <FreeLineToolIcon style={iconStyle} />
-            </div>
+            {freeLineTool}
         </div>
         <PathTypeButtonGrid isEnabled={false} curPathType={curPathType} setPathType={setPathType}/>
     </>);

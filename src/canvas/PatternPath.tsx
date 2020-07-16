@@ -103,21 +103,29 @@ export class PatternPath implements IPatternPath {
         return dx*dx + dy*dy;
     }
 
-    public smoothLine = (): void => {
+    private _selectPoints = (): Point[] => {
+        let result = new Array<Point>();
         if (this._points.length > 2) {
             // Always include the first point
-            this._smoothPoints.push(this._points[0]);
+            result.push(this._points[0]);
             let lastIndexTaken = 0;
             for(let i = 0;i < this._points.length - 1;i++) {
                 if (i - lastIndexTaken >= 10 && this._squaredDistance(this._points[i], this._points[lastIndexTaken]) > 30){
-                    this._smoothPoints.push(this._points[i]);
+                    result.push(this._points[i]);
                     lastIndexTaken = i;
                 }
             }
             // Always include the last point
-            this._smoothPoints.push(this._points[this._points.length - 1]);
+            result.push(this._points[this._points.length - 1]);
+        }
+        return result;
+    }
 
-            // Do not smooth lines that have less than 3 points
+    public smoothLine = (): void => {
+        // Do not smooth lines that have less than 3 points
+        
+
+            // Do not smooth lines that have less than 3 reference points
             if (this._smoothPoints.length > 2) {
                 this._path2D = new Path2D();
                 this._isPath2DValid = true;

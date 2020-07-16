@@ -1,6 +1,9 @@
 import { Point } from './Point';
 import { PatternPathType } from './Enums';
 
+const MIN_SQUARED_DISTANCE_BETWEEN_POINTS = 25;
+const MIN_SKIPPED_POINTS = 9;
+
 export class PatternPath implements IPatternPath {
     private _points: Point[];
     private _smoothPoints: Point[];
@@ -104,13 +107,15 @@ export class PatternPath implements IPatternPath {
     }
 
     private _selectPoints = (): Point[] => {
-        let result = new Array<Point>();
+        const result = new Array<Point>();
         if (this._points.length > 2) {
             // Always include the first point
             result.push(this._points[0]);
             let lastIndexTaken = 0;
             for(let i = 0;i < this._points.length - 1;i++) {
-                if (i - lastIndexTaken >= 10 && this._squaredDistance(this._points[i], this._points[lastIndexTaken]) > 30){
+                if (i - lastIndexTaken > MIN_SKIPPED_POINTS && 
+                        this._squaredDistance(this._points[i], this._points[lastIndexTaken]) 
+                        > MIN_SQUARED_DISTANCE_BETWEEN_POINTS) {
                     result.push(this._points[i]);
                     lastIndexTaken = i;
                 }
@@ -122,25 +127,22 @@ export class PatternPath implements IPatternPath {
     }
 
     public smoothLine = (): void => {
-        // Do not smooth lines that have less than 3 points
-        
+        this._smoothPoints = this._selectPoints();
+        // Do not smooth lines that have less than 3 reference points
+        if (this._smoothPoints.length > 2) {
+            this._path2D = new Path2D();
+            this._isPath2DValid = true;
 
-            // Do not smooth lines that have less than 3 reference points
-            if (this._smoothPoints.length > 2) {
-                this._path2D = new Path2D();
-                this._isPath2DValid = true;
-
-                console.log("points has " + this._points.length + " points");
-                console.log("smoothPoints has " + this._smoothPoints.length + " points");
-                
-                this._path2D.moveTo(this._smoothPoints[0].getX(), this._smoothPoints[0].getY());
-                let i: number;
-                for (i = 1;i < this._smoothPoints.length - 2;i++) {
-                    const midPoint = this._computeMiddlePoint(this._smoothPoints[i], this._smoothPoints[i+1]);
-                    this._path2D.quadraticCurveTo(this._smoothPoints[i].getX(), this._smoothPoints[i].getY(), midPoint.getX(), midPoint.getY());
-                }
-                this._path2D.quadraticCurveTo(this._smoothPoints[i].getX(), this._smoothPoints[i].getY(), this._smoothPoints[i+1].getX(), this._smoothPoints[i+1].getY());
+            console.log("points has " + this._points.length + " points");
+            console.log("smoothPoints has " + this._smoothPoints.length + " points");
+            
+            this._path2D.moveTo(this._smoothPoints[0].getX(), this._smoothPoints[0].getY());
+            let i: number;
+            for (i = 1;i < this._smoothPoints.length - 2;i++) {
+                const midPoint = this._computeMiddlePoint(this._smoothPoints[i], this._smoothPoints[i+1]);
+                this._path2D.quadraticCurveTo(this._smoothPoints[i].getX(), this._smoothPoints[i].getY(), midPoint.getX(), midPoint.getY());
             }
+            this._path2D.quadraticCurveTo(this._smoothPoints[i].getX(), this._smoothPoints[i].getY(), this._smoothPoints[i+1].getX(), this._smoothPoints[i+1].getY());
         }
     }
 }

@@ -3,7 +3,7 @@ import {Button} from 'components/Button/Button';
 import './ActionButton.css';
 
 interface ActionButtonProps {
-    button: ActionButton
+    button: ActionButton;
 }
 
 export const ActionButton: React.FC<ActionButtonProps> = (props) => {    

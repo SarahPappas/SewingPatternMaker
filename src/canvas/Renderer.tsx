@@ -10,6 +10,7 @@ class Renderer implements IRenderer {
     private _document: Document;
     private _isTracing: boolean;
     private _currPath: PatternPath | null;
+    private _pathType: PatternPathType;
 
     constructor () {
         this._canvas = document.createElement('canvas');
@@ -25,15 +26,20 @@ class Renderer implements IRenderer {
         this._document = new Document();
         this._isTracing = false;
         this._currPath = null;
+        this._pathType = PatternPathType.UNDEFINED;
     }
 
     init = (): HTMLCanvasElement => {
         this._tick();
 
         this._canvas.onmousedown = (e) => {
+            if (!this._pathType) {
+                throw new Error("Path type not set");
+            }
+
             this._isTracing = true;
             
-            this._currPath = new PatternPath(PatternPathType.Seam);
+            this._currPath = new PatternPath(this._pathType);
             this._document.addPatternPath(this._currPath);
             this._currPath.addPoint(new Point(e.offsetX, e.offsetY));
         };
@@ -54,6 +60,11 @@ class Renderer implements IRenderer {
             const position = new Point(e.offsetX, e.offsetY);
             this._endTracing(position);
         };
+
+        this._canvas.addEventListener('setPathType', ((e: CustomEvent) => {
+            this._setPathType(e.detail.pathType);
+        }) as EventListener)
+    ;
 
         return this._canvas;
     }
@@ -97,6 +108,10 @@ class Renderer implements IRenderer {
         this._draw();
     
         requestAnimationFrame(this._tick);
+    }
+
+    private _setPathType = (type: number) => {
+        this._pathType = type;
     }
 
     // private _update = (): void => {

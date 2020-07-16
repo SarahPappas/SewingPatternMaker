@@ -7,11 +7,25 @@ interface NavButtonProps {
     button: NavButton;
 }
 
-export const NavButton: React.FC<NavButtonProps> = ({ button }) => {    
-    return (<>
-        <Link to={button.to}>
-             <Button label={button.label} className='navButton'></Button>
-        </Link>
-        <Route exact path={button.to} />
-    </>);
+export const NavButton: React.FC<NavButtonProps> = ( props ) => {    
+    const hasChildren = React.Children.count(props.children);
+
+    if (hasChildren) {
+        return (<>
+            <Link to={props.button.to}>
+                {props.children}
+            </Link>
+            <Route exact path={props.button.to} />
+        </>);
+    } else {
+        return (<>
+            <Link to={props.button.to}>
+                <Button label={props.button.label} className='navButton'></Button>
+            </Link>
+            <Route exact path={props.button.to} />
+        </>);
+    }
+
+
+
 };

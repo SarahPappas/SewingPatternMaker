@@ -1,0 +1,13 @@
+.toolContainer {
+    margin: 10px 15px;
+    padding: 10px;
+}
+
+.straightLine {
+    padding: 10px 20px;
+}
+
+.selectedTool {
+    border: #707070 dashed .5px;
+    border-radius: 15px;
+}

@@ -4,3 +4,8 @@ export enum PatternPathType {
     Fold,
     Edge,
 }
+
+export enum ToolType {
+    StraightLine,
+    Freeline
+}

@@ -105,7 +105,7 @@ export class PatternPath implements IPatternPath {
 
     public smoothLine = (): void => {
         if (this._points.length > 2) {
-            this._smoothPoints = new Array<Point>();        
+            // Always include the first point
             this._smoothPoints.push(this._points[0]);
             let lastIndexTaken = 0;
             for(let i = 0;i < this._points.length - 1;i++) {
@@ -114,13 +114,17 @@ export class PatternPath implements IPatternPath {
                     lastIndexTaken = i;
                 }
             }
+            // Always include the last point
             this._smoothPoints.push(this._points[this._points.length - 1]);
+
+            // Do not smooth lines that have less than 3 points
             if (this._smoothPoints.length > 2) {
                 this._path2D = new Path2D();
                 this._isPath2DValid = true;
 
                 console.log("points has " + this._points.length + " points");
                 console.log("smoothPoints has " + this._smoothPoints.length + " points");
+                
                 this._path2D.moveTo(this._smoothPoints[0].getX(), this._smoothPoints[0].getY());
                 let i: number;
                 for (i = 1;i < this._smoothPoints.length - 2;i++) {

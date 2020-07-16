@@ -3,6 +3,7 @@ import { PatternPathType } from './Enums';
 
 export class PatternPath implements IPatternPath {
     private _points: Point[];
+    private _smoothPoints: Point[];
     private _type: PatternPathType;
     private _path2D: Path2D;
     private _isPath2DValid: boolean;
@@ -11,6 +12,7 @@ export class PatternPath implements IPatternPath {
     constructor (pathType: PatternPathType) {
         this._type = pathType;
         this._points = new Array<Point>();
+        this._smoothPoints = new Array<Point>();
         this._path2D = new Path2D();
         this._isPath2DValid = false;
         this._lastIndexAddedToPath2D = -1;
@@ -103,29 +105,29 @@ export class PatternPath implements IPatternPath {
 
     public smoothLine = (): void => {
         if (this._points.length > 2) {
-            const smoothPoints = new Array<Point>();        
-            smoothPoints.push(this._points[0]);
+            this._smoothPoints = new Array<Point>();        
+            this._smoothPoints.push(this._points[0]);
             let lastIndexTaken = 0;
             for(let i = 0;i < this._points.length - 1;i++) {
-                if (i - lastIndexTaken >= 10 && this._squaredDistance(this._points[i], this._points[lastIndexTaken]) > 50){
-                    smoothPoints.push(this._points[i]);
+                if (i - lastIndexTaken >= 10 && this._squaredDistance(this._points[i], this._points[lastIndexTaken]) > 30){
+                    this._smoothPoints.push(this._points[i]);
                     lastIndexTaken = i;
                 }
             }
-            smoothPoints.push(this._points[this._points.length - 1]);
-            if (smoothPoints.length > 2) {
+            this._smoothPoints.push(this._points[this._points.length - 1]);
+            if (this._smoothPoints.length > 2) {
                 this._path2D = new Path2D();
-                console.log("points has " + this._points.length + " points");
-                console.log("smoothPoints has " + smoothPoints.length + " points");
                 this._isPath2DValid = true;
-                this._path2D.moveTo(smoothPoints[0].getX(), smoothPoints[0].getY());
+
+                console.log("points has " + this._points.length + " points");
+                console.log("smoothPoints has " + this._smoothPoints.length + " points");
+                this._path2D.moveTo(this._smoothPoints[0].getX(), this._smoothPoints[0].getY());
                 let i: number;
-                for (i = 1;i < smoothPoints.length - 2;i++) {
-                    const midPoint = this._computeMiddlePoint(smoothPoints[i], smoothPoints[i+1]);
-                    this._path2D.quadraticCurveTo(smoothPoints[i].getX(), smoothPoints[i].getY(), midPoint.getX(), midPoint.getY());
+                for (i = 1;i < this._smoothPoints.length - 2;i++) {
+                    const midPoint = this._computeMiddlePoint(this._smoothPoints[i], this._smoothPoints[i+1]);
+                    this._path2D.quadraticCurveTo(this._smoothPoints[i].getX(), this._smoothPoints[i].getY(), midPoint.getX(), midPoint.getY());
                 }
-                this._path2D.quadraticCurveTo(smoothPoints[i].getX(), smoothPoints[i].getY(), smoothPoints[i+1].getX(), smoothPoints[i+1].getY());
-        
+                this._path2D.quadraticCurveTo(this._smoothPoints[i].getX(), this._smoothPoints[i].getY(), this._smoothPoints[i+1].getX(), this._smoothPoints[i+1].getY());
             }
         }
     }

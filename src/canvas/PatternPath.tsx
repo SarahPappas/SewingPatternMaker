@@ -1,9 +1,6 @@
 import { Point } from './Point';
 import { PatternPathType } from './Enums';
 
-const MIN_SQUARED_DISTANCE_BETWEEN_POINTS = 25;
-const MIN_SKIPPED_POINTS = 9;
-
 export class PatternPath implements IPatternPath {
     private _points: Point[];
     private _smoothPoints: Point[];
@@ -107,7 +104,9 @@ export class PatternPath implements IPatternPath {
     }
 
     // Returns a selection of points from the _points array that sum up the points
-    private _selectPoints = (): Point[] => {
+    private _selectPoints = (): Point[] => {      
+        const MIN_SQUARED_DISTANCE_BETWEEN_POINTS = 25;
+        const MIN_SKIPPED_POINTS = 9;
         const result = new Array<Point>();
         if (this._points.length > 2) {
             // Always include the first point

@@ -132,8 +132,8 @@ export class PatternPath implements IPatternPath {
     * MAX_SKIPPED_POINTS.
     */
     private _selectPointsForSmoothing = (): Point[] => {      
-        const MIN_SQUARED_DISTANCE_BETWEEN_POINTS = 25;
-        const MAX_SKIPPED_POINTS = 9;
+        const MIN_SQUARED_DISTANCE_BETWEEN_POINTS = 64;
+        const MAX_SKIPPED_POINTS = 39;
         const result = new Array<Point>();
         if (this._points.length > 2) {
             // Always include the first point

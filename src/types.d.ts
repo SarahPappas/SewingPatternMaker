@@ -32,6 +32,7 @@ type IPatternPath = {
     getType: () => PatternPathType;
     getPath2D: () => Path2D;
     addPoint: (point: Point) => boolean;
+    smoothPath: () => void;
 }
 
 type IPatternPathType = {

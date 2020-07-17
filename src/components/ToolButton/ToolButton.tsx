@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { PatternPathType, ToolType } from 'canvas/Enums';
+import { ToolType } from 'canvas/Enums';
 import { ActionButton } from 'components/ActionButton/ActionButton';
 import './ToolButton.css';
 
@@ -14,16 +14,16 @@ export const ToolButton: React.FC<ToolButtonProps> = ( {toolType, selectedType, 
         detail: { toolType: toolType }
     });
 
-    const canvasRef = useRef(document.getElementsByClassName('canvasContainer')[0]);
+    const canvasRef = useRef(document.querySelector('canvas'));
     useEffect(() => {
-        canvasRef.current = document.getElementsByClassName('canvasContainer')[0];
+        canvasRef.current = document.querySelector('canvas');
     }, [canvasRef]);
 
     let toolBorder = {};
     if (selectedType === toolType) {
         toolBorder = {
-            'border': '#707070 dashed .5px',
-            'border-radius': '15px'
+            border: '#707070 dashed .5px',
+            borderRadius: '15px'
         };
     }
 

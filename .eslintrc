@@ -74,7 +74,6 @@
         "use-isnan": 2,
         "valid-typeof": 2,
         "camelcase": 2,
-        "capitalized-comments": 1,
         "func-call-spacing": 2,
         "prefer-arrow-callback": 2,
         "prefer-const": 2,

@@ -78,7 +78,8 @@ class Renderer implements IRenderer {
 
     private _endTracing = (position: Point): void => {
         if (this._isTracing && this._currPath) {
-            this._currPath.addPoint(position);
+            this._currPath.addPoint(position);   
+            this._currPath.smoothPath();       
         }
         this._isTracing = false;  
         this._currPath = null;

@@ -28,7 +28,8 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     return (<>
         <div className={'backgroundGrey'}></div>
         <div className={'instructionsConatainer'}>
-            {/* TODO: only show Done button when an enclosed shape exists */}
+            {/* TODO: Do not show the done button the first time we show instructions
+                and check the path is enclosed */}
             <NavButton button={doneButton}/> 
             <InstructionModal instructModal={instruction}/>
         </div>

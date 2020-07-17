@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
 import { PathTypeButtonGrid } from 'components/PathTypeButtonGrid/PathTypeButtonGrid';
 import { PatternPathType } from 'canvas/Enums';
-import{ ToolButtonGrid } from 'components/ToolButtonGrid/ToolButtonGrid';
+import { ToolButtonGrid } from 'components/ToolButtonGrid/ToolButtonGrid';
 
 interface AddPathProps {
     curPathType: PatternPathType;

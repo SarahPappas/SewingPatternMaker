@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { PatternPathType, ToolType } from 'canvas/Enums';
 import { ReactComponent as FreeLineToolIcon } from '../../assets/free-line-tool.svg';
 import { ReactComponent as StraightLineToolIcon } from '../../assets/straight-line-tool.svg';
@@ -12,9 +12,7 @@ interface ToolButtonGridProps {
 
 export const ToolButtonGrid: React.FC<ToolButtonGridProps> = ({curPathType}) => {
     // By default the line tool should be selected
-    const toolType = ToolType.StraightLine;
-
-    const selectedType = ToolType.StraightLine;
+    const [selectedToolType, setSelectedToolType] = React.useState<ToolType>(ToolType.StraightLine);
         
     // Do not show free line tool if path type is a fold.
     let freeLineTool = <></>;
@@ -24,14 +22,14 @@ export const ToolButtonGrid: React.FC<ToolButtonGridProps> = ({curPathType}) => 
 
     if (curPathType !== PatternPathType.Fold) {
         freeLineTool =
-            <ToolButton curPathType={curPathType} toolType={ToolType.Freeline} selectedType={selectedType}>
+            <ToolButton toolType={ToolType.Freeline} selectedType={selectedToolType} setSelectedType={setSelectedToolType}>
                 <FreeLineToolIcon style={iconStyle}></FreeLineToolIcon>
             </ToolButton>;
     }
 
     return (
         <div className='toolBar'>
-            <ToolButton curPathType={curPathType} toolType={ToolType.StraightLine} selectedType={selectedType}>
+            <ToolButton toolType={ToolType.StraightLine} selectedType={selectedToolType} setSelectedType={setSelectedToolType}>
                 <StraightLineToolIcon style={iconStyle}></StraightLineToolIcon>
             </ToolButton>
             {freeLineTool}

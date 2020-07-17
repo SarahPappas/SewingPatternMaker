@@ -22,8 +22,7 @@ export const ToolButton: React.FC<ToolButtonProps> = ( {toolType, selectedType, 
     let toolBorder = {};
     if (selectedType === toolType) {
         toolBorder = {
-            border: '#707070 dashed .5px',
-            borderRadius: '15px'
+            borderColor: '#707070',
         };
     }
 

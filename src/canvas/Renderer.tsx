@@ -82,6 +82,8 @@ class Renderer implements IRenderer {
         }
         this._isTracing = false;  
         this._currPath = null;
+
+        this._canvas.dispatchEvent(new Event('endTracing'));
     }
 
     private _draw = (): void => {

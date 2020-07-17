@@ -6,8 +6,3 @@
 .straightLine {
     padding: 10px 20px;
 }
-
-.selectedTool {
-    border: #707070 dashed .5px;
-    border-radius: 15px;
-}

@@ -82,6 +82,28 @@ export class PatternPath implements IPatternPath {
         
         return new Point(middleX, middleY);
     }
+    
+    /*
+    * Replaces the path2D of the patternPath with a smoothed path. The path is smoothed
+    * all at once, replacing the old path. The method is to be called after the drawing
+    * is completed, for example on the onMouseUp event. The path is smoothed by selecting
+    * a subset of the points array. The points are selected by the selectPoints method.
+    */
+    public smoothPath = (): void => {
+        this._smoothPoints = this._selectPointsForSmoothing();
+        // Do not smooth lines that have less than 3 reference points
+        if (this._smoothPoints.length > 2) {
+            this._path2D = new Path2D();
+            this._isPath2DValid = true;
+            this._path2D.moveTo(this._smoothPoints[0].getX(), this._smoothPoints[0].getY());
+            let i: number;
+            for (i = 1;i < this._smoothPoints.length - 2;i++) {
+                const midPoint = this._computeMiddlePoint(this._smoothPoints[i], this._smoothPoints[i+1]);
+                this._path2D.quadraticCurveTo(this._smoothPoints[i].getX(), this._smoothPoints[i].getY(), midPoint.getX(), midPoint.getY());
+            }
+            this._path2D.quadraticCurveTo(this._smoothPoints[i].getX(), this._smoothPoints[i].getY(), this._smoothPoints[i+1].getX(), this._smoothPoints[i+1].getY());
+        }
+    }
 
     /* 
     * The algorithm for starting and ending the line is not quite right. The first segment of the path will be 
@@ -103,10 +125,15 @@ export class PatternPath implements IPatternPath {
         return dx*dx + dy*dy;
     }
 
-    // Returns a selection of points from the _points array that sum up the points
-    private _selectPoints = (): Point[] => {      
+    /*
+    * Returns a selection of points from the _points array that sum up the points.
+    * The points that are too close in distance from each other are discarded, but
+    * that rule can be overriden in order to not skip more data points than 
+    * MAX_SKIPPED_POINTS.
+    */
+    private _selectPointsForSmoothing = (): Point[] => {      
         const MIN_SQUARED_DISTANCE_BETWEEN_POINTS = 25;
-        const MIN_SKIPPED_POINTS = 9;
+        const MAX_SKIPPED_POINTS = 9;
         const result = new Array<Point>();
         if (this._points.length > 2) {
             // Always include the first point
@@ -114,7 +141,7 @@ export class PatternPath implements IPatternPath {
             let lastIndexTaken = 0;
             for(let i = 0;i < this._points.length - 1;i++) {
                 // Discard points that are too close in index or in distance to the last added point
-                if (i - lastIndexTaken > MIN_SKIPPED_POINTS && 
+                if (i - lastIndexTaken > MAX_SKIPPED_POINTS || 
                         this._squaredDistance(this._points[i], this._points[lastIndexTaken]) 
                         > MIN_SQUARED_DISTANCE_BETWEEN_POINTS) {
                     result.push(this._points[i]);
@@ -125,22 +152,5 @@ export class PatternPath implements IPatternPath {
             result.push(this._points[this._points.length - 1]);
         }
         return result;
-    }
-
-    // Replaces the path2D of the patternPath with a smoothed path
-    public smoothPath = (): void => {
-        this._smoothPoints = this._selectPoints();
-        // Do not smooth lines that have less than 3 reference points
-        if (this._smoothPoints.length > 2) {
-            this._path2D = new Path2D();
-            this._isPath2DValid = true;
-            this._path2D.moveTo(this._smoothPoints[0].getX(), this._smoothPoints[0].getY());
-            let i: number;
-            for (i = 1;i < this._smoothPoints.length - 2;i++) {
-                const midPoint = this._computeMiddlePoint(this._smoothPoints[i], this._smoothPoints[i+1]);
-                this._path2D.quadraticCurveTo(this._smoothPoints[i].getX(), this._smoothPoints[i].getY(), midPoint.getX(), midPoint.getY());
-            }
-            this._path2D.quadraticCurveTo(this._smoothPoints[i].getX(), this._smoothPoints[i].getY(), this._smoothPoints[i+1].getX(), this._smoothPoints[i+1].getY());
-        }
     }
 }

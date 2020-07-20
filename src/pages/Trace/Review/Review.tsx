@@ -7,11 +7,11 @@ export const Review: React.FC = () => {
     // TODO: Delete button should dispatch event that removes the most recent path
     const deleteButton: NavButton = {label:'DELETE', to: '/Trace/Instructions'};
 
-    const canvasRef = useRef(document.getElementsByClassName('canvasContainer')[0]);
+    const canvasContainerRef = useRef(document.getElementsByClassName('canvasContainer')[0]);
     useEffect(() => {
-        canvasRef.current = document.getElementsByClassName('canvasContainer')[0];
-        canvasRef.current.classList.add('canvasContainerBackground');
-    }, [canvasRef]);
+        canvasContainerRef.current = document.getElementsByClassName('canvasContainer')[0];
+        canvasContainerRef.current.classList.add('canvasContainerBackground');
+    }, [canvasContainerRef]);
     
     return (<>
         <div className={'reviewButtonsConatainer'}>

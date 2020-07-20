@@ -14,7 +14,6 @@ export const Review: React.FC = () => {
     }, [canvasRef]);
     
     return (<>
-        <div className={'backgroundGrey'}></div>
         <div className={'reviewButtonsConatainer'}>
             <NavButton button={keepButton}/> 
             <NavButton button={deleteButton}/> 

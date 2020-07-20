@@ -1,11 +1,3 @@
-.backgroundGrey {
-    height: 100%;
-    width: 100%;
-    background-color: rgba(112, 112, 112, .7);
-    position: absolute;
-    z-index: -1;
-}
-
 .reviewButtonsConatainer {
     width: 100%;
     height: 90%;

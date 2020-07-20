@@ -23,6 +23,9 @@ export class Document implements IDocument {
 
     // Removes the most recently added Pattern Path
     removePatternPath = (): boolean => {
+        if (!this._patternPaths.length) {
+            throw new Error("Tried to remove path from document, but there are no paths to remove");
+        }
         return Boolean(this._patternPaths.pop());
     }
 }

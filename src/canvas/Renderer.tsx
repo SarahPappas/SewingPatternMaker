@@ -73,6 +73,10 @@ class Renderer implements IRenderer {
             this._setToolType(e.detail.toolType);
         }) as EventListener);
 
+        this._canvas.addEventListener('removePath', ((e) => {
+            this._document.removePatternPath();
+        }) as EventListener);
+
         return this._canvas;
     }
 

@@ -8,14 +8,14 @@ interface CanvasContainerProps {
 
 export const CanvasContainer: React.FC<CanvasContainerProps> = ({ uploadedFileData }) => {
   const canvasContainerRef = React.useRef(document.createElement("div"));
-  const canvas = renderer.init();
 
   React.useEffect(() => {
+    const canvas = renderer.init();
     if (canvasContainerRef.current) {
       canvasContainerRef.current.appendChild(canvas);
       canvasContainerRef.current.style.backgroundImage = "url(" + uploadedFileData + ")";
     }
-  }, [canvasContainerRef, canvas, uploadedFileData]);
+  }, [canvasContainerRef, uploadedFileData]);
 
   return <div className='canvasContainer' ref={canvasContainerRef}></div>;
 };

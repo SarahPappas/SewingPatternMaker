@@ -43,7 +43,7 @@ class Renderer implements IRenderer {
             this._isTracing = true;
             
             // TODO: setTool Type when creating a new path.
-            this._currPath = new PatternPath(this._pathType);
+            this._currPath = new PatternPath(this._pathType, this._toolType);
             this._document.addPatternPath(this._currPath);
             this._currPath.addPoint(new Point(e.offsetX, e.offsetY));
         };
@@ -82,12 +82,13 @@ class Renderer implements IRenderer {
 
     private _endTracing = (position: Point): void => {
         if (this._isTracing && this._currPath) {
-            this._currPath.addPoint(position);   
-            this._currPath.smoothPath();  
+            this._currPath.addPoint(position); 
+            if (this._toolType === ToolType.Freeline) {
+                this._currPath.smoothCurvyPath();
+            }  
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }
-        this._isTracing = false;  
-        this._currPath = null;
+        this._resetTracing();
     }
 
     private _draw = (): void => {
@@ -116,19 +117,25 @@ class Renderer implements IRenderer {
         });
     }
 
+    private _resetTracing = (): void => {
+        this._isTracing = false;  
+        this._currPath = null;
+        this._toolType = ToolType.StraightLine;
+    }
+
+    private _setPathType = (type: number): void => {
+        this._pathType = type;
+    }
+
+    private _setToolType = (type: number): void => {
+        this._toolType = type;
+    }
+
     private _tick = (): void => {
         // this._update();
         this._draw();
     
         requestAnimationFrame(this._tick);
-    }
-
-    private _setPathType = (type: number) => {
-        this._pathType = type;
-    }
-
-    private _setToolType = (type: number) => {
-        this._toolType = type;
     }
 
     // private _update = (): void => {

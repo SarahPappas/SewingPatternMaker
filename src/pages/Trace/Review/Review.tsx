@@ -5,15 +5,26 @@ import './Review.css';
 
 export const Review: React.FC = () => {
     const keepButton: NavButton = {label: 'KEEP', to: '/Trace/Instructions' };
-    // TODO: Delete button should dispatch event that removes the most recent path
     const deleteButtonNav: NavButton = {label:'DELETE', to: '/Trace/Instructions'};
-    const deleteButotonAction: ActionButton = {label: '', action: () => {console.log('delete line!');   }};
 
     const canvasContainerRef = useRef(document.getElementsByClassName('canvasContainer')[0]);
+    const canvasRef = useRef(document.querySelector('canvas'));
     useEffect(() => {
+        // Take the canvas out of the background.
         canvasContainerRef.current = document.getElementsByClassName('canvasContainer')[0];
         canvasContainerRef.current.classList.add('canvasContainerBackground');
-    }, [canvasContainerRef]);
+
+        // Get the canvas element so that we can add an event listener.
+        canvasRef.current = document.querySelector('canvas');
+    }, [canvasContainerRef, canvasRef]);
+
+    // Add event listener to remove the most recently added path.
+    const removePath = new Event('removePath', {});
+    const handleRemovePath = () => {
+        console.log("button handle remove path");
+        canvasRef.current?.dispatchEvent(removePath);
+    };
+    const deleteButotonAction: ActionButton = {label: '', action: handleRemovePath};
     
     return (<>
         <div className={'reviewButtonsConatainer'}>

@@ -1,16 +1,18 @@
 import { Point } from './Point';
-import { PatternPathType } from './Enums';
+import { PatternPathType, ToolType } from './Enums';
 
 export class PatternPath implements IPatternPath {
     private _points: Point[];
     private _smoothPoints: Point[];
     private _type: PatternPathType;
+    private _toolType: ToolType;
     private _path2D: Path2D;
     private _isPath2DValid: boolean;
     private _lastIndexAddedToPath2D: number;
 
-    constructor (pathType: PatternPathType) {
+    constructor (pathType: PatternPathType, toolType: ToolType) {
         this._type = pathType;
+        this._toolType = toolType;
         this._points = new Array<Point>();
         this._smoothPoints = new Array<Point>();
         this._path2D = new Path2D();
@@ -48,7 +50,14 @@ export class PatternPath implements IPatternPath {
         // Otherwise, continue adding to the Path2D. We do not need to loop through all of the points.
         // Instead we can approximate the curve from the last point that was added to the path2D and the
         // Most recent point added to the paths array.
-        this._updatePath2DWithQuadraticCurve();
+        switch(this._toolType) {
+            case ToolType.StraightLine:
+                this._updatePath2DStraightLine();
+                break;
+            case ToolType.Freeline:
+                this._updatePath2DWithQuadraticCurve();
+                break;
+        }
 
         this._lastIndexAddedToPath2D = this._points.length - 1;
         this._isPath2DValid = true;
@@ -89,7 +98,7 @@ export class PatternPath implements IPatternPath {
     * is completed, for example on the onMouseUp event. The path is smoothed by selecting
     * a subset of the points array. The points are selected by the selectPoints method.
     */
-    public smoothPath = (): void => {
+    public smoothCurvyPath = (): void => {
         this._smoothPoints = this._selectPointsForSmoothing();
         // Do not smooth lines that have less than 3 reference points
         if (this._smoothPoints.length > 2) {
@@ -152,5 +161,14 @@ export class PatternPath implements IPatternPath {
             result.push(this._points[this._points.length - 1]);
         }
         return result;
+    }
+
+    private _updatePath2DStraightLine = (): void => {
+        const firstPoint = this._points[0];
+        const lastPoint = this._points[this._points.length -1];
+        
+        this._path2D = new Path2D();
+        this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
+        this._path2D.lineTo(lastPoint.getX(), lastPoint.getY());
     }
 }

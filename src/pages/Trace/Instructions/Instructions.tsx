@@ -23,7 +23,7 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
 
         // Reset the path type.
         setPathType(PatternPathType.UNDEFINED);
-    }, [canvasRef, curPathType]);
+    }, [canvasRef, curPathType, setPathType]);
     
     return (<>
         <div className={'backgroundGrey'}></div>

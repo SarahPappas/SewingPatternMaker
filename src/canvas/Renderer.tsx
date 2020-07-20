@@ -2,7 +2,7 @@ import { PatternPath } from './PatternPath';
 import { Document } from './Document';
 import { Point } from './Point';
 import { PatternPathColor } from './PatternPathColor';
-import { PatternPathType } from './Enums';
+import { PatternPathType, ToolType } from './Enums';
 
 class Renderer implements IRenderer {
     private _canvas: HTMLCanvasElement;
@@ -11,6 +11,7 @@ class Renderer implements IRenderer {
     private _isTracing: boolean;
     private _currPath: PatternPath | null;
     private _pathType: PatternPathType;
+    private _toolType: ToolType;
 
     constructor () {
         this._canvas = document.createElement('canvas');
@@ -27,6 +28,8 @@ class Renderer implements IRenderer {
         this._isTracing = false;
         this._currPath = null;
         this._pathType = PatternPathType.UNDEFINED;
+        // The default tool type is a straight line tool.
+        this._toolType = ToolType.StraightLine;
     }
 
     init = (): HTMLCanvasElement => {
@@ -39,6 +42,7 @@ class Renderer implements IRenderer {
 
             this._isTracing = true;
             
+            // TODO: setTool Type when creating a new path.
             this._currPath = new PatternPath(this._pathType);
             this._document.addPatternPath(this._currPath);
             this._currPath.addPoint(new Point(e.offsetX, e.offsetY));
@@ -63,8 +67,11 @@ class Renderer implements IRenderer {
 
         this._canvas.addEventListener('setPathType', ((e: CustomEvent) => {
             this._setPathType(e.detail.pathType);
-        }) as EventListener)
-    ;
+        }) as EventListener);
+
+        this._canvas.addEventListener('setToolType', ((e: CustomEvent) => {
+            this._setToolType(e.detail.toolType);
+        }) as EventListener);
 
         return this._canvas;
     }
@@ -72,7 +79,8 @@ class Renderer implements IRenderer {
     private _endTracing = (position: Point): void => {
         if (this._isTracing && this._currPath) {
             this._currPath.addPoint(position);   
-            this._currPath.smoothPath();       
+            this._currPath.smoothPath();  
+            this._canvas.dispatchEvent(new Event('endTracing'));     
         }
         this._isTracing = false;  
         this._currPath = null;
@@ -113,6 +121,10 @@ class Renderer implements IRenderer {
 
     private _setPathType = (type: number) => {
         this._pathType = type;
+    }
+
+    private _setToolType = (type: number) => {
+        this._toolType = type;
     }
 
     // private _update = (): void => {

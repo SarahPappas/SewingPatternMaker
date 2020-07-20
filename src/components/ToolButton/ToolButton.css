@@ -1,0 +1,7 @@
+.toolContainer {
+    margin: 10px 15px;
+    padding: 10px;
+    height: 50%;
+    border: dashed .5px transparent;
+    border-radius: 15px;
+}

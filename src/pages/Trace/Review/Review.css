@@ -1,0 +1,9 @@
+.reviewButtonsConatainer {
+    width: 100%;
+    height: 90%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+}

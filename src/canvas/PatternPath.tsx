@@ -1,5 +1,6 @@
 import { Point } from './Point';
 import { PatternPathType, ToolType } from './Enums';
+import { CurveFitter } from './CurveFitter';
 
 export class PatternPath implements IPatternPath {
     private _points: Point[];
@@ -170,5 +171,15 @@ export class PatternPath implements IPatternPath {
         this._path2D = new Path2D();
         this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
         this._path2D.lineTo(lastPoint.getX(), lastPoint.getY());
+    }
+
+    private _fitCurve = (): void => {
+        const firstPoint = this._points[0];
+        this._path2D = new Path2D();
+        this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
+
+        const curveFitter = new CurveFitter(this._points);
+        const bestCurve = curveFitter.Fit();
+        this._path2D.quadraticCurveTo();
     }
 }

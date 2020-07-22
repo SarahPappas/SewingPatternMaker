@@ -169,17 +169,20 @@ export class PatternPath implements IPatternPath {
         const lastPoint = this._points[this._points.length -1];
         
         this._path2D = new Path2D();
+        this._isPath2DValid = true;
         this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
         this._path2D.lineTo(lastPoint.getX(), lastPoint.getY());
     }
 
-    private _fitCurve = (): void => {
+    fitCurve = (): void => {
         const firstPoint = this._points[0];
+        const lastPoint = this._points[this._points.length -1];
         this._path2D = new Path2D();
+        this._isPath2DValid = true;
         this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
 
         const curveFitter = new CurveFitter(this._points);
         const bestCurve = curveFitter.Fit();
-        this._path2D.quadraticCurveTo();
+        this._path2D.quadraticCurveTo(bestCurve.control.getX(), bestCurve.control.getY(), lastPoint.getX(), lastPoint.getY());
     }
 }

@@ -18,4 +18,10 @@ export class Point implements IPoint {
     equals = (o: Point): boolean => {
         return this._x === o.getX() && this._y === o.getY();
     }
+
+    distanceSquared = (point: Point): number => {
+        const dx = this._x - point.getX();
+        const dy = this._y - point.getY();
+        return dx * dx + dy * dy;
+    }
 }

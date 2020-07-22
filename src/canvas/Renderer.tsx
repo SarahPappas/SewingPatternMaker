@@ -56,13 +56,17 @@ class Renderer implements IRenderer {
         
         this._canvas.onmouseup = (e) => {
             const position = new Point(e.offsetX, e.offsetY);
-            this._endTracing(position);
+            if (this._isTracing) {
+                this._endTracing(position);
+            }
         };
 
         // If the user draws off the canvas, we will stop adding to the path.
         this._canvas.onmouseout = (e) => {
             const position = new Point(e.offsetX, e.offsetY);
-            this._endTracing(position);
+            if(this._isTracing) {
+                this._endTracing(position);
+            }
         };
 
         this._canvas.addEventListener('setPathType', ((e: CustomEvent) => {
@@ -81,10 +85,11 @@ class Renderer implements IRenderer {
     }
 
     private _endTracing = (position: Point): void => {
-        if (this._isTracing && this._currPath) {
+        if (this._currPath) {
             this._currPath.addPoint(position); 
             if (this._toolType === ToolType.Freeline) {
-                this._currPath.smoothCurvyPath();
+                //this._currPath.smoothCurvyPath();
+                this._currPath.fitCurve();
             }  
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }

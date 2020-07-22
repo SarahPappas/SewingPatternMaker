@@ -8,33 +8,33 @@ export class CurveFitter {
         this._points = points;
     }
 
-    Fit = (): Curve | void => {
+    Fit = (): Curve => {
         // If there are two points or less, return void becuase this cannnot be fit to a curve.
-        if (this._points.length >= 2) {
-            return;
+        if (this._points.length <= 2) {
+            throw new Error("not enough points");
         }
 
-        let startPoint = this._points[0];
-        let endPoint = this._points[this._points.length -1];
+        const startPoint = this._points[0];
+        const endPoint = this._points[this._points.length -1];
 
-        // Set the bounds we will look in for the control point.
+        // Set the bounds of the drawing.
         let controlPointBoundMinX = this._points[0].getX();
         let controlPointBoundMaxX = this._points[0].getX();
         let controlPointBoundMinY = this._points[0].getY();
         let controlPointBoundMaxY = this._points[0].getY();
 
         this._points.forEach(point => {
-            let x = point.getX();
-            let y = point.getY();
-            if(x < controlPointBoundMinX) {
+            const x = point.getX();
+            const y = point.getY();
+            if (x < controlPointBoundMinX) {
                 controlPointBoundMinX = x;
-            } else {
+            } else if (x > controlPointBoundMaxX) {
                 controlPointBoundMaxX = x;
             }
 
-            if(y < controlPointBoundMinY) {
+            if (y < controlPointBoundMinY) {
                 controlPointBoundMinY = y;
-            } else {
+            } else if (y > controlPointBoundMaxY) {
                 controlPointBoundMaxY = y;
             }
         });
@@ -42,53 +42,64 @@ export class CurveFitter {
         let controlPointBoundHeight = controlPointBoundMaxY - controlPointBoundMinY;
         let controlPointBoundWidth = controlPointBoundMaxX - controlPointBoundMinX;
 
+        // Expand bounds of box of where we will search for a control point.
+        const boundCenterX = controlPointBoundWidth/2 + controlPointBoundMinX;
+        const boundCenterY = controlPointBoundHeight/2 + controlPointBoundMinY;
+
+        controlPointBoundMinX = boundCenterX + 2.5 * (controlPointBoundMinX - boundCenterX );
+        controlPointBoundMinY = boundCenterY + 2.5 * (controlPointBoundMinY - boundCenterY );
+        controlPointBoundHeight = controlPointBoundHeight * 2.5;
+        controlPointBoundWidth = controlPointBoundWidth * 2.5;
+
         // Test each control point searching for the best fit.
-        // let potentialCurves = new Array<Curve>();
-        const numSamples = 20;
-        let bestCurveDelta: number = 10000;
-        let bestCurve= new Curve(startPoint, endPoint, endPoint); 
+        const numSamples = 101;
+        const numPointsOnPotentialcurve = 51;
+        let bestCurveDelta = Number.MAX_VALUE;
+        let bestCurve = new Curve(startPoint, endPoint, endPoint); 
 
         for (let y = 0; y < numSamples; y++) {
-            let boundRelativeY = y / numSamples - 1;
-            let controlPointY = controlPointBoundMinY + controlPointBoundHeight * boundRelativeY;
+            const boundRelativeY = y / (numSamples - 1);
+            const controlPointY = controlPointBoundMinY + controlPointBoundHeight * boundRelativeY;
         
             for (let x = 0; x < numSamples; x++) {
-                let boundRelativeX = x / numSamples - 1;
-                let controlPointX = controlPointBoundMinX + controlPointBoundWidth * boundRelativeX;
+                const boundRelativeX = x / (numSamples - 1);
+                const controlPointX = controlPointBoundMinX + controlPointBoundWidth * boundRelativeX;
         
-                // let potentialCurvesIndex = y * numSamples + x;
                 const curve = new Curve(startPoint, endPoint, new Point(controlPointX, controlPointY));
-                // potentialCurves[potentialCurvesIndex] = curve;
-
         
-                let potentialCurvePoints = curve.computePointsOnCurve(numSamples);
-  
-                for (let i = 0; i < numSamples; i++) {
-                    let delta = this.sumDistanceSquared(potentialCurvePoints[i]);
-                    if (delta < bestCurveDelta) {
-                        delta = bestCurveDelta;
-                        bestCurve = curve;
+                const potentialCurvePoints = curve.computePointsOnCurve(numPointsOnPotentialcurve);
+
+                let maxDelta = 0;
+                for (let i = 0;i < numPointsOnPotentialcurve;i++) {
+                    const delta = this.closestDistanceSquared(potentialCurvePoints[i], this._points);
+                    if (delta > maxDelta) {
+                        maxDelta = delta; 
                     }
                 }
+
+                if (maxDelta < bestCurveDelta) {
+                    bestCurveDelta = maxDelta;
+                    bestCurve = curve;
+                }
+
             }
         }
 
         return bestCurve;
-
-
     };
 
-    private sumDistanceSquared = (point: Point): number => {
-        let sum = 0;
-        for (let i = 0; i < this._points.length; i++) {
-            let dx = point.getX() - this._points[i].getX();
-            let dy = point.getY() - this._points[i].getX();;
-            sum += dx * dx + dy * dy;
+    private closestDistanceSquared = (point: Point, points: Point[]): number => {
+        let minDistance = Number.MAX_VALUE;
 
+
+        for (let i = 0;i < points.length;i++) {
+            const distance = point.distanceSquared(points[i]);
+            if (distance < minDistance) {
+                minDistance = distance;
+            }
         }
-        return sum;
-    };
 
-    
+        return minDistance;
+    }
 }
 

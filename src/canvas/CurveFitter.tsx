@@ -175,6 +175,7 @@ export class CurveFitter {
             curves.push(this.Fit(this._points.slice(lastCurveIndex, this._splitsIndex[i])));
             lastCurveIndex = this._splitsIndex[i];
         }
+        curves.push(this.Fit(this._points.slice(lastCurveIndex, this._points.length -1)));
 
         return curves;
     }

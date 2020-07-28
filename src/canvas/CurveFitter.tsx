@@ -3,27 +3,29 @@ import { Curve } from './Curve';
 
 export class CurveFitter {
     private _points: Point[];
+    private _splitsIndex: number[];
     
     constructor (points: Point[]) {
         this._points = points;
+        this._splitsIndex = new Array<number>();
     }
 
-    Fit = (): Curve => {
+    Fit = (points: Point[]): Curve => {
         // If there are two points or less, return void becuase this cannnot be fit to a curve.
-        if (this._points.length <= 2) {
+        if (points.length <= 2) {
             throw new Error("not enough points");
         }
 
-        const startPoint = this._points[0];
-        const endPoint = this._points[this._points.length -1];
+        const startPoint = points[0];
+        const endPoint = points[points.length -1];
 
         // Set the bounds of the drawing.
-        let controlPointBoundMinX = this._points[0].getX();
-        let controlPointBoundMaxX = this._points[0].getX();
-        let controlPointBoundMinY = this._points[0].getY();
-        let controlPointBoundMaxY = this._points[0].getY();
+        let controlPointBoundMinX = points[0].getX();
+        let controlPointBoundMaxX = points[0].getX();
+        let controlPointBoundMinY = points[0].getY();
+        let controlPointBoundMaxY = points[0].getY();
 
-        this._points.forEach(point => {
+        points.forEach(point => {
             const x = point.getX();
             const y = point.getY();
             if (x < controlPointBoundMinX) {
@@ -71,7 +73,7 @@ export class CurveFitter {
 
                 let maxDelta = 0;
                 for (let i = 0;i < numPointsOnPotentialcurve;i++) {
-                    const delta = this.closestDistanceSquared(potentialCurvePoints[i], this._points);
+                    const delta = this.closestDistanceSquared(potentialCurvePoints[i], points);
                     if (delta > maxDelta) {
                         maxDelta = delta; 
                     }
@@ -100,6 +102,81 @@ export class CurveFitter {
         }
 
         return minDistance;
+    }
+
+    private splitPath = (points: Point[]): void => {
+        if (points.length < 3) {
+            return;
+        }
+
+        let startIndex = 0;
+        let prevSlope = this.getSlope(points[startIndex], points[1]);
+        let nextSlope = null;
+        let direction = null;
+
+        for (let i = 2; i < points.length - 5; i+=2) {
+            nextSlope = this.getSlope(points[startIndex], points[i]);
+
+            if (prevSlope === Infinity) {
+                prevSlope = nextSlope;
+                continue;
+            }
+
+            if (nextSlope === Infinity) {
+                continue;
+            }
+
+            if (!direction) {
+                if (prevSlope - nextSlope > 0) {
+                    direction = 'decrease';
+                } else if (prevSlope - nextSlope < 0) {
+                    direction = 'increase';
+                } else {
+                    direction = null;
+                }
+            }
+
+            switch (direction) {
+                case 'increase': 
+                    if ((prevSlope - nextSlope > 3 && !this._splitsIndex.length) || prevSlope - nextSlope > 0 && i - this._splitsIndex[this._splitsIndex.length - 1] > 3) {
+                        this._splitsIndex.push(i);
+                        startIndex = i;
+                        direction = null;
+                    }
+                    break;
+                case 'decrease':
+                    if ((prevSlope - nextSlope < -3  && !this._splitsIndex.length) || prevSlope - nextSlope < 0 && i - this._splitsIndex[this._splitsIndex.length - 1] > 3) {
+                        this._splitsIndex.push(i);
+                        startIndex =  i;
+                        direction = null;
+                    }
+                    break;
+            }
+
+            prevSlope = nextSlope;
+        }
+    }
+
+    private getSlope = (pointA: Point, pointB: Point): number => {
+        return (pointA.getY() - pointB.getY()) /(pointA.getX() - pointB.getX());
+    }
+
+    FitLine = (): Curve[] => {
+        const curves = new Array<Curve>();
+        this.splitPath(this._points);
+
+        if (!this._splitsIndex.length) {
+            curves.push(this.Fit(this._points));
+            return curves;
+        }
+
+        let lastCurveIndex = 0;
+        for (let i = 0; i < this._splitsIndex.length; i++) {
+            curves.push(this.Fit(this._points.slice(lastCurveIndex, this._splitsIndex[i])));
+            lastCurveIndex = this._splitsIndex[i];
+        }
+
+        return curves;
     }
 }
 

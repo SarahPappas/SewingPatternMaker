@@ -1,5 +1,6 @@
 import { Point } from './Point';
 import { Curve } from './Curve';
+import { Direction } from './Enums';
 
 export class CurveFitter {
     private _points: Point[];
@@ -104,19 +105,23 @@ export class CurveFitter {
         return minDistance;
     }
 
-    private splitPath = (points: Point[]): void => {
+    private splitPathBySlope = (points: Point[]): void => {
         if (points.length < 3) {
             return;
         }
 
         let startIndex = 0;
         let prevSlope = this.getSlope(points[startIndex], points[1]);
-        let nextSlope = null;
-        let direction = null;
+        let nextSlope;
+        let direction = Direction.UNDEFINED;
+        const SLOPE_THRESHOLD = 5;
+        const INDEX_THRESHOLD = 3;
 
-        for (let i = 2; i < points.length - 5; i+=2) {
+        // Use every other point to calculate slope
+        for (let i = 1; i < points.length - 5; i++) {
             nextSlope = this.getSlope(points[startIndex], points[i]);
 
+            // If either the previous slope or the next slope is infiinty, skip this iteration of the loop.
             if (prevSlope === Infinity) {
                 prevSlope = nextSlope;
                 continue;
@@ -126,29 +131,42 @@ export class CurveFitter {
                 continue;
             }
 
+            // If the direction is the the slope is moving is not defined, set the direction.
             if (!direction) {
                 if (prevSlope - nextSlope > 0) {
-                    direction = 'decrease';
+                    direction = Direction.Decrease;
                 } else if (prevSlope - nextSlope < 0) {
-                    direction = 'increase';
-                } else {
-                    direction = null;
+                    direction = Direction.Increase;
                 }
             }
 
             switch (direction) {
-                case 'increase': 
-                    if ((prevSlope - nextSlope > 3 && !this._splitsIndex.length) || prevSlope - nextSlope > 0 && i - this._splitsIndex[this._splitsIndex.length - 1] > 3) {
+                case Direction.Increase: 
+                    /* If the difference in slope is greater than the slope threshold and there are not splits yet, add a split. 
+                     * Otherwise, if the difference in slope is greater than the slope threshold and the difference in index is 
+                     * greater than the index threshold, add the split.
+                     */
+                    if ((prevSlope - nextSlope > SLOPE_THRESHOLD && !this._splitsIndex.length) 
+                        || (prevSlope - nextSlope > SLOPE_THRESHOLD && i - this._splitsIndex[this._splitsIndex.length - 1] > INDEX_THRESHOLD)) {
                         this._splitsIndex.push(i);
+                        // Set the start index to the current index.
                         startIndex = i;
-                        direction = null;
+                        // Reset the direction/
+                        direction = Direction.UNDEFINED;
                     }
                     break;
-                case 'decrease':
-                    if ((prevSlope - nextSlope < -3  && !this._splitsIndex.length) || prevSlope - nextSlope < 0 && i - this._splitsIndex[this._splitsIndex.length - 1] > 3) {
+                case Direction.Decrease:
+                    /* If the difference in slope is less than the slope threshold and there are not splits yet, add a split. 
+                     * Otherwise, if the difference in slope is less than the slope threshold and the difference in index is 
+                     * greater than the index threshold, add the split.
+                     */
+                    if ((prevSlope - nextSlope < -SLOPE_THRESHOLD  && !this._splitsIndex.length) 
+                        || (prevSlope - nextSlope < -SLOPE_THRESHOLD && i - this._splitsIndex[this._splitsIndex.length - 1] > INDEX_THRESHOLD)) {
                         this._splitsIndex.push(i);
+                        // Set the start index to the current index.
                         startIndex =  i;
-                        direction = null;
+                        // Reset the direction.
+                        direction = Direction.UNDEFINED;
                     }
                     break;
             }
@@ -163,13 +181,16 @@ export class CurveFitter {
 
     FitLine = (): Curve[] => {
         const curves = new Array<Curve>();
-        this.splitPath(this._points);
+        // Spit the original set of points.
+        this.splitPathBySlope(this._points);
 
+        // If the line is not split, fit all the points to a curve
         if (!this._splitsIndex.length) {
             curves.push(this.Fit(this._points));
             return curves;
         }
 
+        // If the line is split, fit each segement with a curve.
         let lastCurveIndex = 0;
         for (let i = 0; i < this._splitsIndex.length; i++) {
             curves.push(this.Fit(this._points.slice(lastCurveIndex, this._splitsIndex[i])));

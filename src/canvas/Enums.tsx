@@ -9,3 +9,9 @@ export enum ToolType {
     StraightLine,
     Freeline
 }
+
+export enum Direction {
+    UNDEFINED,
+    Increase,
+    Decrease
+}

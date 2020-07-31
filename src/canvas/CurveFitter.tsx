@@ -19,7 +19,9 @@ export class CurveFitter {
         const startPoint = points[0];
         const endPoint = points[points.length -1];
 
-        const controlPoint = startPoint.getPointOnMidline(endPoint, 50);
+        const PARAM = 50;
+
+        const controlPoint = startPoint.getPointOnMidline(endPoint, PARAM);
 
         const bestCurve = new Curve(startPoint, endPoint, controlPoint); 
 

@@ -174,31 +174,5 @@ export class CurveFitter {
             prevSlope = nextSlope;
         }
     }
-
-    private getSlope = (pointA: Point, pointB: Point): number => {
-        return (pointA.getY() - pointB.getY()) /(pointA.getX() - pointB.getX());
-    }
-
-    FitLine = (): Curve[] => {
-        const curves = new Array<Curve>();
-        // Spit the original set of points.
-        this.splitPathBySlope(this._points);
-
-        // If the line is not split, fit all the points to a curve
-        if (!this._splitsIndex.length) {
-            curves.push(this.Fit(this._points));
-            return curves;
-        }
-
-        // If the line is split, fit each segement with a curve.
-        let lastCurveIndex = 0;
-        for (let i = 0; i < this._splitsIndex.length; i++) {
-            curves.push(this.Fit(this._points.slice(lastCurveIndex, this._splitsIndex[i])));
-            lastCurveIndex = this._splitsIndex[i];
-        }
-        curves.push(this.Fit(this._points.slice(lastCurveIndex, this._points.length -1)));
-
-        return curves;
-    }
 }
 

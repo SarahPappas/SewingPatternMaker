@@ -23,28 +23,8 @@ export class CurveFitter {
 
         const controlPoint = startPoint.getPointOnMidline(endPoint, PARAM);
 
-        const bestCurve = new Curve(startPoint, endPoint, controlPoint); 
-
-        return bestCurve;
+        return new Curve(startPoint, endPoint, controlPoint); 
     };
-
-    private closestDistanceSquared = (point: Point, points: Point[]): number => {
-        let minDistance = Number.MAX_VALUE;
-
-
-        for (let i = 0;i < points.length;i++) {
-            const distance = point.distanceSquared(points[i]);
-            if (distance < minDistance) {
-                minDistance = distance;
-            }
-        }
-
-        return minDistance;
-    }
-
-    private getSlope = (pointA: Point, pointB: Point): number => {
-        return (pointA.getY() - pointB.getY()) /(pointA.getX() - pointB.getX());
-    }
 
     FitLine = (): Path2D => {
         const curve = this.Fit(this._points);

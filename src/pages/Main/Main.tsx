@@ -42,6 +42,11 @@ export const Main: React.FC = () => {
             }}
         />
         <Route exact path="/Trace/Review" component={Review} />
-        <Route exact path="/Trace/AddMeasurement" component={AddMeasurement}></Route>
+        <Route 
+            exact path="/Trace/AddMeasurement" 
+            render= {() => {
+                return <AddMeasurement setUploadedFileData={setUploadedFileData}/>;
+            }}
+        />
     </div></div>;
 };

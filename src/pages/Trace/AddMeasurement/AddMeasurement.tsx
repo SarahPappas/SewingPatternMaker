@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { InstructionModal } from 'components/InstructionModal/InstructionModal';
 import './AddMeasurement.css';
 
-export const AddMeasurement: React.FC = () => {
+interface AddMeasurementProps {
+    setUploadedFileData: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileData }) => {
     const instructModal: InstructModal = {text: ['Choose a path to measure.']};
     
+    //const canvasContainerRef = useRef(document.querySelector<HTMLElement>('canvasContainer'));
+    useEffect(() => {
+        setUploadedFileData("");
+    }, [setUploadedFileData]);
+
     return (
         <>
             <div className={'instructionsContainer'}>

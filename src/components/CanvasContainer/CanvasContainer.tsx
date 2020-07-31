@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { renderer } from "../../canvas/Renderer";
 import './CanvasContainer.css';
 
@@ -9,7 +9,7 @@ interface CanvasContainerProps {
 export const CanvasContainer: React.FC<CanvasContainerProps> = ({ uploadedFileData }) => {
   const canvasContainerRef = React.useRef(document.createElement("div"));
 
-  React.useEffect(() => {
+  useEffect(() => {
     const canvas = renderer.init();
     if (canvasContainerRef.current) {
       canvasContainerRef.current.appendChild(canvas);

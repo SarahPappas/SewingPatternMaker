@@ -1,6 +1,6 @@
 import React from 'react';
 import { InstructionModal } from 'components/InstructionModal/InstructionModal';
-import './Instructions.css';
+import './AddMeasurement.css';
 
 export const AddMeasurement: React.FC = () => {
     const instructModal: InstructModal = {text: ['Choose a path to measure.']};

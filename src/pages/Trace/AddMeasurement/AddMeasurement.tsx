@@ -1,12 +1,15 @@
 import React from 'react';
-import { Button } from 'components/Button/Button';
+import { InstructionModal } from 'components/InstructionModal/InstructionModal';
+import './Instructions.css';
 
 export const AddMeasurement: React.FC = () => {
-    
+    const instructModal: InstructModal = {text: ['Choose a path to measure.']};
     
     return (
         <>
-            <Button label='Choose a path to measure.' className='button'></Button>
+            <div className={'instructionsContainer'}>
+                <InstructionModal instructModal={instructModal}></InstructionModal>
+            </div>
         </>
     );
 };

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { InstructionModal } from 'components/InstructionModal/InstructionModal';
 import './AddMeasurement.css';
-import { useHistory } from 'react-router-dom';
+import { renderer } from 'canvas/Renderer';
 
 interface AddMeasurementProps {
     setUploadedFileData: React.Dispatch<React.SetStateAction<string>>;
@@ -10,6 +10,11 @@ interface AddMeasurementProps {
 export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileData }) => {
     const instructModal: InstructModal = {text: ['Choose a path to measure.']};
     
+    // Reinitialize event listeners on canvas
+    useEffect(() => {
+        renderer.measurementInit();
+    }, []);
+
     // Remove class that puts canvas in the background.
     const canvasContainerRef = useRef(document.getElementsByClassName('canvasContainer')[0]);
     useEffect(() => {
@@ -17,8 +22,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
         canvasContainerRef.current.classList.remove('canvasContainerBackground');
     }, [canvasContainerRef]);
 
-
-    //const canvasContainerRef = useRef(document.querySelector<HTMLElement>('canvasContainer'));
+    // Remove the photo in the background
     useEffect(() => {
         setUploadedFileData("");
     }, [setUploadedFileData]);
@@ -27,12 +31,11 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
     const canvasRef = useRef(document.querySelector('canvas'));
     useEffect(() => {
         canvasRef.current = document.querySelector('canvas');
+        
     }, [canvasRef]);
-    
-    const history = useHistory();
 
-    canvasRef.current?.addEventListener("endTracing", () => {
-        history.push('/Trace/Review');
+    canvasRef.current?.addEventListener("selectPath", () => {
+        console.log("path selected");
     });
 
     return (

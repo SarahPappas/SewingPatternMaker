@@ -37,4 +37,11 @@ export class Point implements IPoint {
 
         return minDistance;
     }
+
+    computeMiddlePoint = (point2: Point): Point => {
+        const middleX = (this.getX() + point2.getX()) / 2;
+        const middleY = (this.getY() + point2.getY()) / 2;
+        
+        return new Point(middleX, middleY);
+    }
 }

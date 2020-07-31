@@ -11,17 +11,19 @@ export const AddMeasurement: React.FC = () => {
                 <InstructionModal instructModal={instructModal}></InstructionModal>
             </div>
             <div>
-                Measurement
-            </div>
-            <div>
                 <div>
-                    input box
+                    Measurement
                 </div>
                 <div>
-                    in
-                </div>
-                <div>
-                    Button
+                    <div>
+                        input box
+                    </div>
+                    <div>
+                        in
+                    </div>
+                    <div>
+                        Button
+                    </div>
                 </div>
             </div>
         </>

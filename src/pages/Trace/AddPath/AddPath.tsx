@@ -11,11 +11,11 @@ interface AddPathProps {
 
 export const AddPath: React.FC<AddPathProps> = ({curPathType, setPathType}) => {
     // Remove class that puts canvas in the background.
-    const canvasConstainerRef = useRef(document.getElementsByClassName('canvasContainer')[0]);
+    const canvasContainerRef = useRef(document.getElementsByClassName('canvasContainer')[0]);
     useEffect(() => {
-        canvasConstainerRef.current = document.getElementsByClassName('canvasContainer')[0];
-        canvasConstainerRef.current.classList.remove('canvasContainerBackground');
-    }, [canvasConstainerRef]);
+        canvasContainerRef.current = document.getElementsByClassName('canvasContainer')[0];
+        canvasContainerRef.current.classList.remove('canvasContainerBackground');
+    }, [canvasContainerRef]);
 
     // Get the Canvas so that we can and an event listener to it.
     const canvasRef = useRef(document.querySelector('canvas'));

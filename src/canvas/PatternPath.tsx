@@ -129,12 +129,6 @@ export class PatternPath implements IPatternPath {
         this._path2D.quadraticCurveTo(prevPoint.getX(), prevPoint.getY(), midPoint.getX(), midPoint.getY());
     }
 
-    private _squaredDistance = (point1: Point, point2: Point): number => {
-        const dx = point2.getX() - point1.getX();
-        const dy = point2.getY() - point1.getY();
-        return dx*dx + dy*dy;
-    }
-
     /*
     * Returns a selection of points from the _points array that sum up the points.
     * The points that are too close in distance from each other are discarded, but
@@ -152,7 +146,7 @@ export class PatternPath implements IPatternPath {
             for(let i = 0;i < this._points.length - 1;i++) {
                 // Discard points that are too close in index or in distance to the last added point
                 if (i - lastIndexTaken > MAX_SKIPPED_POINTS || 
-                        this._squaredDistance(this._points[i], this._points[lastIndexTaken]) 
+                        this._points[i].distanceSquared(this._points[lastIndexTaken]) 
                         > MIN_SQUARED_DISTANCE_BETWEEN_POINTS) {
                     result.push(this._points[i]);
                     lastIndexTaken = i;
@@ -182,7 +176,7 @@ export class PatternPath implements IPatternPath {
         this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
 
         const curveFitter = new CurveFitter(this._points);
-        const bestCurves = curveFitter.FitLine();
+        const bestCurves = curveFitter.Fit();
         bestCurves.forEach(curve => {
             this._path2D.quadraticCurveTo(curve.control.getX(), curve.control.getY(), curve.end.getX(), curve.end.getY());
         });

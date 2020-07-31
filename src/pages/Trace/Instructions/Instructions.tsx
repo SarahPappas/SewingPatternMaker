@@ -11,7 +11,7 @@ interface InstructionsProps {
 }
 
 export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathType}) => {
-    const doneButton: NavButton = {label: 'DONE', to: '/AddMeasurement' };
+    const doneButton: NavButton = {label: 'DONE', to: 'AddMeasurement' };
     const addPathButton: NavButton = {label:'', to: 'AddPath'};
     const instruction: InstructModal = {text: ['Choose seam, fold, or edge to add to your pattern']};
 

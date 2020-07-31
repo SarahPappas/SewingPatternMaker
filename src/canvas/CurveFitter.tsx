@@ -114,7 +114,7 @@ export class CurveFitter {
         let prevSlope = this.getSlope(points[startIndex], points[1]);
         let nextSlope;
         let direction = Direction.UNDEFINED;
-        const SLOPE_THRESHOLD = 5;
+        const SLOPE_THRESHOLD = 1;
         const INDEX_THRESHOLD = 3;
 
         // Use every other point to calculate slope

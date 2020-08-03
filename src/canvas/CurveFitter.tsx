@@ -43,7 +43,7 @@ export class CurveFitter {
                 const potentialCurvePoints = curve.computePointsOnCurve(numPointsOnPotentialcurve);
 
                 let maxDelta = 0;
-                for (let i = 0;i < numPointsOnPotentialcurve;i++) {
+                for (let i = 0; i < numPointsOnPotentialcurve; i++) {
                     const delta = potentialCurvePoints[i].closestDistanceSquaredFromSetOfPoints(points);
                     if (delta > maxDelta) {
                         maxDelta = delta; 

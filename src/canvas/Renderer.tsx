@@ -80,16 +80,19 @@ class Renderer implements IRenderer {
         return this._canvas;
     }
 
-    measurementInit = (): void => {
+    measurementInit = (): HTMLCanvasElement => {
         this._tick();
 
         this._canvas.onmousedown = (e) => {
-            console.log("onmousedown");
+            console.log("new onmousedown");
         };
 
         this._canvas.onmousemove = null;
         this._canvas.onmouseup = null;
         this._canvas.onmouseout = null;
+
+        return this._canvas;
+        
     }
 
     private _endTracing = (position: Point): void => {

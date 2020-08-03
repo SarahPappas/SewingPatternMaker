@@ -11,11 +11,15 @@ export const CanvasContainer: React.FC<CanvasContainerProps> = ({ uploadedFileDa
 
   useEffect(() => {
     const canvas = renderer.init();
+    console.log("here");
     if (canvasContainerRef.current) {
       canvasContainerRef.current.appendChild(canvas);
-      canvasContainerRef.current.style.backgroundImage = "url(" + uploadedFileData + ")";
     }
-  }, [canvasContainerRef, uploadedFileData]);
+  }, [canvasContainerRef]);
+
+  useEffect(() => {
+    canvasContainerRef.current.style.backgroundImage = "url(" + uploadedFileData + ")";
+  }, [uploadedFileData]);
 
   return <div className='canvasContainer' ref={canvasContainerRef}></div>;
 };

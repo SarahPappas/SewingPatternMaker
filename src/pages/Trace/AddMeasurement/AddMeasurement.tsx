@@ -10,33 +10,16 @@ interface AddMeasurementProps {
 export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileData }) => {
     const instructModal: InstructModal = {text: ['Choose a path to measure.']};
     
-    // Reinitialize event listeners on canvas
-    useEffect(() => {
-        renderer.measurementInit();
-    }, []);
-
-    // Remove class that puts canvas in the background.
+    // Remove class that puts canvas in the background, remove picture,
+    // and reinitialize event listeners.
     const canvasContainerRef = useRef(document.getElementsByClassName('canvasContainer')[0]);
     useEffect(() => {
+        
         canvasContainerRef.current = document.getElementsByClassName('canvasContainer')[0];
         canvasContainerRef.current.classList.remove('canvasContainerBackground');
-    }, [canvasContainerRef]);
-
-    // Remove the photo in the background
-    useEffect(() => {
+        canvasContainerRef.current.appendChild(renderer.measurementInit());
         setUploadedFileData("");
-    }, [setUploadedFileData]);
-
-    // Get the Canvas so that we can and an event listener to it.
-    const canvasRef = useRef(document.querySelector('canvas'));
-    useEffect(() => {
-        canvasRef.current = document.querySelector('canvas');
-        
-    }, [canvasRef]);
-
-    canvasRef.current?.addEventListener("selectPath", () => {
-        console.log("path selected");
-    });
+    }, [canvasContainerRef, setUploadedFileData]);
 
     return (
         <>

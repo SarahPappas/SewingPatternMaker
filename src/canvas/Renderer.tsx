@@ -82,17 +82,38 @@ class Renderer implements IRenderer {
 
     measurementInit = (): HTMLCanvasElement => {
         this._tick();
-
+        const patternPaths = this._document.getPatternPaths();
+        let highlightedPath = null;
+        let selectedPath = null;
+        
         this._canvas.onmousedown = (e) => {
-            console.log("new onmousedown");
+            for (let i = 0;i < patternPaths.length;i++) {
+                const path = patternPaths[i].getPath2D();
+                if (this._context.isPointInStroke(path, e.offsetX, e.offsetY)) {
+                    //deselect old selectedPath
+                    selectedPath = path;
+                    //select path
+                    console.log("select path");
+                }
+            }
         };
 
-        this._canvas.onmousemove = null;
+        this._canvas.onmousemove = (e) => {
+            //unhighlight old highlightedPath
+            for (let i = 0;i < patternPaths.length;i++) {
+                const path = patternPaths[i].getPath2D();
+                if (this._context.isPointInStroke(path, e.offsetX, e.offsetY)) {
+                    highlightedPath = path;
+                    //highlight path
+                    console.log("highlight path");
+                }
+            }
+        };
+
         this._canvas.onmouseup = null;
         this._canvas.onmouseout = null;
 
         return this._canvas;
-        
     }
 
     private _endTracing = (position: Point): void => {

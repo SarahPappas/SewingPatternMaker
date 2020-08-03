@@ -11,10 +11,10 @@ export class BoundingBox {
     constructor ();
     constructor (points: Point[]); // eslint-disable-line no-dupe-class-members
     constructor (points?: Point[])  { // eslint-disable-line no-dupe-class-members
-        this.minX = points && points[0].getX() || 0;
-        this.minY = points && points[0].getY() || 0;
-        this.maxY = points && points[0].getY() || 0;
-        this.maxX = points && points[0].getX() || 0;
+        this.minX = points ? points[0].getX() : 0;
+        this.minY = points ? points[0].getY() : 0;
+        this.maxY = points ? points[0].getY() : 0;
+        this.maxX = points ? points[0].getX() : 0;
         this.height = 0;
         this.width = 0;
 

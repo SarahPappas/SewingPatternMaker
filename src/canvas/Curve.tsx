@@ -3,7 +3,7 @@ import { Point } from './Point';
 export class Curve {
     start: Point;
     end: Point;
-    public control: Point;
+    control: Point;
 
     constructor (start: Point, end: Point, control: Point) {
         this.start = start;

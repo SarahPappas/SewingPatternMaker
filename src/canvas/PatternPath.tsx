@@ -164,44 +164,44 @@ export class PatternPath implements IPatternPath {
     }
 
     snapEndpoints = (paths: PatternPath[]): void => {
-        const endpoints: {start: Point; end: Point}[] = [];
+        const endpoints: {first: Point; last: Point}[] = [];
         paths.forEach(path => {
             if (path === this) {
                 return;
             }
             const points = path.getPoints();
-            endpoints.push({start: points[0], end: points[points.length - 1]});
+            endpoints.push({first: points[0], last: points[points.length - 1]});
         });
 
-        const myStartPoint = this._points[0];
-        const myEndPoint = this._points[this._points.length - 1];
+        const myFirstPoint = this._points[0];
+        const myLastPoint = this._points[this._points.length - 1];
         // Radius to check within to see if we should snap to point.
         const radius = 10;
-        let updatedStartPoint = false;
-        let updatedEndPoint = false;
+        let updatedFirstPoint = false;
+        let updatedLastPoint = false;
         endpoints.forEach(point =>  {
-            if(!updatedStartPoint && myStartPoint.isWithinRadius(point.start, radius)) {
-                this._points[0] = point.start;
-                updatedStartPoint = true;
+            if(!updatedFirstPoint && myFirstPoint.isWithinRadius(point.first, radius)) {
+                this._points[0] = point.first;
+                updatedFirstPoint = true;
             }
 
-            if(!updatedStartPoint && myStartPoint.isWithinRadius(point.end, radius)) {
-                this._points[0] = point.end;
-                updatedStartPoint = true;
+            if(!updatedFirstPoint && myFirstPoint.isWithinRadius(point.last, radius)) {
+                this._points[0] = point.last;
+                updatedFirstPoint = true;
             }
 
-            if(!updatedEndPoint && myEndPoint.isWithinRadius(point.start, radius)) {
-                this._points[this._points.length] = point.start;
-                updatedEndPoint = true;
+            if(!updatedLastPoint && myLastPoint.isWithinRadius(point.first, radius)) {
+                this._points[this._points.length] = point.first;
+                updatedLastPoint = true;
             }
 
-            if(!updatedEndPoint && myEndPoint.isWithinRadius(point.end, radius)) {
-                this._points[this._points.length] = point.end;
-                updatedEndPoint = true;
+            if(!updatedLastPoint && myLastPoint.isWithinRadius(point.last, radius)) {
+                this._points[this._points.length] = point.last;
+                updatedLastPoint = true;
             }
         });
 
-        if (updatedStartPoint || updatedEndPoint) {
+        if (updatedFirstPoint || updatedLastPoint) {
             if (this._toolType == ToolType.StraightLine) {
                 this._updatePath2DStraightLine();
             }

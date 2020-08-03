@@ -18,4 +18,8 @@ export class Point implements IPoint {
     equals = (o: Point): boolean => {
         return this._x === o.getX() && this._y === o.getY();
     }
+
+    isWithinRadius = (o: Point, radius: number): boolean => {
+        return Math.pow((o.getX() - this._x), 2) + Math.pow((o.getY() - this._y), 2) < Math.pow(radius, 2);
+    }
 }

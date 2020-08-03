@@ -28,7 +28,7 @@ export class Point implements IPoint {
     closestDistanceSquaredFromSetOfPoints = (points: Point[]): number => {
         let minDistance = Number.MAX_VALUE;
 
-        for (let i = 0;i < points.length;i++) {
+        for (let i = 0; i < points.length; i++) {
             const distance = this.distanceSquared(points[i]);
             if (distance < minDistance) {
                 minDistance = distance;

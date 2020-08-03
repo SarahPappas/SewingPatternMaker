@@ -163,6 +163,55 @@ export class PatternPath implements IPatternPath {
         return result;
     }
 
+    snapEndpoints = (paths: PatternPath[]): void => {
+        const endpoints: {start: Point; end: Point}[] = [];
+        paths.forEach(path => {
+            if (path === this) {
+                return;
+            }
+            const points = path.getPoints();
+            endpoints.push({start: points[0], end: points[points.length - 1]});
+        });
+
+        const myStartPoint = this._points[0];
+        const myEndPoint = this._points[this._points.length - 1];
+        // Radius to check within to see if we should snap to point.
+        const radius = 10;
+        let updatedStartPoint = false;
+        let updatedEndPoint = false;
+        endpoints.forEach(point =>  {
+            if(!updatedStartPoint && myStartPoint.isWithinRadius(point.start, radius)) {
+                this._points[0] = point.start;
+                updatedStartPoint = true;
+            }
+
+            if(!updatedStartPoint && myStartPoint.isWithinRadius(point.end, radius)) {
+                this._points[0] = point.end;
+                updatedStartPoint = true;
+            }
+
+            if(!updatedEndPoint && myEndPoint.isWithinRadius(point.start, radius)) {
+                this._points[this._points.length] = point.start;
+                updatedEndPoint = true;
+            }
+
+            if(!updatedEndPoint && myEndPoint.isWithinRadius(point.end, radius)) {
+                this._points[this._points.length] = point.end;
+                updatedEndPoint = true;
+            }
+        });
+
+        if (updatedStartPoint || updatedEndPoint) {
+            if (this._toolType == ToolType.StraightLine) {
+                this._updatePath2DStraightLine();
+            }
+
+            if (this._toolType == ToolType.Freeline) {
+                this._updatePath2DWithQuadraticCurve();
+            }
+        }
+    }
+
     private _updatePath2DStraightLine = (): void => {
         const firstPoint = this._points[0];
         const lastPoint = this._points[this._points.length -1];

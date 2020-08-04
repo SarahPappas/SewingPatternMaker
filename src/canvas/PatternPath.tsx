@@ -164,49 +164,50 @@ export class PatternPath implements IPatternPath {
     }
 
     snapEndpoints = (paths: PatternPath[]): void => {
-        const endpoints: {first: Point; last: Point}[] = [];
-        paths.forEach(path => {
-            if (path === this) {
-                return;
-            }
-            const points = path.getPoints();
-            endpoints.push({first: points[0], last: points[points.length - 1]});
-        });
-
         const myFirstPoint = this._points[0];
         const myLastPoint = this._points[this._points.length - 1];
         // Radius to check within to see if we should snap to point.
         const radius = 10;
         let updatedFirstPoint = false;
         let updatedLastPoint = false;
-        endpoints.forEach(point =>  {
-            if(!updatedFirstPoint && myFirstPoint.isWithinRadius(point.first, radius)) {
-                this._points[0] = point.first;
+
+        paths.forEach(path => {
+            if (path === this) {
+                return;
+            }
+            const points = path.getPoints();
+
+            const otherFirstPoint = points[0];
+            const otherLastPoint = points[points.length - 1];
+
+            if(!updatedFirstPoint && myFirstPoint.isWithinRadius(otherFirstPoint, radius)) {
+                this._points[0] = otherFirstPoint;
                 updatedFirstPoint = true;
             }
 
-            if(!updatedFirstPoint && myFirstPoint.isWithinRadius(point.last, radius)) {
-                this._points[0] = point.last;
+            if(!updatedFirstPoint && myFirstPoint.isWithinRadius(otherLastPoint, radius)) {
+                this._points[0] = otherLastPoint;
                 updatedFirstPoint = true;
             }
 
-            if(!updatedLastPoint && myLastPoint.isWithinRadius(point.first, radius)) {
-                this._points[this._points.length] = point.first;
+            if(!updatedLastPoint && myLastPoint.isWithinRadius(otherFirstPoint, radius)) {
+                this._points[this._points.length] = otherFirstPoint;
                 updatedLastPoint = true;
             }
 
-            if(!updatedLastPoint && myLastPoint.isWithinRadius(point.last, radius)) {
-                this._points[this._points.length] = point.last;
+            if(!updatedLastPoint && myLastPoint.isWithinRadius(otherLastPoint, radius)) {
+                this._points[this._points.length] = otherLastPoint;
                 updatedLastPoint = true;
             }
+
         });
 
         if (updatedFirstPoint || updatedLastPoint) {
-            if (this._toolType == ToolType.StraightLine) {
+            if (this._toolType === ToolType.StraightLine) {
                 this._updatePath2DStraightLine();
             }
 
-            if (this._toolType == ToolType.Freeline) {
+            if (this._toolType === ToolType.Freeline) {
                 this._updatePath2DWithQuadraticCurve();
             }
         }

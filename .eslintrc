@@ -78,7 +78,7 @@
         "prefer-arrow-callback": 2,
         "prefer-const": 2,
         "no-var": 2,
-        "semi-spacing": [1, {"before": false, "after": false}],
+        "semi-spacing": [1, {"before": false, "after": true}],
         "@typescript-eslint/explicit-function-return-type": 0,
         "semi": 2
     }

@@ -31,7 +31,7 @@ export class Curve {
                     this.lerp(startToControlY, controlToEndY, t));
     };
 
-    private lerp = (start: number, end: number, amt: number): number => {
-        return start + amt * (end - start);
+    private lerp = (start: number, end: number, t: number): number => {
+        return start + t * (end - start);
     };
 }

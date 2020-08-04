@@ -21,15 +21,15 @@ export class BoundingBox {
         this.calcWidth();
     }
 
-    expand = (amount: number): void => {
+    expand = (factor: number): void => {
         // Expand bounds of box of where we will search for a control point.
         const boxCenterX = this.width/2 + this.minX;
         const boxCenterY = this.height/2 + this.minY;
 
-        this.minX = boxCenterX + amount * (this.minX - boxCenterX);
-        this.minY = boxCenterY + amount * (this.minY - boxCenterY);
-        this.height = this.height * amount;
-        this.width = this.width * amount;
+        this.minX = boxCenterX + factor * (this.minX - boxCenterX);
+        this.minY = boxCenterY + factor * (this.minY - boxCenterY);
+        this.height = this.height * factor;
+        this.width = this.width * factor;
         this.maxX = this.minX + this.width;
         this.maxY = this.minY + this.height;
     }

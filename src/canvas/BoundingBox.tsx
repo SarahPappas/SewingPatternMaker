@@ -12,7 +12,7 @@ export class BoundingBox {
         if (!points.length) {
             return;
         }
-        
+
         this.minX = this.maxX = points[0].getX();
         this.minY = this.maxY = points[0].getY();
 
@@ -30,6 +30,8 @@ export class BoundingBox {
         this.minY = boxCenterY + amount * (this.minY - boxCenterY);
         this.height = this.height * amount;
         this.width = this.width * amount;
+        this.maxX = this.minX + this.width;
+        this.maxY = this.minY + this.height;
     }
 
     private build = (points: Point[]): void => {

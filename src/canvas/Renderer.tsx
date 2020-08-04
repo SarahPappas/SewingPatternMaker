@@ -83,17 +83,15 @@ class Renderer implements IRenderer {
     measurementInit = (): HTMLCanvasElement => {
         this._tick();
         const patternPaths = this._document.getPatternPaths();
-        let highlightedPath = null;
-        let selectedPath = null;
+        let highlightedPath: PatternPath | null = null;
+        let selectedPath: PatternPath | null = null;
         
         this._canvas.onmousedown = (e) => {
             for (let i = 0;i < patternPaths.length;i++) {
-                const path = patternPaths[i].getPath2D();
-                if (this._context.isPointInStroke(path, e.offsetX, e.offsetY)) {
-                    //deselect old selectedPath
-                    selectedPath = path;
-                    //select path
-                    console.log("select path");
+                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
+                    selectedPath?.deselect();
+                    selectedPath = patternPaths[i];
+                    selectedPath.select();
                 }
             }
         };
@@ -105,7 +103,6 @@ class Renderer implements IRenderer {
                 if (this._context.isPointInStroke(path, e.offsetX, e.offsetY)) {
                     highlightedPath = path;
                     //highlight path
-                    console.log("highlight path");
                 }
             }
         };
@@ -142,7 +139,13 @@ class Renderer implements IRenderer {
         const paths = this._document.getPatternPaths();
         paths.forEach(path => {
             const path2D = path.getPath2D();
-            const pathColor = PatternPathColor.get(path.getType());
+            let pathColor: string | undefined;
+            if (path.isSelected()){
+                pathColor = '#FF0000';
+            } else {
+                pathColor = PatternPathColor.get(path.getType());
+            } 
+            
             if (!pathColor) {
                 throw new Error("Could not get path color for " + path.getType().toString());
             }

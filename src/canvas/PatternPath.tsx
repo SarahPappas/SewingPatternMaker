@@ -9,6 +9,7 @@ export class PatternPath implements IPatternPath {
     private _path2D: Path2D;
     private _isPath2DValid: boolean;
     private _lastIndexAddedToPath2D: number;
+    private _isSelected: boolean;
 
     constructor (pathType: PatternPathType, toolType: ToolType) {
         this._type = pathType;
@@ -18,6 +19,7 @@ export class PatternPath implements IPatternPath {
         this._path2D = new Path2D();
         this._isPath2DValid = false;
         this._lastIndexAddedToPath2D = -1;
+        this._isSelected = false;
     }
 
     getPoints = (): Point[] => {
@@ -170,5 +172,17 @@ export class PatternPath implements IPatternPath {
         this._path2D = new Path2D();
         this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
         this._path2D.lineTo(lastPoint.getX(), lastPoint.getY());
+    }
+
+    public select = (): void => {
+        this._isSelected = true;
+    }
+
+    public deselect = (): void => {
+        this._isSelected = false;
+    }
+
+    public isSelected = (): boolean => {
+        return this._isSelected;
     }
 }

@@ -91,7 +91,7 @@ class Renderer implements IRenderer {
         let selectedPath: PatternPath | null = null;
         
         this._canvas.onmousedown = (e) => {
-            for (let i = 0;i < patternPaths.length;i++) {
+            for (let i = 0; i < patternPaths.length; i++) {
                 if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
                     selectedPath?.deselect();
                     selectedPath = patternPaths[i];
@@ -102,7 +102,7 @@ class Renderer implements IRenderer {
 
         this._canvas.onmousemove = (e) => {
             highlightedPath?.removeHighlight();
-            for (let i = 0;i < patternPaths.length;i++) {
+            for (let i = 0; i < patternPaths.length; i++) {
                 if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
                     highlightedPath = patternPaths[i];
                     highlightedPath.highlight();

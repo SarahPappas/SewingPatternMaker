@@ -1,22 +1,18 @@
 import { Point } from './Point';
 
 export class BoundingBox {
-    minX: number;
-    minY: number;
-    height: number;
-    width: number;
-    private maxX: number;
-    private maxY: number;
+    minX = 0;
+    minY = 0;
+    height = 0;
+    width = 0;
+    private maxX = 0;
+    private maxY = 0;
 
-    constructor ();
-    constructor (points: Point[]); // eslint-disable-line no-dupe-class-members
-    constructor (points?: Point[])  { // eslint-disable-line no-dupe-class-members
-        this.minX = points ? points[0].getX() : 0;
-        this.minY = points ? points[0].getY() : 0;
-        this.maxY = points ? points[0].getY() : 0;
-        this.maxX = points ? points[0].getX() : 0;
-        this.height = 0;
-        this.width = 0;
+    constructor (points: Point[])  { // eslint-disable-line no-dupe-class-members
+        if (points.length) {
+            this.minX = this.maxX = points[0].getX();
+            this.minY = this.maxY = points[0].getY();
+        }
 
         if (points) {
             this.build(points);
@@ -25,20 +21,15 @@ export class BoundingBox {
         }
     }
 
-    expand = (): BoundingBox => {
-        const retBox = new BoundingBox();
-        Object.assign(retBox, this);
-
+    expand = (amount: number): void => {
         // Expand bounds of box of where we will search for a control point.
-        const boxCenterX = retBox.width/2 + retBox.minX;
-        const boxCenterY = retBox.height/2 + retBox.minY;
+        const boxCenterX = this.width/2 + this.minX;
+        const boxCenterY = this.height/2 + this.minY;
 
-        retBox.minX = boxCenterX + 2.5 * (retBox.minX - boxCenterX);
-        retBox.minY = boxCenterY + 2.5 * (retBox.minY - boxCenterY);
-        retBox.height = retBox.height * 2.5;
-        retBox.width = retBox.width * 2.5;
-
-        return retBox;
+        this.minX = boxCenterX + amount * (this.minX - boxCenterX);
+        this.minY = boxCenterY + amount * (this.minY - boxCenterY);
+        this.height = this.height * amount;
+        this.width = this.width * amount;
     }
 
     private build = (points: Point[]): void => {

@@ -97,12 +97,11 @@ class Renderer implements IRenderer {
         };
 
         this._canvas.onmousemove = (e) => {
-            //unhighlight old highlightedPath
+            highlightedPath?.removeHighlight();
             for (let i = 0;i < patternPaths.length;i++) {
-                const path = patternPaths[i].getPath2D();
-                if (this._context.isPointInStroke(path, e.offsetX, e.offsetY)) {
-                    highlightedPath = path;
-                    //highlight path
+                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
+                    highlightedPath = patternPaths[i];
+                    highlightedPath.highlight();
                 }
             }
         };
@@ -142,9 +141,11 @@ class Renderer implements IRenderer {
             let pathColor: string | undefined;
             if (path.isSelected()){
                 pathColor = '#FF0000';
+            } else if (path.isHighlighted()) {
+                pathColor = '#000000';
             } else {
                 pathColor = PatternPathColor.get(path.getType());
-            } 
+            }
             
             if (!pathColor) {
                 throw new Error("Could not get path color for " + path.getType().toString());

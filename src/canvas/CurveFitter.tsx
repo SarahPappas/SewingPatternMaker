@@ -12,13 +12,13 @@ export class CurveFitter {
         
         // Get the bounds of the drawing.
         const boundingBox = new BoundingBox(points);
-        const expandedBox = boundingBox.expand();
+        boundingBox.expand(2.5);
 
         // The number of samples taken on the x and y axis to test as a control point for the curve.
         const numSamples = 101;
         
         // Find the best curve in the bounds. 
-        return CurveFitter.guessAndCheckPointsInBoundsForBestCurve(points, numSamples, expandedBox);
+        return CurveFitter.guessAndCheckPointsInBoundsForBestCurve(points, numSamples, boundingBox);
     };
 
     private static guessAndCheckPointsInBoundsForBestCurve = (points: Point[], numSamples: number, boundingBox: BoundingBox): Curve => {

@@ -43,14 +43,14 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
             <div className={'measurementInstructionsContainer'}>
                 <InstructionModal instructModal={instructModal}></InstructionModal>
             </div>
-            <div>
-                <div className={'measurement text'}>
+            <div className={'measurementBottomContainer'}>
+                <div className={'text'}>
                     Measurement
                 </div>
-                <div className='measurementInputContainer'>
+                <div className={'measurementInputContainer'}>
                     <Input input={input}></Input>
 
-                    <div className={'unit text'}>
+                    <div className={'text'}>
                         IN
                     </div>
 

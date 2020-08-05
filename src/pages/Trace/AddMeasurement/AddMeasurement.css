@@ -9,9 +9,19 @@
     flex-direction: column;
 }
 
-.measurementInputContainer {
+.measurementBottomContainer {
     width: 300px;
-    position: absolute;
+}
+
+.text {
+    background-color: white;
+    color: #707070;
+    font-size: 1.5em;
+    line-height: 200%;
+    text-align: left;
+}
+
+.measurementInputContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -23,17 +33,3 @@
     height: 50px;
 }
 
-.text {
-    background-color: white;
-    color: #707070;
-    font-size: 1.5em;
-    line-height: 200%;
-    text-align: left;
-}
-
-.measurement {
-    width: 300px;
-}
-
-.unit {
-}

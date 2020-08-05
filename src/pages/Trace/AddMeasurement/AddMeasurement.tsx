@@ -2,13 +2,15 @@ import React, { useEffect, useRef } from 'react';
 import { InstructionModal } from 'components/InstructionModal/InstructionModal';
 import './AddMeasurement.css';
 import { renderer } from 'canvas/Renderer';
+import { InputButton } from 'components/InputButton/InputButton';
+import { ActionButton } from 'components/ActionButton/ActionButton';
+import check from '../../../assets/defaultPhoto.jpg';
 
 interface AddMeasurementProps {
     setUploadedFileData: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileData }) => {
-    const instructModal: InstructModal = {text: ['Choose a path to measure.']};
     
     // Remove class that puts canvas in the background, remove picture,
     // and reinitialize event listeners.
@@ -20,6 +22,16 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
         setUploadedFileData("");
     }, [canvasContainerRef, setUploadedFileData]);
 
+    const handleSubmit = () => {
+        console.log('handleSubmit');
+    };
+
+    const instructModal: InstructModal = {text: ['Choose a path to measure.']};
+
+    const input = { id: 'measurement-input', type: 'text', className: ''};
+
+    const button: ActionButton = {label: '', action: handleSubmit};
+    
     return (
         <>
             <div className={'measurementInstructionsContainer'}>
@@ -30,15 +42,10 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
                     Measurement
                 </div>
                 <div>
-                    <div>
-                        input box
-                    </div>
-                    <div>
-                        in
-                    </div>
-                    <div>
-                        Button
-                    </div>
+                    <InputButton input={input}></InputButton>
+                    <ActionButton button={button}>
+                        <img className='submitButton' src={check} alt='submit'/>
+                    </ActionButton>
                 </div>
             </div>
         </>

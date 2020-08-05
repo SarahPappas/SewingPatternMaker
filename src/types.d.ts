@@ -16,7 +16,7 @@ type InstructModal = {
 type Input = {
     id: string;
     type: string;
-    accept: string;
+    accept?: string;
     className: string;
 }
 

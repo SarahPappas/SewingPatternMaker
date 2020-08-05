@@ -19,7 +19,7 @@ export const Input: React.FC<InputButtonProps> = ({ input, button }) => {
     }
 
     return (<>
-        <input id={input.id} type={input.type} accept={input.accept} onChange={input.onChange} multiple={false}/>
+        <input id={input.id} type={input.type} accept={input.accept} onChange={input.onChange} className={input.className} multiple={false}/>
         {optionalButton}        
     </>);
 };

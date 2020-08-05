@@ -3,9 +3,9 @@ import { InstructionModal } from 'components/InstructionModal/InstructionModal';
 import './AddMeasurement.css';
 import { renderer } from 'canvas/Renderer';
 import { Input } from 'components/Input/Input';
-import { ActionButton } from 'components/ActionButton/ActionButton';
-import check from '../../../assets/defaultPhoto.jpg';
+import checkIcon from '../../../assets/defaultPhoto.jpg';
 import { NavButton } from 'components/NavButton/NavButton';
+import { ActionButton } from 'components/ActionButton/ActionButton';
 
 interface AddMeasurementProps {
     setUploadedFileData: React.Dispatch<React.SetStateAction<string>>;
@@ -33,9 +33,10 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
 
     const instructModal: InstructModal = {text: ['Choose a path to measure.']};
 
-    const input = { id: 'measurement-input', type: 'text', className: '', onChange: handleChange};
+    const input: Input = { id: 'measurement-input', type: 'text', className: 'measurementInput', onChange: handleChange};
 
-    const button: NavButton = {label: '', to: ''};
+    const navButton: NavButton = {label: '', to: '/Trace/AddMeasurement'};
+    const actionButton: ActionButton = {label: '', action: handleSubmit};
     
     return (
         <>
@@ -43,14 +44,20 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
                 <InstructionModal instructModal={instructModal}></InstructionModal>
             </div>
             <div>
-                <div>
+                <div className={'measurement text'}>
                     Measurement
                 </div>
-                <div>
+                <div className='measurementInputContainer'>
                     <Input input={input}></Input>
-                    
-                    <NavButton button={button}>
-                        <img className='submitButton' src={check} alt='submit'/>
+
+                    <div className={'unit text'}>
+                        IN
+                    </div>
+
+                    <NavButton button={navButton}>
+                        <ActionButton button={actionButton}>
+                            <img className='submitButton' src={checkIcon} alt='submit'/>
+                        </ActionButton>
                     </NavButton>
                 </div>
             </div>

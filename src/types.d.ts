@@ -23,6 +23,7 @@ type Input = {
     type: string;
     accept?: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    className?: string;
 }
 
 /* CANVAS TYPES */

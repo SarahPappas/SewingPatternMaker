@@ -34,7 +34,7 @@ export class CurveFitter {
         
             for (let x = 0; x < numSamples; x++) {
                 const boundRelativeX = x / (numSamples - 1);
-                const controlPointX = boundingBox.minY + boundingBox.width * boundRelativeX;
+                const controlPointX = boundingBox.minX + boundingBox.width * boundRelativeX;
         
                 const curve = new Curve(startPoint, endPoint, new Point(controlPointX, controlPointY));
         

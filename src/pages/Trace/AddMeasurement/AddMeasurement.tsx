@@ -25,11 +25,14 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
     }, [canvasContainerRef, setUploadedFileData]);
 
     const handleSubmit = () => {
-        
         if (parseFloat(inputMeasurement).toString() !== inputMeasurement.trim()) {
-            console.log('please enter a number');
+            //todo: modal?
+            console.log('Please enter a decimal number');
+        //} else if (no path selected) {
+        //    console.log('Please select a path');
         } else {
             console.log(parseFloat(inputMeasurement));
+            // TODO: add measurement to document
         }
     };
 

@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import { InputButton } from 'components/InputButton/InputButton';
-import defaultPhoto from '../../assets/defaultPhoto.jpg';
+import defaultPhoto from '../../assets/upload-photo-icon.svg';
 import './UploadPhoto.css';
 import '../NavButton/NavButton.css';
 

@@ -25,7 +25,12 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
     }, [canvasContainerRef, setUploadedFileData]);
 
     const handleSubmit = () => {
-        console.log(inputMeasurement);
+        
+        if (parseFloat(inputMeasurement).toString() !== inputMeasurement.trim()) {
+            console.log('please enter a number');
+        } else {
+            console.log(parseFloat(inputMeasurement));
+        }
     };
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -38,9 +43,12 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
         id: 'measurement-input', 
         type: 'text', 
         className: 'measurementInput',
-        onChange: handleChange};
+        onChange: handleChange
+    };
 
+    //TODO: link navButton to final review/printing page
     const navButton: NavButton = {label: '', to: '/Trace/AddMeasurement'};
+    
     const actionButton: ActionButton = {label: '', action: handleSubmit};
     
     return (

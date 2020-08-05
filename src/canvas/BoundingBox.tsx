@@ -38,7 +38,7 @@ export class BoundingBox {
         points.forEach(point => {
             const x = point.getX();
             const y = point.getY();
-            if (x < this.minY) {
+            if (x < this.minX) {
                 this.minX = x;
             } else if (x > this.maxX) {
                 this.maxX = x;

@@ -135,7 +135,7 @@ class Renderer implements IRenderer {
 
     private _drawPatternPaths = (): void => {
         const context = this._context;
-        context.lineWidth = 3;
+        context.lineWidth = 5;
         context.lineJoin = 'round';
         context.lineCap = 'round';
         
@@ -144,7 +144,7 @@ class Renderer implements IRenderer {
             const path2D = path.getPath2D();
             let pathColor: string | undefined;
             if (path.isSelected()){
-                pathColor = '#FF0000';
+                pathColor = '#000000';
             } else if (path.isHighlighted()) {
                 pathColor = '#000000';
             } else {

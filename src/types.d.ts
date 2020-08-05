@@ -9,6 +9,11 @@ type ActionButton = {
     action: (...args: any[]) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
+type Button = {
+    label: string;
+    className: string;
+};
+
 type InstructModal = {
     text: string[];
 }
@@ -17,7 +22,7 @@ type Input = {
     id: string;
     type: string;
     accept?: string;
-    className: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 /* CANVAS TYPES */

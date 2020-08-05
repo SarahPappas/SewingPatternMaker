@@ -2,9 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import { InstructionModal } from 'components/InstructionModal/InstructionModal';
 import './AddMeasurement.css';
 import { renderer } from 'canvas/Renderer';
-import { InputButton } from 'components/InputButton/InputButton';
+import { Input } from 'components/Input/Input';
 import { ActionButton } from 'components/ActionButton/ActionButton';
 import check from '../../../assets/defaultPhoto.jpg';
+import { NavButton } from 'components/NavButton/NavButton';
 
 interface AddMeasurementProps {
     setUploadedFileData: React.Dispatch<React.SetStateAction<string>>;
@@ -26,11 +27,15 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
         console.log('handleSubmit');
     };
 
+    const handleChange = () => {
+        console.log('handle change');
+    };
+
     const instructModal: InstructModal = {text: ['Choose a path to measure.']};
 
-    const input = { id: 'measurement-input', type: 'text', className: ''};
+    const input = { id: 'measurement-input', type: 'text', className: '', onChange: handleChange};
 
-    const button: ActionButton = {label: '', action: handleSubmit};
+    const button: NavButton = {label: '', to: ''};
     
     return (
         <>
@@ -42,10 +47,11 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
                     Measurement
                 </div>
                 <div>
-                    <InputButton input={input}></InputButton>
-                    <ActionButton button={button}>
+                    <Input input={input}></Input>
+                    
+                    <NavButton button={button}>
                         <img className='submitButton' src={check} alt='submit'/>
-                    </ActionButton>
+                    </NavButton>
                 </div>
             </div>
         </>

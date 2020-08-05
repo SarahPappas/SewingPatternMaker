@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, ChangeEvent } from 'react';
 import { InstructionModal } from 'components/InstructionModal/InstructionModal';
 import './AddMeasurement.css';
 import { renderer } from 'canvas/Renderer';
@@ -12,6 +12,7 @@ interface AddMeasurementProps {
 }
 
 export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileData }) => {
+    const [inputMeasurement, setInputMeasurement] = React.useState<string>("");
     
     // Remove class that puts canvas in the background, remove picture,
     // and reinitialize event listeners.
@@ -24,16 +25,20 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
     }, [canvasContainerRef, setUploadedFileData]);
 
     const handleSubmit = () => {
-        console.log('handleSubmit');
+        console.log(inputMeasurement);
     };
 
-    const handleChange = () => {
-        console.log('handle change');
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setInputMeasurement(e.target.value);
     };
 
     const instructModal: InstructModal = {text: ['Choose a path to measure.']};
 
-    const input: Input = { id: 'measurement-input', type: 'text', className: 'measurementInput', onChange: handleChange};
+    const input: Input = { 
+        id: 'measurement-input', 
+        type: 'text', 
+        className: 'measurementInput',
+        onChange: handleChange};
 
     const navButton: NavButton = {label: '', to: '/Trace/AddMeasurement'};
     const actionButton: ActionButton = {label: '', action: handleSubmit};

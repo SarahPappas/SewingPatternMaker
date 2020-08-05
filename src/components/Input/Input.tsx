@@ -13,13 +13,23 @@ export const Input: React.FC<InputButtonProps> = ({ input, button }) => {
     if (button) {
         optionalButton = (
             <label htmlFor={input.id}> 
-                <Button label={button.label} className={button.className}></Button>
+                <Button 
+                    label={button.label} 
+                    className={button.className}>
+                </Button>
             </label>
         );
     }
 
     return (<>
-        <input id={input.id} type={input.type} accept={input.accept} onChange={input.onChange} className={input.className} multiple={false}/>
+        <input 
+            id={input.id} 
+            type={input.type} 
+            accept={input.accept} 
+            onChange={input.onChange} 
+            className={input.className} 
+            multiple={false}
+        />
         {optionalButton}        
     </>);
 };

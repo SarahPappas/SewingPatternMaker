@@ -22,7 +22,7 @@ type Input = {
     id: string;
     type: string;
     accept?: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange: ChangeEvent<HTMLInputElement>;
     className?: string;
 }
 

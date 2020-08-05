@@ -20,7 +20,7 @@ export class Point implements IPoint {
     }
 
     isWithinRadius = (o: Point, radius: number): boolean => {
-        return Math.pow((o.getX() - this._x), 2) + Math.pow((o.getY() - this._y), 2) < Math.pow(radius, 2);
+        return this.distanceSquared(o) < radius * radius;
     }
     
     distanceSquared = (point: Point): number => {

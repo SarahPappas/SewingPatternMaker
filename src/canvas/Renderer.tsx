@@ -1,5 +1,5 @@
 import { PatternPath } from './PatternPath';
-import { Document } from './Document';
+import { Document, golablDocument } from './Document';
 import { Point } from './Point';
 import { PatternPathColor } from './PatternPathColor';
 import { PatternPathType, ToolType } from './Enums';
@@ -24,7 +24,7 @@ class Renderer implements IRenderer {
         }
 
         this._context = contextOrNull;
-        this._document = new Document();
+        this._document = golablDocument;
         this._isTracing = false;
         this._currPath = null;
         this._pathType = PatternPathType.UNDEFINED;
@@ -81,6 +81,11 @@ class Renderer implements IRenderer {
             this._document.removePatternPath();
         }) as EventListener);
 
+        // Which direction should the event come from?
+        // this._canvas.addEventListener('checkIfDoneTracing', ((e: CustomEvent) => {
+        //     e.detail.isDoneTracing = true;
+        // }) as EventListener);
+
         return this._canvas;
     }
 
@@ -90,7 +95,8 @@ class Renderer implements IRenderer {
             this._currPath.snapEndpoints(this._document.getPatternPaths());
             if (this._toolType === ToolType.Freeline) {
                 this._currPath.fitCurve();
-            }  
+            }
+
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }
         this._resetTracing();

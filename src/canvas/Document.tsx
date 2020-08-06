@@ -66,3 +66,9 @@ export class Document implements IDocument {
 
     };
 }
+
+// Todo move into seperate App class with Render
+// pass in the document to the renderer
+const golablDocument = new Document();
+
+export { golablDocument };

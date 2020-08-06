@@ -35,6 +35,7 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
         <div className={'instructionsConatainer'}>
             {documentHasPath ? 
                 <><NavButton button={doneButton}/> 
+                    {/*TODO: Finish action button and stop navigation path is not enclosed. */}
                     {/* {<ActionButton></ActionButton>} */}
                 <NavButton button={doneButton}/></>
             : <></>}

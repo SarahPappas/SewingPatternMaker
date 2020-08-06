@@ -27,10 +27,10 @@ export class Document implements IDocument {
             throw new Error("Tried to remove path from document, but there are no paths to remove");
         }
         return Boolean(this._patternPaths.pop());
-    }
+    };
 
     arePatternPiecesEnclosed = (): boolean => {
-        let endpoints = new Array (this._patternPaths.length * 2);
+        const endpoints = new Array(this._patternPaths.length * 2);
 
         this._patternPaths.forEach(path => {
             const points = path.getPoints();
@@ -39,14 +39,17 @@ export class Document implements IDocument {
         });
 
         for(let i = 0; i < endpoints.length; i++) {
-            if (!endpoints[i]) {
+            const point = endpoints[i];
+            if (!point) {
                 continue;
             }
 
-            const point = endpoints[i];
             let foundMatch = false;
             for (let j = i + 1; j < endpoints.length && !foundMatch; j++) {
                 const o = endpoints[j];
+                if(!o) {
+                    continue;
+                }
 
                 if (point.equals(o)) {
                     foundMatch = true;
@@ -61,5 +64,5 @@ export class Document implements IDocument {
 
         return true;
 
-    }
+    };
 }

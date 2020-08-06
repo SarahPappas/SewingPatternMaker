@@ -20,6 +20,10 @@ export class Curve {
         return resultingPoints;
     };
 
+    getLength = (): number => {
+        return -1;
+    }
+
     private computePoint = (t: number): Point => {
         const startToControlX = this.lerp(this.start.getX(), this.control.getX(), t);
         const startToControlY = this.lerp(this.start.getY(), this.control.getY(), t);

@@ -26,9 +26,10 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
 
     const handleSubmit = () => {
         if (parseFloat(inputMeasurement).toString() !== inputMeasurement.trim()) {
-            //todo: modal?
+            // TODO: pop an error modal to the user
             console.log('Please enter a decimal number');
         //} else if (no path selected) {
+        //    // TODO: pop an error modal to the user
         //    console.log('Please select a path');
         } else {
             console.log(parseFloat(inputMeasurement));
@@ -49,7 +50,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
         onChange: handleChange
     };
 
-    //TODO: link navButton to final review/printing page
+    // TODO: link navButton to final review/printing page
     const navButton: NavButton = {label: '', to: '/Trace/AddMeasurement'};
     
     const actionButton: ActionButton = {label: '', action: handleSubmit};

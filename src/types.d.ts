@@ -1,5 +1,3 @@
-import { ModalType } from "canvas/Enums";
-
 /* COMPONENT TYPES */
 type NavButton = {
     label: string;

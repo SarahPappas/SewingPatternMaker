@@ -81,11 +81,6 @@ class Renderer implements IRenderer {
             this._document.removePatternPath();
         }) as EventListener);
 
-        // Which direction should the event come from?
-        // this._canvas.addEventListener('checkIfDoneTracing', ((e: CustomEvent) => {
-        //     e.detail.isDoneTracing = true;
-        // }) as EventListener);
-
         return this._canvas;
     }
 

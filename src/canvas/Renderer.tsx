@@ -85,7 +85,6 @@ class Renderer implements IRenderer {
     }
 
     measurementInit = (): HTMLCanvasElement => {
-        this._tick();
         const patternPaths = this._document.getPatternPaths();
         let highlightedPath: PatternPath | null = null;
         let selectedPath: PatternPath | null = null;

@@ -28,4 +28,38 @@ export class Document implements IDocument {
         }
         return Boolean(this._patternPaths.pop());
     }
+
+    arePatternPiecesEnclosed = (): boolean => {
+        let endpoints = new Array (this._patternPaths.length * 2);
+
+        this._patternPaths.forEach(path => {
+            const points = path.getPoints();
+            endpoints.push(points[0]);
+            endpoints.push(points[points.length - 1]);
+        });
+
+        for(let i = 0; i < endpoints.length; i++) {
+            if (!endpoints[i]) {
+                continue;
+            }
+
+            const point = endpoints[i];
+            let foundMatch = false;
+            for (let j = i + 1; j < endpoints.length && !foundMatch; j++) {
+                const o = endpoints[j];
+
+                if (point.equals(o)) {
+                    foundMatch = true;
+                    endpoints[j] = null;
+                }
+            }
+
+            if (!foundMatch) {
+                return false;
+            }
+        }
+
+        return true;
+
+    }
 }

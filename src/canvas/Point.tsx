@@ -19,6 +19,10 @@ export class Point implements IPoint {
         return this._x === o.getX() && this._y === o.getY();
     }
 
+    isWithinRadius = (o: Point, radius: number): boolean => {
+        return this.distanceSquared(o) < radius * radius;
+    }
+    
     distanceSquared = (point: Point): number => {
         const dx = this._x - point.getX();
         const dy = this._y - point.getY();

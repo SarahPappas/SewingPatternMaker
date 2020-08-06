@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import { Input } from 'components/Input/Input';
-import defaultPhoto from '../../assets/defaultPhoto.jpg';
+import defaultPhoto from '../../assets/upload-photo-icon.svg';
 import './UploadPhoto.css';
 
 interface UploadPhotoProps {

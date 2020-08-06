@@ -3,7 +3,7 @@ import { InstructionModal } from 'components/InstructionModal/InstructionModal';
 import './AddMeasurement.css';
 import { renderer } from 'canvas/Renderer';
 import { Input } from 'components/Input/Input';
-import checkIcon from '../../../assets/defaultPhoto.jpg';
+import checkIcon from '../../../assets/check-icon.svg';
 import { NavButton } from 'components/NavButton/NavButton';
 import { ActionButton } from 'components/ActionButton/ActionButton';
 

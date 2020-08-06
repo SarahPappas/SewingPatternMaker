@@ -4,6 +4,7 @@ import { Modal as InstructionModal } from 'components/Modal/Modal';
 import { PathTypeButtonGrid } from 'components/PathTypeButtonGrid/PathTypeButtonGrid';
 import './Instructions.css';
 import { PatternPathType, ModalType } from 'canvas/Enums';
+import { globalDocument } from '../../../canvas/Document';
 
 interface InstructionsProps {
     curPathType: PatternPathType;
@@ -14,6 +15,7 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     const doneButton: NavButton = {label: 'DONE', to: '/AddMeasurement' };
     const addPathButton: NavButton = {label:'', to: 'AddPath'};
     const instruction: Modal = {text: ['Choose seam, fold, or edge to add to your pattern'], type: ModalType.Instruction};
+    const documentHasPath = globalDocument.isEmpty();
 
     const canvasRef = useRef(document.getElementsByClassName('canvasContainer')[0]);
     useEffect(() => {
@@ -23,14 +25,13 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
 
         // Reset the path type.
         setPathType(PatternPathType.UNDEFINED);
+
     }, [canvasRef, curPathType, setPathType]);
     
     return (<>
         <div className={'backgroundGrey'}></div>
         <div className={'instructionsConatainer'}>
-            {/* TODO: Do not show the done button the first time we show instructions
-                and check the path is enclosed */}
-            <NavButton button={doneButton}/> 
+            {documentHasPath ? <NavButton button={doneButton}/> : <div></div>}
             <InstructionModal modal={instruction}/>
         </div>
         <div className='arrowFlexGrid'>

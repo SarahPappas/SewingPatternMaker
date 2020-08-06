@@ -5,6 +5,7 @@ import { PathTypeButtonGrid } from 'components/PathTypeButtonGrid/PathTypeButton
 import './Instructions.css';
 import { PatternPathType, ModalType } from 'canvas/Enums';
 import { globalDocument } from '../../../canvas/Document';
+import { ActionButton } from 'components/ActionButton/ActionButton';
 
 interface InstructionsProps {
     curPathType: PatternPathType;
@@ -16,6 +17,7 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     const addPathButton: NavButton = {label:'', to: 'AddPath'};
     const instruction: Modal = {text: ['Choose seam, fold, or edge to add to your pattern'], type: ModalType.Instruction};
     const documentHasPath = globalDocument.isEmpty();
+
 
     const canvasRef = useRef(document.getElementsByClassName('canvasContainer')[0]);
     useEffect(() => {
@@ -31,7 +33,11 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     return (<>
         <div className={'backgroundGrey'}></div>
         <div className={'instructionsConatainer'}>
-            {documentHasPath ? <NavButton button={doneButton}/> : <div></div>}
+            {documentHasPath ? 
+                <><NavButton button={doneButton}/> 
+                    {/* {<ActionButton></ActionButton>} */}
+                <NavButton button={doneButton}/></>
+            : <></>}
             <InstructionModal modal={instruction}/>
         </div>
         <div className='arrowFlexGrid'>

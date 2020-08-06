@@ -7,7 +7,8 @@ interface ModalProps {
 }
 
 export const Modal: React.FC<ModalProps> = ({ modal }) => {
-    let itemClassName: string , modalClassName: string;
+    let itemClassName = ""; 
+    let modalClassName = "";
     switch(modal.type) {
         case ModalType.Instruction:
             itemClassName = 'instructionItem';

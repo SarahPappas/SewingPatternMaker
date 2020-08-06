@@ -114,6 +114,10 @@ class Renderer implements IRenderer {
 
         return this._canvas;
     }
+    
+    getDocument = (): Document => {
+        return this._document;
+    }
 
     private _endTracing = (position: Point): void => {
         if (this._currPath) {
@@ -143,9 +147,7 @@ class Renderer implements IRenderer {
         paths.forEach(path => {
             const path2D = path.getPath2D();
             let pathColor: string | undefined;
-            if (path.isSelected()){
-                pathColor = '#000000';
-            } else if (path.isHighlighted()) {
+            if (path.isSelected() || path.isHighlighted()){
                 pathColor = '#000000';
             } else {
                 pathColor = PatternPathColor.get(path.getType());
@@ -185,8 +187,10 @@ class Renderer implements IRenderer {
     // private _update = (): void => {
     //     console.log("update");
     // }
+
 }
 
 const renderer = new Renderer();
+const pathDocument = renderer.getDocument();
 
-export { renderer };
+export { renderer, pathDocument };

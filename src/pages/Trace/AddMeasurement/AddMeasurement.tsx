@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, ChangeEvent } from 'react';
-import { InstructionModal } from 'components/InstructionModal/InstructionModal';
 import './AddMeasurement.css';
-import { renderer } from 'canvas/Renderer';
-import { Input } from 'components/Input/Input';
 import checkIcon from '../../../assets/check-icon.svg';
+import { renderer, pathDocument } from 'canvas/Renderer';
+import { InstructionModal } from 'components/InstructionModal/InstructionModal';
+import { Input } from 'components/Input/Input';
 import { NavButton } from 'components/NavButton/NavButton';
 import { ActionButton } from 'components/ActionButton/ActionButton';
 
@@ -28,20 +28,22 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
         if (parseFloat(inputMeasurement).toString() !== inputMeasurement.trim()) {
             // TODO: pop an error modal to the user
             console.log('Please enter a decimal number');
-        //} else if (no path selected) {
-        //    // TODO: pop an error modal to the user
-        //    console.log('Please select a path');
         } else {
-            console.log(parseFloat(inputMeasurement));
-            // TODO: add measurement to document
+            const wasPathSelected = pathDocument.getPatternPaths().some(path => path.isSelected());
+            if (!wasPathSelected) {
+                // TODO: pop an error modal to the user
+                console.log('Please select a path');
+            } else {
+                pathDocument.setSizeRatio(parseFloat(inputMeasurement));
+            }
         }
     };
+
+    const instructModal: InstructModal = {text: ['Choose a path to measure.']};
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setInputMeasurement(e.target.value);
     };
-
-    const instructModal: InstructModal = {text: ['Choose a path to measure.']};
 
     const input: Input = { 
         id: 'measurement-input', 
@@ -50,7 +52,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
         onChange: handleChange
     };
 
-    // TODO: link navButton to final review/printing page
+    // TODO: link this navButton to final review/printing page
     const navButton: NavButton = {label: '', to: '/Trace/AddMeasurement'};
     
     const actionButton: ActionButton = {label: '', action: handleSubmit};

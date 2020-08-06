@@ -148,30 +148,6 @@ export class PatternPath implements IPatternPath {
         }
     }
 
-    /* 
-    * The algorithm for starting and ending the line is not quite right. The first segment of the path will be 
-    * a straight line because a bezier curve with a control point equal to one of is extremities points will 
-    * just be a line. Additionally, The line will not end on the exact last point. Instead, it will end on the 
-    * middle of the last two points. We decided this is okay for now, but may need to be updated in the future.
-    */
-    private _updatePath2DWithQuadraticCurve = (): void => {
-        const currPoint = this._points[this._points.length - 1];
-        const prevPoint = this._points[this._lastIndexAddedToPath2D];
-
-        const midPoint = prevPoint.computeMiddlePoint(currPoint);
-        this._path2D.quadraticCurveTo(prevPoint.getX(), prevPoint.getY(), midPoint.getX(), midPoint.getY());
-    }
-
-    private _updatePath2DStraightLine = (): void => {
-        const firstPoint = this._points[0];
-        const lastPoint = this._points[this._points.length -1];
-        
-        this._path2D = new Path2D();
-        this._isPath2DValid = true;
-        this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
-        this._path2D.lineTo(lastPoint.getX(), lastPoint.getY());
-    }
-
     public select = (): void => {
         this._isSelected = true;
     }
@@ -194,5 +170,34 @@ export class PatternPath implements IPatternPath {
 
     public isHighlighted = (): boolean => {
         return this._isHighlighted;
+    }
+
+    public getLengthInPixels = (): number => {
+        // TODO: implement this method for lines, bezier curves and arcs
+        return 1;
+    }
+
+    /* 
+    * The algorithm for starting and ending the line is not quite right. The first segment of the path will be 
+    * a straight line because a bezier curve with a control point equal to one of is extremities points will 
+    * just be a line. Additionally, The line will not end on the exact last point. Instead, it will end on the 
+    * middle of the last two points. We decided this is okay for now, but may need to be updated in the future.
+    */
+    private _updatePath2DWithQuadraticCurve = (): void => {
+        const currPoint = this._points[this._points.length - 1];
+        const prevPoint = this._points[this._lastIndexAddedToPath2D];
+
+        const midPoint = prevPoint.computeMiddlePoint(currPoint);
+        this._path2D.quadraticCurveTo(prevPoint.getX(), prevPoint.getY(), midPoint.getX(), midPoint.getY());
+    }
+
+    private _updatePath2DStraightLine = (): void => {
+        const firstPoint = this._points[0];
+        const lastPoint = this._points[this._points.length -1];
+        
+        this._path2D = new Path2D();
+        this._isPath2DValid = true;
+        this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
+        this._path2D.lineTo(lastPoint.getX(), lastPoint.getY());
     }
 }

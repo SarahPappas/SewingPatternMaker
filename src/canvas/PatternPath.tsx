@@ -173,8 +173,13 @@ export class PatternPath implements IPatternPath {
     }
 
     public getLengthInPixels = (): number => {
-        // TODO: implement this method for lines, bezier curves and arcs
-        return 1;
+        switch(this._toolType) {
+            case ToolType.StraightLine:
+                return Math.sqrt(this._points[0].distanceSquared(this._points[this._points.length - 1]));
+            case ToolType.Freeline:
+                // TODO: implement this methodbezier curves and arcs    
+                return -1;
+        }
     }
 
     /* 

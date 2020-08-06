@@ -21,7 +21,6 @@ export const Review: React.FC = () => {
     // Add event listener to remove the most recently added path.
     const removePath = new Event('removePath', {});
     const handleRemovePath = () => {
-        console.log("button handle remove path");
         canvasRef.current?.dispatchEvent(removePath);
     };
     const deleteButotonAction: ActionButton = {label: '', action: handleRemovePath};

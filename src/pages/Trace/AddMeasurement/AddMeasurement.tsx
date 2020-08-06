@@ -34,6 +34,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
                 // TODO: pop an error modal to the user
                 console.log('Please select a path');
             } else {
+                console.log('ok');
                 pathDocument.setSizeRatio(parseFloat(inputMeasurement));
             }
         }

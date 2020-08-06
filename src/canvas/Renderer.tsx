@@ -95,6 +95,7 @@ class Renderer implements IRenderer {
                     selectedPath?.deselect();
                     selectedPath = patternPaths[i];
                     selectedPath.select();
+                    break;
                 }
             }
         };

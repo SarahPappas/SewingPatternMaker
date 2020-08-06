@@ -1,5 +1,5 @@
 import { PatternPath } from './PatternPath';
-import { Document, golablDocument } from './Document';
+import { Document, globalDocument } from './Document';
 import { Point } from './Point';
 import { PatternPathColor } from './PatternPathColor';
 import { PatternPathType, ToolType } from './Enums';
@@ -24,7 +24,7 @@ class Renderer implements IRenderer {
         }
 
         this._context = contextOrNull;
-        this._document = golablDocument;
+        this._document = globalDocument;
         this._isTracing = false;
         this._currPath = null;
         this._pathType = PatternPathType.UNDEFINED;

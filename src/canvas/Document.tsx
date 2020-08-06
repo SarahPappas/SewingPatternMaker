@@ -65,10 +65,14 @@ export class Document implements IDocument {
         return true;
 
     };
+
+    isEmpty = (): boolean => {
+        return Boolean(this._patternPaths.length);
+    };
 }
 
 // Todo move into seperate App class with Render
 // pass in the document to the renderer
-const golablDocument = new Document();
+const globalDocument = new Document();
 
-export { golablDocument };
+export { globalDocument };

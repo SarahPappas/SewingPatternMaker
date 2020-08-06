@@ -1,3 +1,5 @@
+import { ModalType } from "canvas/Enums";
+
 /* COMPONENT TYPES */
 type NavButton = {
     label: string;
@@ -9,23 +11,24 @@ type ActionButton = {
     action: (...args: any[]) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
-type InstructModal = {
+type Modal = {
     text: string[];
-}
+    type: ModalType;
+};
 
 type Input = {
     id: string;
     type: string;
     accept: string;
     className: string;
-}
+};
 
 /* CANVAS TYPES */
 type IDocument = {
     getPatternPaths: () => PatternPath[];
     addPatternPath: (patternPath: PatternPath) => boolean;
     removePatternPath: () => boolean;
-}
+};
 
 type IPatternPath = {
     getPoints: () => Point[];
@@ -33,12 +36,12 @@ type IPatternPath = {
     getPath2D: () => Path2D;
     addPoint: (point: Point) => boolean;
     fitCurve: () => void;
-}
+};
 
 type IPatternPathType = {
     getColor: () => PatternPathColor;
     getName: () => PatternPathName;
-}
+};
 
 type IPoint = {
     getX: () => number;
@@ -48,4 +51,4 @@ type IPoint = {
 
 type IRenderer = {
     init: () => HTMLCanvasElement;
-}
+};

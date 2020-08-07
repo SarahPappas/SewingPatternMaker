@@ -29,14 +29,10 @@ export class Point implements IPoint {
         return dx * dx + dy * dy;
     }
 
-    middlePoint = (other: Point): Point => {
-        return new Point((this._x + other._x)/2, (this._y + other._y)/2);
-    }
-
     // generates points that equidistant from this point and the other point.
     // at t=0, is returns the middle point.
     getPointOnMidline = (other: Point, t: number): Point => {
-        const middle = this.middlePoint(other);
+        const middle = this.computeMiddlePoint(other);
         const normalVector = [this._y - other._y, other._x - this._x];
         const norm = Math.sqrt(this.distanceSquared(other));
         const normalUnitVector = normalVector.map((value) => (value/norm));
@@ -45,7 +41,7 @@ export class Point implements IPoint {
 
     getCenter = (other: Point, control: Point): Point => {
         const normalVector = [this._y - other._y, other._x - this._x];
-        const middle = this.middlePoint(other);
+        const middle = this.computeMiddlePoint(other);
         const x = (this._x * (control._x - this._x) + (middle._x * normalVector[1] / normalVector[0] - middle._y + this._y) * (control._y - this._y)) / (normalVector[1] * (control._y - this._y) / normalVector[0] + (control._x - this._x));
         const y = (x - middle._x) * normalVector[1] / normalVector[0] + middle._y;
         return new Point(x, y);

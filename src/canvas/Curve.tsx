@@ -13,7 +13,7 @@ export class Curve {
 
     computePointsOnCurve = (numPoints: number): Point[] => {
         const resultingPoints = new Array<Point>();
-        for (let i = 0;i < numPoints;i++) {
+        for (let i = 0; i < numPoints; i++) {
             const t = i / (numPoints - 1);
             resultingPoints[i] = this.computePoint(t);
         }

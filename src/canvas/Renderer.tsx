@@ -84,7 +84,7 @@ class Renderer implements IRenderer {
         return this._canvas;
     }
 
-    measurementInit = (): HTMLCanvasElement => {
+    measurementInit = (): void  => {
         const patternPaths = this._document.getPatternPaths();
         let highlightedPath: PatternPath | null = null;
         let selectedPath: PatternPath | null = null;
@@ -112,8 +112,6 @@ class Renderer implements IRenderer {
 
         this._canvas.onmouseup = null;
         this._canvas.onmouseout = null;
-
-        return this._canvas;
     }
     
     getDocument = (): Document => {

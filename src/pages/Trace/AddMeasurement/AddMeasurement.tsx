@@ -20,7 +20,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
     useEffect(() => {
         canvasContainerRef.current = document.getElementsByClassName('canvasContainer')[0];
         canvasContainerRef.current.classList.remove('canvasContainerBackground');
-        canvasContainerRef.current.appendChild(renderer.measurementInit());
+        renderer.measurementInit();
         setUploadedFileData("");
     }, [canvasContainerRef, setUploadedFileData]);
 

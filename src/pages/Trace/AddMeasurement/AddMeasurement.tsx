@@ -42,7 +42,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
 
     const instructModal: InstructModal = {text: ['Choose a line to measure.']};
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         setInputMeasurement(e.target.value);
     };
 
@@ -50,7 +50,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
         id: 'measurement-input', 
         type: 'text', 
         className: 'measurementInput',
-        onChange: handleChange
+        onChange: handleInputChange
     };
 
     // TODO: link this navButton to final review/printing page

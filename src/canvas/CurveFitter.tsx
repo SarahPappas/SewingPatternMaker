@@ -57,13 +57,10 @@ export class CurveFitter {
             }
         }
 
-        console.log('start: ' + startPoint.getX() + ', ' + startPoint.getY());
-        console.log('end: ' + endPoint.getX() + ', ' + endPoint.getY());
         //also test arc curves
         for (let i = -500; i <= 500; i += 20) {
             const controlPoint = startPoint.getPointOnMidline(endPoint, i);
             const curve = new Curve(startPoint, endPoint, controlPoint, CurveType.Arc);
-            //console.log('control: ' + controlPoint.getX() + ', ' + controlPoint.getY());
             const potentialCurvePoints = curve.computePointsOnCurve(numPointsOnPotentialcurve);
 
             let curveDelta = 0;

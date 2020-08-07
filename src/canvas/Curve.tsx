@@ -22,15 +22,13 @@ export class Curve {
 
     getLength = (): number => {
         let length = 0;
-        // intuitively determined method to decide the number of segments to
-        // take on the curve
-        const NUMPOINTS = Math.ceil((Math.sqrt(this.start.distanceSquared(this.control)) + Math.sqrt(this.control.distanceSquared(this.end))) / 10);
-        //console.log('numpoints: ' + NUMPOINTS);
+        // compute the total distance from start to control + from control to end in order to compute an 
+        // appropriate number of points on the curve.
+        const NUMPOINTS = Math.ceil((Math.sqrt(this.start.distanceSquared(this.control)) + Math.sqrt(this.control.distanceSquared(this.end))) / 5);
         const pointsOnCurve = this.computePointsOnCurve(NUMPOINTS);
         for (let i = 0; i < NUMPOINTS - 1; i++) {
             length += Math.sqrt(pointsOnCurve[i+1].distanceSquared(pointsOnCurve[i]));
         }
-        //console.log('length: ' + length);
         return length;
     }
 

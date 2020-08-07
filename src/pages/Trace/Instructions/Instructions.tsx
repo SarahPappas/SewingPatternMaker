@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { NavButton } from 'components/NavButton/NavButton';
-import { Modal as InstructionModal } from 'components/Modal/Modal';
+import { Modal } from 'components/Modal/Modal';
 import { PathTypeButtonGrid } from 'components/PathTypeButtonGrid/PathTypeButtonGrid';
 import './Instructions.css';
 import { PatternPathType, ModalType } from 'canvas/Enums';
@@ -12,11 +12,38 @@ interface InstructionsProps {
     setPathType: React.Dispatch<React.SetStateAction<PatternPathType>>;
 }
 
-export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathType}) => {
-    const doneButton: NavButton = {label: 'DONE', to: '/AddMeasurement' };
+export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathType, ...props}) => {
+    const showNavButton: NavButton = {label: 'DONE', to: '/AddMeasurement' };
     const addPathButton: NavButton = {label:'', to: 'AddPath'};
+    const warning: Modal = {text: ['Your pattern is incomplete.', 'Please add another line.'], type: ModalType.Warning};
     const instruction: Modal = {text: ['Choose seam, fold, or edge to add to your pattern'], type: ModalType.Instruction};
-    const documentHasPath = globalDocument.isEmpty();
+    
+    const [showWarning, setShowWarning] = React.useState<boolean>(false);
+    let doneContainer = <></>;
+    let showDoneButton = globalDocument.isEmpty();
+    let arePatternsEnclosed = globalDocument.arePatternPiecesEnclosed();
+
+    useEffect(() => {
+        showDoneButton = globalDocument.isEmpty();
+        arePatternsEnclosed = globalDocument.arePatternPiecesEnclosed();
+    }, [arePatternsEnclosed, showDoneButton]);
+
+    const handleClickDone = (): void => {
+        console.log("click");
+        setShowWarning(!globalDocument.arePatternPiecesEnclosed());
+    };
+    const showWarningButton: ActionButton = {label: 'DONE', action: handleClickDone};
+    if (showDoneButton && !showWarning) {
+        doneContainer = <ActionButton button={showWarningButton}></ActionButton>;
+    }
+
+    if (showDoneButton && arePatternsEnclosed) {
+        doneContainer = <NavButton button={showNavButton}/>;
+    }
+
+    if (showWarning) {
+        doneContainer =  <Modal modal={warning}/>;
+    }
 
 
     const canvasRef = useRef(document.getElementsByClassName('canvasContainer')[0]);
@@ -33,13 +60,8 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     return (<>
         <div className={'backgroundGrey'}></div>
         <div className={'instructionsConatainer'}>
-            {documentHasPath ? 
-                <><NavButton button={doneButton}/> 
-                    {/*TODO: Finish action button and stop navigation path is not enclosed. */}
-                    {/* {<ActionButton></ActionButton>} */}
-                <NavButton button={doneButton}/></>
-            : <></>}
-            <InstructionModal modal={instruction}/>
+            {doneContainer }
+            <Modal modal={instruction}/>
         </div>
         <div className='arrowFlexGrid'>
             <div className='arrowCol'>

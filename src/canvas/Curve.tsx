@@ -46,7 +46,7 @@ export class Curve {
         let startAngle = Math.acos((this.start.getX() - center.getX()) / radius);
         let endAngle = Math.acos((this.start.getX() - center.getX()) / radius);
 
-        // TODO: make sure we go in the right direction on the circle
+        //make sure we go in the right direction on the circle
         if (Math.abs(endAngle - startAngle) > Math.PI) {
             if (startAngle < endAngle) {
                 startAngle += 2 * Math.PI;

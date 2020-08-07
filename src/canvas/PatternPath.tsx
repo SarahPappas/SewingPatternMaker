@@ -153,7 +153,7 @@ export class PatternPath implements IPatternPath {
                 return Math.sqrt(this._points[0].distanceSquared(this._points[this._points.length - 1]));
             case ToolType.Freeline:
                 // TODO: implement this method for arcs    
-                if (this._fittedCurve === null) {
+                if (!this._fittedCurve) {
                     throw new Error();
                 }
                 return this._fittedCurve.getLength();

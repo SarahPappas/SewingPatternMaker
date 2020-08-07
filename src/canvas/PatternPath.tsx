@@ -1,6 +1,7 @@
 import { Point } from './Point';
 import { PatternPathType, ToolType, CurveType } from './Enums';
 import { CurveFitter } from './CurveFitter';
+import { Curve } from './Curve';
 
 export class PatternPath implements IPatternPath {
     private _points: Point[];
@@ -9,6 +10,7 @@ export class PatternPath implements IPatternPath {
     private _path2D: Path2D;
     private _isPath2DValid: boolean;
     private _lastIndexAddedToPath2D: number;
+    private _fittedCurve: Curve | null;
 
     constructor (pathType: PatternPathType, toolType: ToolType) {
         this._type = pathType;
@@ -17,6 +19,7 @@ export class PatternPath implements IPatternPath {
         this._path2D = new Path2D();
         this._isPath2DValid = false;
         this._lastIndexAddedToPath2D = -1;
+        this._fittedCurve = null;
     }
 
     getPoints = (): Point[] => {
@@ -90,15 +93,14 @@ export class PatternPath implements IPatternPath {
         this._isPath2DValid = true;
         this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
 
-        const fittedCurve = CurveFitter.Fit(this._points);
-        if (fittedCurve.type === CurveType.Bezier) {
-            this._path2D.quadraticCurveTo(fittedCurve.control.getX(), fittedCurve.control.getY(), fittedCurve.end.getX(), fittedCurve.end.getY());   
-        } else if (fittedCurve.type === CurveType.Arc) {
-            this._path2D.arcTo(fittedCurve.control.getX(), fittedCurve.control.getY(), fittedCurve.end.getX(), fittedCurve.end.getY(), fittedCurve.start.getRadius(fittedCurve.end, fittedCurve.control));
+        this._fittedCurve = CurveFitter.Fit(this._points);
+        if (this._fittedCurve.type === CurveType.Bezier) {
+            this._path2D.quadraticCurveTo(this._fittedCurve.control.getX(), this._fittedCurve.control.getY(), this._fittedCurve.end.getX(), this._fittedCurve.end.getY());   
+        } else if (this._fittedCurve.type === CurveType.Arc) {
+            this._path2D.arcTo(this._fittedCurve.control.getX(), this._fittedCurve.control.getY(), this._fittedCurve.end.getX(), this._fittedCurve.end.getY(), this._fittedCurve.start.getRadius(this._fittedCurve.end, this._fittedCurve.control));
         } else {
             throw new Error();
-        }
-             
+        }      
     }
 
     snapEndpoints = (paths: PatternPath[]): void => {
@@ -148,6 +150,18 @@ export class PatternPath implements IPatternPath {
             if (this._toolType === ToolType.Freeline) {
                 this._updatePath2DWithQuadraticCurve();
             }
+        }
+    }
+
+    public getLengthInPixels = (): number => {
+        switch(this._toolType) {
+            case ToolType.StraightLine:
+                return Math.sqrt(this._points[0].distanceSquared(this._points[this._points.length - 1]));
+            case ToolType.Freeline: 
+                if (!this._fittedCurve) {
+                    throw new Error();
+                }
+                return this._fittedCurve.getLength();
         }
     }
 

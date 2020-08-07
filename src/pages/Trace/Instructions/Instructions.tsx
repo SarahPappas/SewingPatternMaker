@@ -11,7 +11,7 @@ interface InstructionsProps {
 }
 
 export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathType}) => {
-    const doneButton: NavButton = {label: 'DONE', to: '/AddMeasurement' };
+    const doneButton: NavButton = {label: 'DONE', to: 'AddMeasurement' };
     const addPathButton: NavButton = {label:'', to: 'AddPath'};
     const instruction: InstructModal = {text: ['Choose seam, fold, or edge to add to your pattern']};
 
@@ -27,7 +27,7 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     
     return (<>
         <div className={'backgroundGrey'}></div>
-        <div className={'instructionsConatainer'}>
+        <div className={'instructionsContainer'}>
             {/* TODO: Do not show the done button the first time we show instructions
                 and check the path is enclosed */}
             <NavButton button={doneButton}/> 

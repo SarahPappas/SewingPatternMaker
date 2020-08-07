@@ -8,6 +8,7 @@ import { CanvasContainer } from '../../components/CanvasContainer/CanvasContaine
 import { AddPath } from 'pages/Trace/AddPath/AddPath';
 import { PatternPathType } from 'canvas/Enums';
 import { Review } from 'pages/Trace/Review/Review';
+import { AddMeasurement } from 'pages/Trace/AddMeasurement/AddMeasurement';
 
 export const Main: React.FC = () => {
     const [uploadedFileData, setUploadedFileData] = React.useState<string>("");
@@ -41,5 +42,11 @@ export const Main: React.FC = () => {
             }}
         />
         <Route exact path="/Trace/Review" component={Review} />
+        <Route 
+            exact path="/Trace/AddMeasurement" 
+            render= {() => {
+                return <AddMeasurement setUploadedFileData={setUploadedFileData}/>;
+            }}
+        />
     </div></div>;
 };

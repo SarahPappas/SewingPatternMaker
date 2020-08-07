@@ -1,0 +1,31 @@
+.measurementInstructionsContainer {
+    position: absolute;
+    top: 5%;
+}
+
+.measurementBottomContainer {
+    width: 300px;
+    position: absolute;
+    bottom: 5%;
+}
+
+.text {
+    background-color: white;
+    color: #707070;
+    font-size: 1.5em;
+    line-height: 200%;
+    text-align: left;
+}
+
+.measurementInputContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.submitIcon {
+    width: 50px;
+    height: 50px;
+}
+

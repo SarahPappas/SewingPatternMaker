@@ -1,6 +1,7 @@
 import { Point } from './Point';
 import { Curve } from './Curve';
 import { BoundingBox } from './BoundingBox';
+import { CurveType } from './Enums';
 
 export class CurveFitter {
 
@@ -26,7 +27,7 @@ export class CurveFitter {
         const endPoint = points[points.length -1];
 
         let bestCurveDelta = Number.MAX_VALUE;
-        let bestCurve = new Curve(startPoint, endPoint, endPoint); 
+        let bestCurve = new Curve(startPoint, endPoint, endPoint, CurveType.Bezier); 
 
         for (let y = 0; y < numSamples; y++) {
             const boundRelativeY = y / (numSamples - 1);
@@ -36,7 +37,7 @@ export class CurveFitter {
                 const boundRelativeX = x / (numSamples - 1);
                 const controlPointX = boundingBox.minX + boundingBox.width * boundRelativeX;
         
-                const curve = new Curve(startPoint, endPoint, new Point(controlPointX, controlPointY));
+                const curve = new Curve(startPoint, endPoint, new Point(controlPointX, controlPointY), CurveType.Bezier);
         
                 // The number of points on the potential curve that will be used to test the curve's fit.
                 const numPointsOnPotentialcurve = 51;

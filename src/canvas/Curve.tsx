@@ -1,26 +1,35 @@
 import { Point } from './Point';
+import { CurveType } from './Enums';
 
 export class Curve {
     start: Point;
     end: Point;
     control: Point;
+    type: CurveType;
 
-    constructor (start: Point, end: Point, control: Point) {
+    constructor (start: Point, end: Point, control: Point, type: CurveType) {
         this.start = start;
         this.end = end;
         this.control = control;
+        this.type = type;
     }
 
     computePointsOnCurve = (numPoints: number): Point[] => {
         const resultingPoints = new Array<Point>();
         for (let i = 0; i < numPoints; i++) {
             const t = i / (numPoints - 1);
-            resultingPoints[i] = this.computePoint(t);
+            if (this.type === CurveType.Bezier) {
+                resultingPoints[i] = this.computePointOnBezier(t);
+            } else if (this.type === CurveType.Arc) {
+                resultingPoints[i] = this.computePointOnArc(t);
+            } else {
+                throw new Error();
+            }
         }
         return resultingPoints;
     };
 
-    private computePoint = (t: number): Point => {
+    private computePointOnBezier = (t: number): Point => {
         const startToControlX = this.lerp(this.start.getX(), this.control.getX(), t);
         const startToControlY = this.lerp(this.start.getY(), this.control.getY(), t);
 
@@ -29,6 +38,11 @@ export class Curve {
 
         return new Point(this.lerp(startToControlX, controlToEndX, t),
                     this.lerp(startToControlY, controlToEndY, t));
+    };
+
+    private computePointOnArc = (t: number): Point => {
+        // TODO: implement this
+        return new Point(0,0);
     };
 
     private lerp = (start: number, end: number, t: number): number => {

@@ -9,3 +9,8 @@ export enum ToolType {
     StraightLine,
     Freeline
 }
+
+export enum CurveType {
+    Bezier,
+    Arc
+}

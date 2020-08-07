@@ -3,6 +3,7 @@ import { Document } from './Document';
 import { Point } from './Point';
 import { PatternPathColor } from './PatternPathColor';
 import { PatternPathType, ToolType } from './Enums';
+import { PathSelection } from './PathSelection';
 
 class Renderer implements IRenderer {
     private _canvas: HTMLCanvasElement;
@@ -12,6 +13,7 @@ class Renderer implements IRenderer {
     private _currPath: PatternPath | null;
     private _pathType: PatternPathType;
     private _toolType: ToolType;
+    private _pathSelection: PathSelection;
 
     constructor () {
         this._canvas = document.createElement('canvas');
@@ -30,6 +32,7 @@ class Renderer implements IRenderer {
         this._pathType = PatternPathType.UNDEFINED;
         // The default tool type is a straight line tool.
         this._toolType = ToolType.StraightLine;
+        this._pathSelection = new PathSelection();
     }
 
     init = (): HTMLCanvasElement => {
@@ -84,38 +87,36 @@ class Renderer implements IRenderer {
         return this._canvas;
     }
 
-    measurementInit = (): HTMLCanvasElement => {
+    measurementInit = (): void  => {
         const patternPaths = this._document.getPatternPaths();
-        let highlightedPath: PatternPath | null = null;
-        let selectedPath: PatternPath | null = null;
         
         this._canvas.onmousedown = (e) => {
             for (let i = 0; i < patternPaths.length; i++) {
                 if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
-                    selectedPath?.deselect();
-                    selectedPath = patternPaths[i];
-                    selectedPath.select();
+                    this._pathSelection.setSelectedPath(patternPaths[i]);
                     break;
                 }
             }
         };
 
         this._canvas.onmousemove = (e) => {
-            highlightedPath?.removeHighlight();
+            this._pathSelection.setHighlightedPath(null);
             for (let i = 0; i < patternPaths.length; i++) {
                 if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
-                    highlightedPath = patternPaths[i];
-                    highlightedPath.highlight();
+                    this._pathSelection.setHighlightedPath(patternPaths[i]);
+                    break;
                 }
             }
         };
 
         this._canvas.onmouseup = null;
         this._canvas.onmouseout = null;
-
-        return this._canvas;
     }
     
+    getPathSelection = (): PatternPath | null => {
+        return this._pathSelection.getSelectedPath();
+    }
+
     getDocument = (): Document => {
         return this._document;
     }
@@ -148,8 +149,8 @@ class Renderer implements IRenderer {
         paths.forEach(path => {
             const path2D = path.getPath2D();
             let pathColor: string | undefined;
-            if (path.isSelected() || path.isHighlighted()){
-                pathColor = '#000000';
+            if (path === this._pathSelection.getSelectedPath() || path === this._pathSelection.getHighlightedPath()){
+                pathColor = PatternPathColor.get("Selected");
             } else {
                 pathColor = PatternPathColor.get(path.getType());
             }
@@ -192,6 +193,5 @@ class Renderer implements IRenderer {
 }
 
 const renderer = new Renderer();
-const pathDocument = renderer.getDocument();
 
-export { renderer, pathDocument };
+export { renderer };

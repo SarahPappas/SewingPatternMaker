@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, ChangeEvent } from 'react';
 import './AddMeasurement.css';
 import checkIcon from '../../../assets/check-icon.svg';
-import { renderer, pathDocument } from 'canvas/Renderer';
+import { renderer } from 'canvas/Renderer';
 import { InstructionModal } from 'components/InstructionModal/InstructionModal';
 import { Input } from 'components/Input/Input';
 import { NavButton } from 'components/NavButton/NavButton';
@@ -20,7 +20,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
     useEffect(() => {
         canvasContainerRef.current = document.getElementsByClassName('canvasContainer')[0];
         canvasContainerRef.current.classList.remove('canvasContainerBackground');
-        canvasContainerRef.current.appendChild(renderer.measurementInit());
+        renderer.measurementInit();
         setUploadedFileData("");
     }, [canvasContainerRef, setUploadedFileData]);
 
@@ -29,20 +29,20 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
             // TODO: pop an error modal to the user
             console.log('Please enter a decimal number');
         } else {
-            const wasPathSelected = pathDocument.getPatternPaths().some(path => path.isSelected());
-            if (!wasPathSelected) {
+            const selectedPath = renderer.getPathSelection();
+            if (!selectedPath) {
                 // TODO: pop an error modal to the user
                 console.log('Please select a path');
             } else {
                 console.log('ok');
-                pathDocument.setSizeRatio(parseFloat(inputMeasurement));
+                renderer.getDocument().setSizeRatio(parseFloat(inputMeasurement), selectedPath);
             }
         }
     };
 
-    const instructModal: InstructModal = {text: ['Choose a path to measure.']};
+    const instructModal: InstructModal = {text: ['Choose a line to measure.']};
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         setInputMeasurement(e.target.value);
     };
 
@@ -50,7 +50,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
         id: 'measurement-input', 
         type: 'text', 
         className: 'measurementInput',
-        onChange: handleChange
+        onChange: handleInputChange
     };
 
     // TODO: link this navButton to final review/printing page

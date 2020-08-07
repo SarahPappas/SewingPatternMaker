@@ -2,11 +2,11 @@ import { PatternPath } from './PatternPath';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
-    private _sizeRatio: undefined | number; // in pixels per inch
+    private _sizeRatio: null | number; // in pixels per inch
 
     constructor () {
         this._patternPaths = new Array<PatternPath>();
-        this._sizeRatio = undefined;
+        this._sizeRatio = null;
     }
 
     getPatternPaths = (): PatternPath[] => {
@@ -32,17 +32,12 @@ export class Document implements IDocument {
     }
 
     // Sets the pixels per inch ratio according to the input measurement
-    setSizeRatio = (inputMeasurementInInches: number): void => {
-        this._patternPaths.forEach(path => {
-            if (path.isSelected()) {
-                this._sizeRatio = path.getLengthInPixels() / inputMeasurementInInches;
-                return;
-            }
-        });
+    setSizeRatio = (inputMeasurementInInches: number, selectedPath: PatternPath): void => {
+        this._sizeRatio = selectedPath.getLengthInPixels() / inputMeasurementInInches;
     }
 
     getSizeRatio = (): number => {
-        if (this._sizeRatio === undefined) {
+        if (!this._sizeRatio) {
             console.log('error: the resizing ratio is not defined.');
             return -1;
         } 

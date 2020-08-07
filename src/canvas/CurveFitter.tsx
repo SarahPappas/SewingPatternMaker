@@ -59,6 +59,8 @@ export class CurveFitter {
             }
         }
 
+        //TODO: also test arc curves
+
         return bestCurve;
     }
 }

@@ -1,42 +1,64 @@
 import { Point } from './Point';
 import { Curve } from './Curve';
+import { BoundingBox } from './BoundingBox';
 
 export class CurveFitter {
-    private _points: Point[];
-    private _splitsIndex: number[];
-    
-    constructor (points: Point[]) {
-        this._points = points;
-        this._splitsIndex = new Array<number>();
-    }
 
-    Fit = (points: Point[]): Curve => {
+    static Fit = (points: Point[]): Curve => {
         // If there are two points or less, return void becuase this cannnot be fit to a curve.
         if (points.length <= 2) {
             throw new Error("not enough points");
         }
+        
+        // Get the bounds of the drawing.
+        const boundingBox = new BoundingBox(points);
+        boundingBox.expand(2.5);
 
+        // The number of samples taken on the x and y axis to test as a control point for the curve.
+        const numSamples = 101;
+        
+        // Find the best curve in the bounds. 
+        return CurveFitter.guessAndCheckPointsInBoundsForBestCurve(points, numSamples, boundingBox);
+    };
+
+    private static guessAndCheckPointsInBoundsForBestCurve = (points: Point[], numSamples: number, boundingBox: BoundingBox): Curve => {
         const startPoint = points[0];
         const endPoint = points[points.length -1];
 
-        const PARAM = 50;
+        let bestCurveDelta = Number.MAX_VALUE;
+        let bestCurve = new Curve(startPoint, endPoint, endPoint); 
 
-        const controlPoint = startPoint.getPointOnMidline(endPoint, PARAM);
+        for (let y = 0; y < numSamples; y++) {
+            const boundRelativeY = y / (numSamples - 1);
+            const controlPointY = boundingBox.minY + boundingBox.height * boundRelativeY;
+        
+            for (let x = 0; x < numSamples; x++) {
+                const boundRelativeX = x / (numSamples - 1);
+                const controlPointX = boundingBox.minX + boundingBox.width * boundRelativeX;
+        
+                const curve = new Curve(startPoint, endPoint, new Point(controlPointX, controlPointY));
+        
+                // The number of points on the potential curve that will be used to test the curve's fit.
+                const numPointsOnPotentialcurve = 51;
+                const potentialCurvePoints = curve.computePointsOnCurve(numPointsOnPotentialcurve);
 
-        return new Curve(startPoint, endPoint, controlPoint); 
-    };
+                let maxDelta = 0;
+                for (let i = 0; i < numPointsOnPotentialcurve; i++) {
+                    const delta = potentialCurvePoints[i].closestDistanceSquaredFromSetOfPoints(points);
+                    if (delta > maxDelta) {
+                        maxDelta = delta; 
+                    }
+                }
 
-    FitLine = (): Path2D => {
-        const curve = this.Fit(this._points);
-        const path = new Path2D();
-        path.moveTo(curve.start.getX(), curve.start.getY());
-        // path.lineTo(curve.end.getX(), curve.end.getY());
-        // path.lineTo(curve.control.getX(), curve.control.getY());
-        // const center = curve.start.getCenter(curve.end, curve.control);
-        // path.lineTo(center.getX(), center.getY());
-        // path.lineTo(curve.start.getX(), curve.start.getY());
-        path.arcTo(curve.control.getX(), curve.control.getY(), curve.end.getX(), curve.end.getY(), curve.start.getRadius(curve.end, curve.control));
-        return path;
+                if (maxDelta < bestCurveDelta) {
+                    bestCurveDelta = maxDelta;
+                    bestCurve = curve;
+                }
+
+            }
+        }
+
+        return bestCurve;
     }
 }
 

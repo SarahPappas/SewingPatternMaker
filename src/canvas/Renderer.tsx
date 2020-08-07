@@ -87,8 +87,8 @@ class Renderer implements IRenderer {
     private _endTracing = (position: Point): void => {
         if (this._currPath) {
             this._currPath.addPoint(position); 
+            this._currPath.snapEndpoints(this._document.getPatternPaths());
             if (this._toolType === ToolType.Freeline) {
-                //this._currPath.smoothCurvyPath();
                 this._currPath.fitCurve();
             }  
             this._canvas.dispatchEvent(new Event('endTracing'));     

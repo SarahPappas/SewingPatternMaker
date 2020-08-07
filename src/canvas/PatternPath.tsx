@@ -4,7 +4,6 @@ import { CurveFitter } from './CurveFitter';
 
 export class PatternPath implements IPatternPath {
     private _points: Point[];
-    private _smoothPoints: Point[];
     private _type: PatternPathType;
     private _toolType: ToolType;
     private _path2D: Path2D;
@@ -15,7 +14,6 @@ export class PatternPath implements IPatternPath {
         this._type = pathType;
         this._toolType = toolType;
         this._points = new Array<Point>();
-        this._smoothPoints = new Array<Point>();
         this._path2D = new Path2D();
         this._isPath2DValid = false;
         this._lastIndexAddedToPath2D = -1;
@@ -86,32 +84,63 @@ export class PatternPath implements IPatternPath {
         return true;
     };
 
-    private _computeMiddlePoint = (point1: Point, point2: Point): Point => {
-        const middleX = (point1.getX() + point2.getX()) / 2;
-        const middleY = (point1.getY() + point2.getY()) / 2;
-        
-        return new Point(middleX, middleY);
+    fitCurve = (): void => {
+        const firstPoint = this._points[0];
+        this._path2D = new Path2D();
+        this._isPath2DValid = true;
+        this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
+
+        const fittedCurve = CurveFitter.Fit(this._points);
+        this._path2D.quadraticCurveTo(fittedCurve.control.getX(), fittedCurve.control.getY(), fittedCurve.end.getX(), fittedCurve.end.getY());        
     }
-    
-    /*
-    * Replaces the path2D of the patternPath with a smoothed path. The path is smoothed
-    * all at once, replacing the old path. The method is to be called after the drawing
-    * is completed, for example on the onMouseUp event. The path is smoothed by selecting
-    * a subset of the points array. The points are selected by the selectPoints method.
-    */
-    public smoothCurvyPath = (): void => {
-        this._smoothPoints = this._selectPointsForSmoothing();
-        // Do not smooth lines that have less than 3 reference points
-        if (this._smoothPoints.length > 2) {
-            this._path2D = new Path2D();
-            this._isPath2DValid = true;
-            this._path2D.moveTo(this._smoothPoints[0].getX(), this._smoothPoints[0].getY());
-            let i: number;
-            for (i = 1;i < this._smoothPoints.length - 2;i++) {
-                const midPoint = this._computeMiddlePoint(this._smoothPoints[i], this._smoothPoints[i+1]);
-                this._path2D.quadraticCurveTo(this._smoothPoints[i].getX(), this._smoothPoints[i].getY(), midPoint.getX(), midPoint.getY());
+
+    snapEndpoints = (paths: PatternPath[]): void => {
+        const myFirstPoint = this._points[0];
+        const myLastPoint = this._points[this._points.length - 1];
+        // Radius to check within to see if we should snap to point.
+        const radius = 10;
+        let updatedFirstPoint = false;
+        let updatedLastPoint = false;
+
+        paths.forEach(path => {
+            if (path === this) {
+                return;
             }
-            this._path2D.quadraticCurveTo(this._smoothPoints[i].getX(), this._smoothPoints[i].getY(), this._smoothPoints[i+1].getX(), this._smoothPoints[i+1].getY());
+            const points = path.getPoints();
+
+            const otherFirstPoint = points[0];
+            const otherLastPoint = points[points.length - 1];
+
+            if(!updatedFirstPoint && myFirstPoint.isWithinRadius(otherFirstPoint, radius)) {
+                this._points[0] = otherFirstPoint;
+                updatedFirstPoint = true;
+            }
+
+            if(!updatedFirstPoint && myFirstPoint.isWithinRadius(otherLastPoint, radius)) {
+                this._points[0] = otherLastPoint;
+                updatedFirstPoint = true;
+            }
+
+            if(!updatedLastPoint && myLastPoint.isWithinRadius(otherFirstPoint, radius)) {
+                this._points[this._points.length] = otherFirstPoint;
+                updatedLastPoint = true;
+            }
+
+            if(!updatedLastPoint && myLastPoint.isWithinRadius(otherLastPoint, radius)) {
+                this._points[this._points.length] = otherLastPoint;
+                updatedLastPoint = true;
+            }
+
+        });
+
+        if (updatedFirstPoint || updatedLastPoint) {
+            if (this._toolType === ToolType.StraightLine) {
+                this._updatePath2DStraightLine();
+            }
+
+            if (this._toolType === ToolType.Freeline) {
+                this._updatePath2DWithQuadraticCurve();
+            }
         }
     }
 
@@ -125,43 +154,8 @@ export class PatternPath implements IPatternPath {
         const currPoint = this._points[this._points.length - 1];
         const prevPoint = this._points[this._lastIndexAddedToPath2D];
 
-        const midPoint = this._computeMiddlePoint(prevPoint, currPoint);
+        const midPoint = prevPoint.computeMiddlePoint(currPoint);
         this._path2D.quadraticCurveTo(prevPoint.getX(), prevPoint.getY(), midPoint.getX(), midPoint.getY());
-    }
-
-    private _squaredDistance = (point1: Point, point2: Point): number => {
-        const dx = point2.getX() - point1.getX();
-        const dy = point2.getY() - point1.getY();
-        return dx*dx + dy*dy;
-    }
-
-    /*
-    * Returns a selection of points from the _points array that sum up the points.
-    * The points that are too close in distance from each other are discarded, but
-    * that rule can be overriden in order to not skip more data points than 
-    * MAX_SKIPPED_POINTS.
-    */
-    private _selectPointsForSmoothing = (): Point[] => {      
-        const MIN_SQUARED_DISTANCE_BETWEEN_POINTS = 64;
-        const MAX_SKIPPED_POINTS = 39;
-        const result = new Array<Point>();
-        if (this._points.length > 2) {
-            // Always include the first point
-            result.push(this._points[0]);
-            let lastIndexTaken = 0;
-            for(let i = 0;i < this._points.length - 1;i++) {
-                // Discard points that are too close in index or in distance to the last added point
-                if (i - lastIndexTaken > MAX_SKIPPED_POINTS || 
-                        this._squaredDistance(this._points[i], this._points[lastIndexTaken]) 
-                        > MIN_SQUARED_DISTANCE_BETWEEN_POINTS) {
-                    result.push(this._points[i]);
-                    lastIndexTaken = i;
-                }
-            }
-            // Always include the last point
-            result.push(this._points[this._points.length - 1]);
-        }
-        return result;
     }
 
     private _updatePath2DStraightLine = (): void => {
@@ -172,13 +166,5 @@ export class PatternPath implements IPatternPath {
         this._isPath2DValid = true;
         this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
         this._path2D.lineTo(lastPoint.getX(), lastPoint.getY());
-    }
-
-    fitCurve = (): void => {
-        this._path2D = new Path2D();
-        this._isPath2DValid = true;
-
-        const curveFitter = new CurveFitter(this._points);
-        this._path2D = curveFitter.FitLine();
     }
 }

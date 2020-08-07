@@ -21,7 +21,7 @@ export class PathSelection {
         return this._highlightedPath;
     }
 
-    setHighlightedPath = (path: PatternPath): void => {
+    setHighlightedPath = (path: PatternPath | null): void => {
         this._highlightedPath = path;
     }
 }

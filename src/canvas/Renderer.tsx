@@ -94,14 +94,17 @@ class Renderer implements IRenderer {
             for (let i = 0; i < patternPaths.length; i++) {
                 if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
                     this._pathSelection.setSelectedPath(patternPaths[i]);
+                    break;
                 }
             }
         };
 
         this._canvas.onmousemove = (e) => {
+            this._pathSelection.setHighlightedPath(null);
             for (let i = 0; i < patternPaths.length; i++) {
                 if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
                     this._pathSelection.setHighlightedPath(patternPaths[i]);
+                    break;
                 }
             }
         };

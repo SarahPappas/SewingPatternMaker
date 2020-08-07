@@ -32,13 +32,8 @@ export class Document implements IDocument {
     }
 
     // Sets the pixels per inch ratio according to the input measurement
-    setSizeRatio = (inputMeasurementInInches: number): void => {
-        this._patternPaths.forEach(path => {
-            if (path.isSelected()) {
-                this._sizeRatio = path.getLengthInPixels() / inputMeasurementInInches;
-                return;
-            }
-        });
+    setSizeRatio = (inputMeasurementInInches: number, selectedPath: PatternPath): void => {
+        this._sizeRatio = selectedPath.getLengthInPixels() / inputMeasurementInInches;
     }
 
     getSizeRatio = (): number => {

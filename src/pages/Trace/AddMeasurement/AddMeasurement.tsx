@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, ChangeEvent } from 'react';
 import './AddMeasurement.css';
 import checkIcon from '../../../assets/check-icon.svg';
-import { renderer, pathDocument } from 'canvas/Renderer';
+import { renderer } from 'canvas/Renderer';
 import { InstructionModal } from 'components/InstructionModal/InstructionModal';
 import { Input } from 'components/Input/Input';
 import { NavButton } from 'components/NavButton/NavButton';
@@ -29,13 +29,13 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
             // TODO: pop an error modal to the user
             console.log('Please enter a decimal number');
         } else {
-            const wasPathSelected = pathDocument.getPatternPaths().some(path => path.isSelected());
-            if (!wasPathSelected) {
+            const selectedPath = renderer.getPathSelection();
+            if (!selectedPath) {
                 // TODO: pop an error modal to the user
                 console.log('Please select a path');
             } else {
                 console.log('ok');
-                pathDocument.setSizeRatio(parseFloat(inputMeasurement));
+                renderer.getDocument().setSizeRatio(parseFloat(inputMeasurement), selectedPath);
             }
         }
     };

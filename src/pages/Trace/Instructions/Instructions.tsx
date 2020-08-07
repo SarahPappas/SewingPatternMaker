@@ -15,7 +15,7 @@ interface InstructionsProps {
 export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathType, ...props}) => {
     const showNavButton: NavButton = {label: 'DONE', to: '/AddMeasurement' };
     const addPathButton: NavButton = {label:'', to: 'AddPath'};
-    const warning: Modal = {text: ['Your pattern is incomplete.', 'Please add another line.'], type: ModalType.Warning};
+    const warning: Modal = {text: ['Your pattern is incomplete. Please add another line.'], type: ModalType.Warning};
     const instruction: Modal = {text: ['Choose seam, fold, or edge to add to your pattern'], type: ModalType.Instruction};
     
     const [showWarning, setShowWarning] = React.useState<boolean>(false);
@@ -45,7 +45,6 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
         doneContainer =  <Modal modal={warning}/>;
     }
 
-
     const canvasRef = useRef(document.getElementsByClassName('canvasContainer')[0]);
     useEffect(() => {
         // Put the Canvas in the background.
@@ -61,7 +60,7 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
         <div className={'backgroundGrey'}></div>
         <div className={'instructionsConatainer'}>
             {doneContainer }
-            <Modal modal={instruction}/>
+            <div className={'alignBottom'}><Modal modal={instruction}/></div>
         </div>
         <div className='arrowFlexGrid'>
             <div className='arrowCol'>

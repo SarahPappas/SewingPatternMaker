@@ -1,0 +1,12 @@
+.uploadButton {
+    cursor: pointer;
+}
+
+.measurementInput {
+    width: calc(150px - 20px);
+    color: #707070;
+    font-size: 1.5em;
+    font-family: 'Major Mono Display';
+    padding: 10px 10px;
+    
+}

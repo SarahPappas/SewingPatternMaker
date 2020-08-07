@@ -144,6 +144,11 @@ export class PatternPath implements IPatternPath {
         }
     }
 
+    public getLengthInPixels = (): number => {
+        // TODO: implement this method for lines, bezier curves and arcs
+        return 1;
+    }
+
     /* 
     * The algorithm for starting and ending the line is not quite right. The first segment of the path will be 
     * a straight line because a bezier curve with a control point equal to one of is extremities points will 

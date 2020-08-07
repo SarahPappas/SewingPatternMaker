@@ -26,6 +26,9 @@ export class CurveFitter {
         const startPoint = points[0];
         const endPoint = points[points.length -1];
 
+        // The number of points on the potential curve that will be used to test the curve's fit.
+        const numPointsOnPotentialcurve = 51;
+
         let bestCurveDelta = Number.MAX_VALUE;
         let bestCurve = new Curve(startPoint, endPoint, endPoint, CurveType.Bezier); 
 
@@ -38,44 +41,39 @@ export class CurveFitter {
                 const controlPointX = boundingBox.minX + boundingBox.width * boundRelativeX;
         
                 const curve = new Curve(startPoint, endPoint, new Point(controlPointX, controlPointY), CurveType.Bezier);
-        
-                // The number of points on the potential curve that will be used to test the curve's fit.
-                const numPointsOnPotentialcurve = 51;
                 const potentialCurvePoints = curve.computePointsOnCurve(numPointsOnPotentialcurve);
 
-                let maxDelta = 0;
+                let curveDelta = 0;
                 for (let i = 0; i < numPointsOnPotentialcurve; i++) {
                     const delta = potentialCurvePoints[i].closestDistanceSquaredFromSetOfPoints(points);
-                    if (delta > maxDelta) {
-                        maxDelta = delta; 
-                    }
+                    curveDelta += delta;
                 }
 
-                if (maxDelta < bestCurveDelta) {
-                    bestCurveDelta = maxDelta;
+                if (curveDelta < bestCurveDelta) {
+                    bestCurveDelta = curveDelta;
                     bestCurve = curve;
                 }
 
             }
         }
 
+        console.log('start: ' + startPoint.getX() + ', ' + startPoint.getY());
+        console.log('end: ' + endPoint.getX() + ', ' + endPoint.getY());
         //also test arc curves
-        for (let i = -100; i < 100; i += 10) {
+        for (let i = -500; i <= 500; i += 100) {
             const controlPoint = startPoint.getPointOnMidline(endPoint, i);
             const curve = new Curve(startPoint, endPoint, controlPoint, CurveType.Arc);
-            const numPointsOnPotentialcurve = 51;
+            //console.log('control: ' + controlPoint.getX() + ', ' + controlPoint.getY());
             const potentialCurvePoints = curve.computePointsOnCurve(numPointsOnPotentialcurve);
 
-            let maxDelta = 0;
+            let curveDelta = 0;
             for (let i = 0; i < numPointsOnPotentialcurve; i++) {
                 const delta = potentialCurvePoints[i].closestDistanceSquaredFromSetOfPoints(points);
-                if (delta > maxDelta) {
-                    maxDelta = delta; 
-                }
+                curveDelta += delta;
             }
 
-            if (maxDelta < bestCurveDelta) {
-                bestCurveDelta = maxDelta;
+            if (curveDelta < bestCurveDelta) {
+                bestCurveDelta = curveDelta;
                 bestCurve = curve;
             }
 

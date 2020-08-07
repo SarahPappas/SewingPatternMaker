@@ -16,15 +16,18 @@ export class Curve {
 
     computePointsOnCurve = (numPoints: number): Point[] => {
         const resultingPoints = new Array<Point>();
-        for (let i = 0; i < numPoints; i++) {
-            const t = i / (numPoints - 1);
-            if (this.type === CurveType.Bezier) {
+        if (this.type === CurveType.Bezier) {
+            for (let i = 0; i < numPoints; i++) {
+                const t = i / (numPoints - 1);
                 resultingPoints[i] = this.computePointOnBezier(t);
-            } else if (this.type === CurveType.Arc) {
-                resultingPoints[i] = this.computePointOnArc(t);
-            } else {
-                throw new Error();
             }
+        } else if (this.type === CurveType.Arc) {
+            for (let i = 0; i < numPoints; i++) {
+                const t = i / (numPoints - 1);
+                resultingPoints[i] = this.computePointOnArc(t);
+            }        
+        } else {
+            throw new Error();
         }
         return resultingPoints;
     };
@@ -56,8 +59,8 @@ export class Curve {
     private computePointOnArc = (t: number): Point => {
         const radius = this.start.getRadius(this.end, this.control);
         const center = this.start.getCenter(this.end, this.control);
-        let startAngle = Math.acos((this.start.getX() - center.getX()) / radius);
-        let endAngle = Math.acos((this.start.getX() - center.getX()) / radius);
+        let startAngle = Math.atan2((this.start.getY() - center.getY()), (this.start.getX() - center.getX()));
+        let endAngle = Math.atan2((this.end.getY() - center.getY()), (this.end.getX() - center.getX()));
 
         //make sure we go in the right direction on the circle
         if (Math.abs(endAngle - startAngle) > Math.PI) {

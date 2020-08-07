@@ -21,9 +21,20 @@ export class Curve {
     };
 
     getLength = (): number => {
-        return -1;
+        let length = 0;
+        // intuitively determined method to decide the number of segments to
+        // take on the curve
+        const NUMPOINTS = Math.ceil((Math.sqrt(this.start.distanceSquared(this.control)) + Math.sqrt(this.control.distanceSquared(this.end))) / 10);
+        //console.log('numpoints: ' + NUMPOINTS);
+        const pointsOnCurve = this.computePointsOnCurve(NUMPOINTS);
+        for (let i = 0; i < NUMPOINTS - 1; i++) {
+            length += Math.sqrt(pointsOnCurve[i+1].distanceSquared(pointsOnCurve[i]));
+        }
+        //console.log('length: ' + length);
+        return length;
     }
 
+    // using De Casteljau's algorithm (slower but more stable than the direct approach)
     private computePoint = (t: number): Point => {
         const startToControlX = this.lerp(this.start.getX(), this.control.getX(), t);
         const startToControlY = this.lerp(this.start.getY(), this.control.getY(), t);

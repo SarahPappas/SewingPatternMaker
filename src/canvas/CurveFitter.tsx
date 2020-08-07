@@ -59,7 +59,27 @@ export class CurveFitter {
             }
         }
 
-        //TODO: also test arc curves
+        //also test arc curves
+        for (let i = -100; i < 100; i += 10) {
+            const controlPoint = startPoint.getPointOnMidline(endPoint, i);
+            const curve = new Curve(startPoint, endPoint, controlPoint, CurveType.Arc);
+            const numPointsOnPotentialcurve = 51;
+            const potentialCurvePoints = curve.computePointsOnCurve(numPointsOnPotentialcurve);
+
+            let maxDelta = 0;
+            for (let i = 0; i < numPointsOnPotentialcurve; i++) {
+                const delta = potentialCurvePoints[i].closestDistanceSquaredFromSetOfPoints(points);
+                if (delta > maxDelta) {
+                    maxDelta = delta; 
+                }
+            }
+
+            if (maxDelta < bestCurveDelta) {
+                bestCurveDelta = maxDelta;
+                bestCurve = curve;
+            }
+
+        }
 
         return bestCurve;
     }

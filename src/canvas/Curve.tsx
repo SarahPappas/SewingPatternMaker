@@ -41,8 +41,12 @@ export class Curve {
     };
 
     private computePointOnArc = (t: number): Point => {
-        // TODO: implement this
-        return new Point(0,0);
+        const radius = this.start.getRadius(this.end, this.control);
+        const center = this.start.getCenter(this.end, this.control);
+        const startAngle = Math.acos((this.start.getX() - center.getX()) / radius);
+        const endAngle = Math.acos((this.start.getX() - center.getX()) / radius);
+        // TODO: make sure we go in the right direction on the circle
+        return new Point(center.getX() + radius * Math.cos(this.lerp(startAngle, endAngle, t)), center.getY() + radius * Math.sin(this.lerp(startAngle, endAngle, t)));
     };
 
     private lerp = (start: number, end: number, t: number): number => {

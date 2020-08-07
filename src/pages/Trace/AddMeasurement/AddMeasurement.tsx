@@ -40,7 +40,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
         }
     };
 
-    const instructModal: InstructModal = {text: ['Choose a path to measure.']};
+    const instructModal: InstructModal = {text: ['Choose a line to measure.']};
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setInputMeasurement(e.target.value);

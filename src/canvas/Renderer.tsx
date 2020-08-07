@@ -150,7 +150,7 @@ class Renderer implements IRenderer {
             const path2D = path.getPath2D();
             let pathColor: string | undefined;
             if (path === this._pathSelection.getSelectedPath() || path === this._pathSelection.getHighlightedPath()){
-                pathColor = '#000000';
+                pathColor = PatternPathColor.get("Selected");
             } else {
                 pathColor = PatternPathColor.get(path.getType());
             }

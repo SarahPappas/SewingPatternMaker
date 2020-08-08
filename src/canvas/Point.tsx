@@ -39,17 +39,7 @@ export class Point implements IPoint {
         return new Point(middle.getX() + t * normalUnitVector[0], middle.getY() + t * normalUnitVector[1]);
     }
 
-    getCenter = (other: Point, control: Point): Point => {
-        const normalVector = [this._y - other._y, other._x - this._x];
-        const middle = this.computeMiddlePoint(other);
-        const x = (this._x * (control._x - this._x) + (middle._x * normalVector[1] / normalVector[0] - middle._y + this._y) * (control._y - this._y)) / (normalVector[1] * (control._y - this._y) / normalVector[0] + (control._x - this._x));
-        const y = (x - middle._x) * normalVector[1] / normalVector[0] + middle._y;
-        return new Point(x, y);
-    }
 
-    getRadius = (other: Point, control: Point): number => {
-        return Math.sqrt(this.distanceSquared(this.getCenter(other, control)));
-    }
 
     closestDistanceSquaredFromSetOfPoints = (points: Point[]): number => {
         let minDistance = Number.MAX_VALUE;

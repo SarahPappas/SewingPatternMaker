@@ -99,7 +99,7 @@ export class PatternPath implements IPatternPath {
         if (this._fittedCurve instanceof BezierCurve) {
             this._path2D.quadraticCurveTo(this._fittedCurve.control.getX(), this._fittedCurve.control.getY(), this._fittedCurve.end.getX(), this._fittedCurve.end.getY());   
         } else if (this._fittedCurve instanceof ArcCurve) {
-            this._path2D.arcTo(this._fittedCurve.control.getX(), this._fittedCurve.control.getY(), this._fittedCurve.end.getX(), this._fittedCurve.end.getY(), this._fittedCurve.start.getRadius(this._fittedCurve.end, this._fittedCurve.control));
+            this._path2D.arcTo(this._fittedCurve.control.getX(), this._fittedCurve.control.getY(), this._fittedCurve.end.getX(), this._fittedCurve.end.getY(), this._fittedCurve.getRadius());
         } else {
             throw new Error();
         }      

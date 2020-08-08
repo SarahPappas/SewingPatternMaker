@@ -13,4 +13,8 @@ export class BezierCurve extends Curve {
         return new Point(this.lerp(startToControlX, controlToEndX, t),
                     this.lerp(startToControlY, controlToEndY, t));
     };
+
+    drawCurve = (path: Path2D): void => {
+        path.quadraticCurveTo(this.control.getX(), this.control.getY(), this.end.getX(), this.end.getY());   
+    }
 }

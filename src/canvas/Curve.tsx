@@ -34,6 +34,8 @@ export abstract class Curve {
 
     abstract computePoint(t: number): Point;
 
+    abstract drawCurve(path: Path2D): void;
+
     lerp = (start: number, end: number, t: number): number => {
         return start + t * (end - start);
     };

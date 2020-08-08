@@ -2,8 +2,6 @@ import { Point } from './Point';
 import { PatternPathType, ToolType } from './Enums';
 import { CurveFitter } from './CurveFitter';
 import { Curve } from './Curve';
-import { BezierCurve } from './BezierCurve';
-import { ArcCurve } from './ArcCurve';
 
 export class PatternPath implements IPatternPath {
     private _points: Point[];
@@ -96,13 +94,7 @@ export class PatternPath implements IPatternPath {
         this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
 
         this._fittedCurve = CurveFitter.Fit(this._points);
-        if (this._fittedCurve instanceof BezierCurve) {
-            this._path2D.quadraticCurveTo(this._fittedCurve.control.getX(), this._fittedCurve.control.getY(), this._fittedCurve.end.getX(), this._fittedCurve.end.getY());   
-        } else if (this._fittedCurve instanceof ArcCurve) {
-            this._path2D.arcTo(this._fittedCurve.control.getX(), this._fittedCurve.control.getY(), this._fittedCurve.end.getX(), this._fittedCurve.end.getY(), this._fittedCurve.getRadius());
-        } else {
-            throw new Error();
-        }      
+        this._fittedCurve.drawCurve(this._path2D);  
     }
 
     snapEndpoints = (paths: PatternPath[]): void => {

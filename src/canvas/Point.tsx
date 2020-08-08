@@ -33,6 +33,7 @@ export class Point implements IPoint {
     // from this point and the other point. 
     // at t=0, is returns the point in the middle of this point and the other point.
     getPointOnMidline = (other: Point, t: number): Point => {
+        // TODO: use vectors here
         const middle = this.computeMiddlePoint(other);
         const normalVector = [this._y - other._y, other._x - this._x];
         const norm = Math.sqrt(this.distanceSquared(other));

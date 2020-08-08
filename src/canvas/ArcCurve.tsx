@@ -37,17 +37,27 @@ export class ArcCurve extends Curve {
     }
 
     computePoint = (t: number): Point => {     
-        const x = this.center.getX() + this.radius * Math.cos(this.lerp(this.startAngle, this.endAngle, t));
-        const y = this.center.getY() + this.radius * Math.sin(this.lerp(this.startAngle, this.endAngle, t));
+        const x = this.center.getX() + 
+                  this.radius * Math.cos(this.lerp(this.startAngle, this.endAngle, t));
+        const y = this.center.getY() + 
+                  this.radius * Math.sin(this.lerp(this.startAngle, this.endAngle, t));
         return new Point(x, y);
     };
 
     drawCurve = (path: Path2D): void => {
-        path.arcTo(this.control.getX(), this.control.getY(), this.end.getX(), this.end.getY(), this.radius);
+        path.arcTo(this.control.getX(), this.control.getY(), 
+                   this.end.getX(), this.end.getY(), 
+                   this.radius);
     }
 
+    // override the approximation algorithm from parent class
     getLength = (): number => {
-        // TODO: find exact arcLength
-        return 0;
+        const u = [this.start.getX() - this.control.getX(), this.start.getY() - this.control.getY()];
+        const v = [this.end.getX() - this.control.getX(), this.end.getY() - this.control.getY()];
+        const normOfU = Math.sqrt(u[0] * u[0] + u[1] * u[1]);
+        const normOfV = Math.sqrt(v[0] * v[0] + v[1] * v[1]);
+        const alpha = Math.acos((u[0]*v[0] + u[1]*v[1]) / (normOfU * normOfV));
+        const theta = Math.PI - alpha;
+        return theta * this.radius;
     }
 }

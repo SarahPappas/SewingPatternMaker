@@ -1,7 +1,8 @@
 import { Point } from './Point';
 import { Curve } from './Curve';
 import { BoundingBox } from './BoundingBox';
-import { CurveType } from './Enums';
+import { BezierCurve } from './BezierCurve';
+import { ArcCurve } from './ArcCurve';
 
 export class CurveFitter {
 
@@ -30,7 +31,7 @@ export class CurveFitter {
         const numPointsOnPotentialcurve = 51;
 
         let bestCurveDelta = Number.MAX_VALUE;
-        let bestCurve = new Curve(startPoint, endPoint, endPoint, CurveType.Bezier); 
+        let bestCurve = new BezierCurve(startPoint, endPoint, endPoint); 
 
         for (let y = 0; y < numSamples; y++) {
             const boundRelativeY = y / (numSamples - 1);
@@ -40,7 +41,7 @@ export class CurveFitter {
                 const boundRelativeX = x / (numSamples - 1);
                 const controlPointX = boundingBox.minX + boundingBox.width * boundRelativeX;
         
-                const curve = new Curve(startPoint, endPoint, new Point(controlPointX, controlPointY), CurveType.Bezier);
+                const curve = new BezierCurve(startPoint, endPoint, new Point(controlPointX, controlPointY));
                 const potentialCurvePoints = curve.computePointsOnCurve(numPointsOnPotentialcurve);
 
                 let curveDelta = 0;
@@ -60,7 +61,7 @@ export class CurveFitter {
         //also test arc curves
         for (let i = -500; i <= 500; i += 20) {
             const controlPoint = startPoint.getPointOnMidline(endPoint, i);
-            const curve = new Curve(startPoint, endPoint, controlPoint, CurveType.Arc);
+            const curve = new ArcCurve(startPoint, endPoint, controlPoint);
             const potentialCurvePoints = curve.computePointsOnCurve(numPointsOnPotentialcurve);
 
             let curveDelta = 0;

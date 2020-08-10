@@ -7,17 +7,17 @@ export class Point implements IPoint {
         this.y = y;
     }
 
-    equals = (o: Point): boolean => {
-        return this.x === o.x && this.y === o.y;
+    equals = (other: Point): boolean => {
+        return this.x === other.x && this.y === other.y;
     }
 
-    isWithinRadius = (o: Point, radius: number): boolean => {
-        return this.distanceSquared(o) < radius * radius;
+    isWithinRadius = (other: Point, radius: number): boolean => {
+        return this.distanceSquared(other) < radius * radius;
     }
     
-    distanceSquared = (point: Point): number => {
-        const dx = this.x - point.x;
-        const dy = this.y - point.y;
+    distanceSquared = (other: Point): number => {
+        const dx = this.x - other.x;
+        const dy = this.y - other.y;
         return dx * dx + dy * dy;
     }
 

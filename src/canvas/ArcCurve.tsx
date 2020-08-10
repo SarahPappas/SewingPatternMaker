@@ -29,7 +29,7 @@ export class ArcCurve extends Curve {
         // TODO: check for divisions by 0
         // TODO: use Vector class here
         const normalVector = [this.start.y - this.end.y, this.end.x - this.start.x];
-        const middle = this.start.computeMiddlePoint(this.end);
+        const middle = Point.computeMiddlePoint(this.start, this.end);
         const x = (this.start.x * (this.control.x - this.start.x) + (middle.x * normalVector[1] / normalVector[0] - middle.y + this.start.y) * (this.control.y - this.start.y)) / (normalVector[1] * (this.control.y - this.start.y) / normalVector[0] + (this.control.x - this.start.x));
         const y = (x - middle.x) * normalVector[1] / normalVector[0] + middle.y;
         return new Point(x, y);

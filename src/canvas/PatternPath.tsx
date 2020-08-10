@@ -169,7 +169,7 @@ export class PatternPath implements IPatternPath {
         const currPoint = this._points[this._points.length - 1];
         const prevPoint = this._points[this._lastIndexAddedToPath2D];
 
-        const midPoint = prevPoint.computeMiddlePoint(currPoint);
+        const midPoint = Point.computeMiddlePoint(prevPoint, currPoint);
         this._path2D.quadraticCurveTo(prevPoint.x, prevPoint.y, midPoint.x, midPoint.y);
     }
 

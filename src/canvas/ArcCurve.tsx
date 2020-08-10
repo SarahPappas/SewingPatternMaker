@@ -10,8 +10,8 @@ export class ArcCurve extends Curve {
 
     constructor(start: Point, end: Point, control: Point) {
         super(start, end, control);
-        this.center = this.computeCenter();
-        this.radius = this.computeRadius();
+        this.center = this._computeCenter();
+        this.radius = this._computeRadius();
         // TODO: use vectors here
         this.startAngle = Math.atan2((this.start.y - this.center.y), (this.start.x - this.center.x));
         this.endAngle = Math.atan2((this.end.y - this.center.y), (this.end.x - this.center.x));
@@ -25,7 +25,7 @@ export class ArcCurve extends Curve {
         }
     }
 
-    computeCenter = (): Point => {
+    private _computeCenter = (): Point => {
         // TODO: check for divisions by 0
         // TODO: use Vector class here
         const normalVector = [this.start.y - this.end.y, this.end.x - this.start.x];
@@ -35,7 +35,7 @@ export class ArcCurve extends Curve {
         return new Point(x, y);
     }
 
-    computeRadius = (): number => {
+    private _computeRadius = (): number => {
         return Math.sqrt(this.start.distanceSquared(this.center));
     }
 

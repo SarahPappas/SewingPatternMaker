@@ -2,10 +2,11 @@ import React, { useEffect, useRef, ChangeEvent } from 'react';
 import './AddMeasurement.css';
 import checkIcon from '../../../assets/check-icon.svg';
 import { renderer } from 'canvas/Renderer';
-import { InstructionModal } from 'components/InstructionModal/InstructionModal';
+import { Modal } from 'components/Modal/Modal';
 import { Input } from 'components/Input/Input';
 import { NavButton } from 'components/NavButton/NavButton';
 import { ActionButton } from 'components/ActionButton/ActionButton';
+import { ModalType } from 'canvas/Enums';
 
 interface AddMeasurementProps {
     setUploadedFileData: React.Dispatch<React.SetStateAction<string>>;
@@ -40,7 +41,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
         }
     };
 
-    const instructModal: InstructModal = {text: ['Choose a line to measure.']};
+    const instructModal: Modal = {text: ['Choose a line to measure.'], type: ModalType.Instruction};
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         setInputMeasurement(e.target.value);
@@ -61,7 +62,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
     return (
         <>
             <div className={'measurementInstructionsContainer'}>
-                <InstructionModal instructModal={instructModal}></InstructionModal>
+                <Modal modal={instructModal}></Modal>
             </div>
             <div className={'measurementBottomContainer'}>
                 <div className={'text'}>

@@ -58,7 +58,7 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     return (<>
         <div className={'backgroundGrey'}></div>
         <div className={'instructionsContainer'}>
-            {doneContainer }
+            {doneContainer}
             <div className={'alignBottom'}><Modal modal={instruction}/></div>
         </div>
         <div className='arrowFlexGrid'>

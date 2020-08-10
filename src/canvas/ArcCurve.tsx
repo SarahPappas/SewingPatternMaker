@@ -58,6 +58,7 @@ export class ArcCurve extends Curve {
         const u = Vector.vectorBetweenPoints(this.control, this.start);
         const v = Vector.vectorBetweenPoints(this.control, this.end);
         const alpha = Vector.angleBetween(u, v);
+        // theta is the central angle between starting point and end point
         const theta = Math.PI - alpha;
         return theta * this.radius;
     }

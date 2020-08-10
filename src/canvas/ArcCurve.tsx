@@ -55,8 +55,8 @@ export class ArcCurve extends Curve {
 
     // override the approximation algorithm from parent class
     getLength = (): number => {
-        const u = new Vector(this.control, this.start);
-        const v = new Vector(this.control, this.end);
+        const u = Vector.vectorBetweenPoints(this.control, this.start);
+        const v = Vector.vectorBetweenPoints(this.control, this.end);
         const alpha = u.angleBetween(v);
         const theta = Math.PI - alpha;
         return theta * this.radius;

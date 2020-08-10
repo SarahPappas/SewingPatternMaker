@@ -4,10 +4,14 @@ export class Vector {
     x: number;
     y: number;
 
+    constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+    }
+
     // constructs vector going from p1 to p2
-    constructor(startingPoint: Point, endPoint: Point) {
-        this.x = endPoint.getX() - startingPoint.getX();
-        this.y = endPoint.getY() - startingPoint.getY();
+    static vectorBetweenPoints(startingPoint: Point, endPoint: Point): Vector {
+        return new Vector(endPoint.getX() - startingPoint.getX(), endPoint.getY() - startingPoint.getY());
     }
 
     norm = (): number => {

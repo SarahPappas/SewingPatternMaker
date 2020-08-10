@@ -60,7 +60,7 @@ export class CurveFitter {
 
         //also test arc curves
         for (let i = -500; i <= 500; i += 20) {
-            const controlPoint = startPoint.getPointOnMidline(endPoint, i);
+            const controlPoint = Point.getPointOnMidline(startPoint, endPoint, i);
             const curve = new ArcCurve(startPoint, endPoint, controlPoint);
             const potentialCurvePoints = curve.computePointsOnCurve(numPointsOnPotentialcurve);
 
@@ -73,11 +73,11 @@ export class CurveFitter {
             if (curveDelta < bestCurveDelta) {
                 bestCurveDelta = curveDelta;
                 bestCurve = curve;
-                console.log('arc');
             }
 
         }
 
+        console.log(bestCurve instanceof ArcCurve ? "arc" : "bezier");
         return bestCurve;
     }
 }

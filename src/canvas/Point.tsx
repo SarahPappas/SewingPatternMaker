@@ -21,18 +21,6 @@ export class Point implements IPoint {
         return dx * dx + dy * dy;
     }
 
-    // generates points on the line formed by all points that are equidistant 
-    // from this point and the other point. 
-    // at t=0, is returns the point in the middle of this point and the other point.
-    getPointOnMidline = (other: Point, t: number): Point => {
-        // TODO: use vectors here
-        const middle = Point.computeMiddlePoint(this, other);
-        const normalVector = [this.y - other.y, other.x - this.x];
-        const norm = Math.sqrt(this.distanceSquared(other));
-        const normalUnitVector = normalVector.map((value) => (value/norm));
-        return new Point(middle.x + t * normalUnitVector[0], middle.y + t * normalUnitVector[1]);
-    }
-
     closestDistanceSquaredFromSetOfPoints = (points: Point[]): number => {
         let minDistance = Number.MAX_VALUE;
 
@@ -51,5 +39,17 @@ export class Point implements IPoint {
         const middleY = (p1.y + p2.y) / 2;
         
         return new Point(middleX, middleY);
+    }
+
+    // generates points on the line formed by all points that are equidistant 
+    // from points p1 and p2.
+    // at t=0, is returns the point in the middle of this point and the other point.
+    static getPointOnMidline = (p1: Point, p2: Point, t: number): Point => {
+        // TODO: use vectors here
+        const middle = Point.computeMiddlePoint(p1, p2);
+        const normalVector = [p1.y - p2.y, p2.x - p1.x];
+        const norm = Math.sqrt(p1.distanceSquared(p2));
+        const normalUnitVector = normalVector.map((value) => (value/norm));
+        return new Point(middle.x + t * normalUnitVector[0], middle.y + t * normalUnitVector[1]);
     }
 }

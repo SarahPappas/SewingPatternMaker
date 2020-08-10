@@ -1,3 +1,5 @@
+import { Vector } from "./Vector";
+
 export class Point implements IPoint {
     x: number;
     y: number;
@@ -45,11 +47,11 @@ export class Point implements IPoint {
     // from points p1 and p2.
     // at t=0, is returns the point in the middle of this point and the other point.
     static getPointOnMidline = (p1: Point, p2: Point, t: number): Point => {
-        // TODO: use vectors here
         const middle = Point.computeMiddlePoint(p1, p2);
-        const normalVector = [p1.y - p2.y, p2.x - p1.x];
-        const norm = Math.sqrt(p1.distanceSquared(p2));
-        const normalUnitVector = normalVector.map((value) => (value/norm));
-        return new Point(middle.x + t * normalUnitVector[0], middle.y + t * normalUnitVector[1]);
+        const normalVector = Vector.perp(Vector.vectorBetweenPoints(p1, p2));
+        normalVector.normalize();
+        // TODO: override + and * operations for points and vectors?
+        return new Point(middle.x + t * normalVector.x, 
+                         middle.y + t * normalVector.y);
     }
 }

@@ -14,6 +14,13 @@ export class Vector {
         return new Vector(endPoint.x - startingPoint.x, endPoint.y - startingPoint.y);
     }
 
+    static divide = (vector: Vector, value: number) => {
+        if (value === 0) {
+            throw new Error("division by zero");
+        }
+        return new Vector(vector.x / value, vector.y / value);
+    }
+
     static dotProduct = (v1: Vector, v2: Vector): number => {
         return v1.x * v2.x + v1.y * v2.y;
     }
@@ -26,7 +33,17 @@ export class Vector {
         return Math.acos(Vector.dotProduct(v1, v2) / (v1.norm() * v2.norm()));
     }
 
+    static perp = (vector: Vector): Vector => {
+        return new Vector(-1 * vector.y, vector.x);
+    }
+
     norm = (): number => {
         return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    normalize = (): void => {
+        const norm = this.norm();
+        this.x = this.x / norm;
+        this.y = this.y / norm;
     }
 }

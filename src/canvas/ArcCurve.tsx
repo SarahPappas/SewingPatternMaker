@@ -57,7 +57,7 @@ export class ArcCurve extends Curve {
     getLength = (): number => {
         const u = Vector.vectorBetweenPoints(this.control, this.start);
         const v = Vector.vectorBetweenPoints(this.control, this.end);
-        const alpha = u.angleBetween(v);
+        const alpha = Vector.angleBetween(u, v);
         const theta = Math.PI - alpha;
         return theta * this.radius;
     }

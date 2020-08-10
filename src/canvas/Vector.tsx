@@ -14,16 +14,16 @@ export class Vector {
         return new Vector(endPoint.getX() - startingPoint.getX(), endPoint.getY() - startingPoint.getY());
     }
 
-    norm = (): number => {
-        return Math.sqrt(this.x * this.x + this.y * this.y);
-    }
-
-    dotProduct = (other: Vector): number => {
-        return this.x * other.x + this.y * other.y;
+    static dotProduct = (v1: Vector, v2: Vector): number => {
+        return v1.x * v2.x + v1.y * v2.y;
     }
 
     // Computes the angle between 2 vectors.
-    angleBetween = (other: Vector): number => {
-        return Math.acos(this.dotProduct(other) / (this.norm() * other.norm()));
+    static angleBetween = (v1: Vector, v2: Vector): number => {
+        return Math.acos(Vector.dotProduct(v1, v2) / (v1.norm() * v2.norm()));
+    }
+
+    norm = (): number => {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 }

@@ -23,6 +23,10 @@ export class Point implements IPoint {
         return dx * dx + dy * dy;
     }
 
+    distanceTo = (other: Point): number => {
+        return Math.sqrt(this.distanceSquared(other));
+    }
+
     closestDistanceSquaredFromSetOfPoints = (points: Point[]): number => {
         let minDistance = Number.MAX_VALUE;
 

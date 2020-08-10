@@ -11,7 +11,7 @@ export class ArcCurve extends Curve {
     constructor(start: Point, end: Point, control: Point) {
         super(start, end, control);
         this.center = this._computeCenter();
-        this.radius = this._computeRadius();
+        this.radius = this.center.distanceTo(start);
         const centerToStart = Vector.vectorBetweenPoints(this.center, start);
         this.startAngle = Math.atan2(centerToStart.y, centerToStart.x);
         const centerToEnd = Vector.vectorBetweenPoints(this.center, end);
@@ -47,12 +47,8 @@ export class ArcCurve extends Curve {
                   / (slope * startToControl.y + startToControl.x);
         // replace centerX in equation 2
         const centerY = (centerX - this.control.x) * slope + this.control.y;
-        
-        return new Point(centerX, centerY);
-    }
 
-    private _computeRadius = (): number => {
-        return Math.sqrt(this.start.distanceSquared(this.center));
+        return new Point(centerX, centerY);
     }
 
     computePoint = (t: number): Point => {     
@@ -74,7 +70,7 @@ export class ArcCurve extends Curve {
         const u = Vector.vectorBetweenPoints(this.control, this.start);
         const v = Vector.vectorBetweenPoints(this.control, this.end);
         const alpha = Vector.angleBetween(u, v);
-        // theta is the central angle between starting point and end point
+        // theta is the central angle between starting point and end point on the circle
         const theta = Math.PI - alpha;
         return theta * this.radius;
     }

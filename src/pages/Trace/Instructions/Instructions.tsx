@@ -12,8 +12,8 @@ interface InstructionsProps {
     setPathType: React.Dispatch<React.SetStateAction<PatternPathType>>;
 }
 
-export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathType, ...props}) => {
-    const showNavButton: NavButton = {label: 'DONE', to: '/AddMeasurement' };
+export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathType}) => {
+    const showNavButton: NavButton = {label: 'DONE', to: 'AddMeasurement' };
     const addPathButton: NavButton = {label:'', to: 'AddPath'};
     const warning: Modal = {text: ['Your pattern is incomplete. Please add another line.'], type: ModalType.Warning};
     const instruction: Modal = {text: ['Choose seam, fold, or edge to add to your pattern'], type: ModalType.Instruction};

@@ -9,6 +9,11 @@ type ActionButton = {
     action: (...args: any[]) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
+type Button = {
+    label: string;
+    className: string;
+};
+
 type Modal = {
     text: string[];
     type: ModalType;
@@ -17,8 +22,9 @@ type Modal = {
 type Input = {
     id: string;
     type: string;
-    accept: string;
-    className: string;
+    accept?: string;
+    onChange: ChangeEvent<HTMLInputElement>;
+    className?: string;
 };
 
 /* CANVAS TYPES */

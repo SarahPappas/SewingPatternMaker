@@ -1,11 +1,12 @@
 import React, { useRef, useEffect } from 'react';
+import { AppModels } from '../../../canvas/App';
 import { NavButton } from 'components/NavButton/NavButton';
 import { Modal } from 'components/Modal/Modal';
 import { PathTypeButtonGrid } from 'components/PathTypeButtonGrid/PathTypeButtonGrid';
-import './Instructions.css';
 import { PatternPathType, ModalType } from 'canvas/Enums';
-import { globalDocument } from '../../../canvas/Document';
 import { ActionButton } from 'components/ActionButton/ActionButton';
+import './Instructions.css';
+
 
 interface InstructionsProps {
     curPathType: PatternPathType;
@@ -20,16 +21,16 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     
     const [showWarning, setShowWarning] = React.useState<boolean>(false);
     let doneContainer = <></>;
-    const showDoneButton = useRef(globalDocument.isEmpty());
-    const arePatternsEnclosed = useRef(globalDocument.arePatternPiecesEnclosed());
+    const showDoneButton = useRef(AppModels.document.isEmpty());
+    const arePatternsEnclosed = useRef(AppModels.document.arePatternPiecesEnclosed());
 
     useEffect(() => {
-        showDoneButton.current = globalDocument.isEmpty();
-        arePatternsEnclosed.current = globalDocument.arePatternPiecesEnclosed();
+        showDoneButton.current = AppModels.document.isEmpty();
+        arePatternsEnclosed.current = AppModels.document.arePatternPiecesEnclosed();
     }, [arePatternsEnclosed, showDoneButton]);
 
     const handleClickDone = (): void => {
-        setShowWarning(!globalDocument.arePatternPiecesEnclosed());
+        setShowWarning(!AppModels.document.arePatternPiecesEnclosed());
     };
     const showWarningButton: ActionButton = {label: 'DONE', action: handleClickDone};
     if (showDoneButton.current && !showWarning) {

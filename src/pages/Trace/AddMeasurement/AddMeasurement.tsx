@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, ChangeEvent } from 'react';
-import './AddMeasurement.css';
+import { AppModels } from '../../../canvas/App';
 import checkIcon from '../../../assets/check-icon.svg';
-import { renderer } from 'canvas/Renderer';
 import { Modal } from 'components/Modal/Modal';
 import { Input } from 'components/Input/Input';
 import { NavButton } from 'components/NavButton/NavButton';
 import { ActionButton } from 'components/ActionButton/ActionButton';
 import { ModalType } from 'canvas/Enums';
+import './AddMeasurement.css';
 
 interface AddMeasurementProps {
     setUploadedFileData: React.Dispatch<React.SetStateAction<string>>;
@@ -21,7 +21,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
     useEffect(() => {
         canvasContainerRef.current = document.getElementsByClassName('canvasContainer')[0];
         canvasContainerRef.current.classList.remove('canvasContainerBackground');
-        renderer.measurementInit();
+        AppModels.renderer.measurementInit();
         setUploadedFileData("");
     }, [canvasContainerRef, setUploadedFileData]);
 
@@ -33,12 +33,12 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
         if (parseFloat(inputMeasurement).toString() !== inputMeasurement.trim()) {
             warningModal.current = <Modal modal={numberWarning} />;
         } else {
-            const selectedPath = renderer.getPathSelection();
+            const selectedPath = AppModels.pathSelection.getSelectedPath();
             if (!selectedPath) {
                 warningModal.current = <Modal modal={selectionWarning} />;
             } else {
                 warningModal.current = <></>;
-                renderer.getDocument().setSizeRatio(parseFloat(inputMeasurement), selectedPath);
+                AppModels.document.setSizeRatio(parseFloat(inputMeasurement), selectedPath);
             }
         }
     };

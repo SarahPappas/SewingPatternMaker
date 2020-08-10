@@ -85,9 +85,3 @@ export class Document implements IDocument {
         return this._sizeRatio;        
     };
 }
-
-// Todo move into seperate App class with Render
-// pass in the document to the renderer
-const globalDocument = new Document();
-
-export { globalDocument };

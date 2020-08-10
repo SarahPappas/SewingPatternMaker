@@ -1,11 +1,11 @@
 import { PatternPath } from './PatternPath';
-import { Document, globalDocument } from './Document';
+import { Document } from './Document';
+import { PathSelection } from './PathSelection';
 import { Point } from './Point';
 import { PatternPathColor } from './PatternPathColor';
 import { PatternPathType, ToolType } from './Enums';
-import { PathSelection } from './PathSelection';
 
-class Renderer implements IRenderer {
+export class Renderer implements IRenderer {
     private _canvas: HTMLCanvasElement;
     private _context: CanvasRenderingContext2D;
     private _document: Document;
@@ -15,7 +15,7 @@ class Renderer implements IRenderer {
     private _toolType: ToolType;
     private _pathSelection: PathSelection;
 
-    constructor () {
+    constructor (DocumentModel: Document, PathSelectionModel: PathSelection) {
         this._canvas = document.createElement('canvas');
         this._canvas.width = 300;
         this._canvas.height = 400;
@@ -26,13 +26,13 @@ class Renderer implements IRenderer {
         }
 
         this._context = contextOrNull;
-        this._document = globalDocument;
+        this._document = DocumentModel;
         this._isTracing = false;
         this._currPath = null;
         this._pathType = PatternPathType.UNDEFINED;
         // The default tool type is a straight line tool.
         this._toolType = ToolType.StraightLine;
-        this._pathSelection = new PathSelection();
+        this._pathSelection = PathSelectionModel;
     }
 
     init = (): HTMLCanvasElement => {
@@ -112,14 +112,6 @@ class Renderer implements IRenderer {
         this._canvas.onmouseup = null;
         this._canvas.onmouseout = null;
     }
-    
-    getPathSelection = (): PatternPath | null => {
-        return this._pathSelection.getSelectedPath();
-    }
-
-    getDocument = (): Document => {
-        return this._document;
-    }
 
     private _endTracing = (position: Point): void => {
         if (this._currPath) {
@@ -192,7 +184,3 @@ class Renderer implements IRenderer {
     // }
 
 }
-
-const renderer = new Renderer();
-
-export { renderer };

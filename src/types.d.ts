@@ -39,7 +39,8 @@ type IPatternPath = {
     getType: () => PatternPathType;
     getPath2D: () => Path2D;
     addPoint: (point: Point) => boolean;
-    fitCurve: () => void;
+    snapEndpoints: (paths: PatternPath[]) => void;
+    getLengthInPixels: () => number;
 };
 
 type IPatternPathType = {

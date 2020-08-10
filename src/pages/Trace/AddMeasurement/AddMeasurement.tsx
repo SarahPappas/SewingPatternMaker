@@ -25,17 +25,19 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
         setUploadedFileData("");
     }, [canvasContainerRef, setUploadedFileData]);
 
+    const selectionWarning: Modal = {text: ['Please select a path'], type: ModalType.Warning}; 
+    const numberWarning: Modal = {text: ['Please enter a decimal number'], type: ModalType.Warning};
+    const warningModal = useRef(<></>);
+
     const handleSubmit = () => {
         if (parseFloat(inputMeasurement).toString() !== inputMeasurement.trim()) {
-            // TODO: pop an error modal to the user
-            console.log('Please enter a decimal number');
+            warningModal.current = <Modal modal={numberWarning} />;
         } else {
             const selectedPath = renderer.getPathSelection();
             if (!selectedPath) {
-                // TODO: pop an error modal to the user
-                console.log('Please select a path');
+                warningModal.current = <Modal modal={selectionWarning} />;
             } else {
-                console.log('ok');
+                warningModal.current = <></>;
                 renderer.getDocument().setSizeRatio(parseFloat(inputMeasurement), selectedPath);
             }
         }
@@ -45,6 +47,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         setInputMeasurement(e.target.value);
+        warningModal.current = <></>;
     };
 
     const input: Input = { 
@@ -65,6 +68,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
                 <Modal modal={instructModal}></Modal>
             </div>
             <div className={'measurementBottomContainer'}>
+                {warningModal.current}
                 <div className={'text'}>
                     Measurement
                 </div>

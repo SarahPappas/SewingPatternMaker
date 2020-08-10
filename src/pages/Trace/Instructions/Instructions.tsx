@@ -20,12 +20,12 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     
     const [showWarning, setShowWarning] = React.useState<boolean>(false);
     let doneContainer = <></>;
-    let showDoneButton = globalDocument.isEmpty();
-    let arePatternsEnclosed = globalDocument.arePatternPiecesEnclosed();
+    const showDoneButton = useRef(globalDocument.isEmpty());
+    const arePatternsEnclosed = useRef(globalDocument.arePatternPiecesEnclosed());
 
     useEffect(() => {
-        showDoneButton = globalDocument.isEmpty();
-        arePatternsEnclosed = globalDocument.arePatternPiecesEnclosed();
+        showDoneButton.current = globalDocument.isEmpty();
+        arePatternsEnclosed.current = globalDocument.arePatternPiecesEnclosed();
     }, [arePatternsEnclosed, showDoneButton]);
 
     const handleClickDone = (): void => {
@@ -33,11 +33,11 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
         setShowWarning(!globalDocument.arePatternPiecesEnclosed());
     };
     const showWarningButton: ActionButton = {label: 'DONE', action: handleClickDone};
-    if (showDoneButton && !showWarning) {
+    if (showDoneButton.current && !showWarning) {
         doneContainer = <ActionButton button={showWarningButton}></ActionButton>;
     }
 
-    if (showDoneButton && arePatternsEnclosed) {
+    if (showDoneButton.current && arePatternsEnclosed.current) {
         doneContainer = <NavButton button={showNavButton}/>;
     }
 

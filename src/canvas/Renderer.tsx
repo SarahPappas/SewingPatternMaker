@@ -4,6 +4,8 @@ import { PathSelection } from './PathSelection';
 import { Point } from './Point';
 import { PatternPathColor } from './PatternPathColor';
 import { PatternPathType, ToolType } from './Enums';
+import { StraightLinePath } from './StraightLinePath';
+import { FreeLinePath } from './FreeLinePath';
 
 export class Renderer implements IRenderer {
     private _canvas: HTMLCanvasElement;
@@ -45,8 +47,15 @@ export class Renderer implements IRenderer {
 
             this._isTracing = true;
             
-            // TODO: setTool Type when creating a new path.
-            this._currPath = new PatternPath(this._pathType, this._toolType);
+            switch(this._toolType) {
+                case(ToolType.StraightLine):
+                    this._currPath = new StraightLinePath(this._pathType);
+                    break;
+                case(ToolType.Freeline):
+                    this._currPath = new FreeLinePath(this._pathType);
+                    break;
+            }
+
             this._document.addPatternPath(this._currPath);
             this._currPath.addPoint(new Point(e.offsetX, e.offsetY));
         };
@@ -117,7 +126,7 @@ export class Renderer implements IRenderer {
         if (this._currPath) {
             this._currPath.addPoint(position); 
             this._currPath.snapEndpoints(this._document.getPatternPaths());
-            if (this._toolType === ToolType.Freeline) {
+            if (this._currPath instanceof FreeLinePath) {
                 this._currPath.fitCurve();
             }
 

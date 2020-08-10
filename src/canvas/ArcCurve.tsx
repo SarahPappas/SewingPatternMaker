@@ -27,12 +27,25 @@ export class ArcCurve extends Curve {
 
     private _computeCenter = (): Point => {
         // TODO: check for divisions by 0
-        // TODO: use Vector class here
-        const normalVector = [this.start.y - this.end.y, this.end.x - this.start.x];
-        const middle = Point.computeMiddlePoint(this.start, this.end);
-        const x = (this.start.x * (this.control.x - this.start.x) + (middle.x * normalVector[1] / normalVector[0] - middle.y + this.start.y) * (this.control.y - this.start.y)) / (normalVector[1] * (this.control.y - this.start.y) / normalVector[0] + (this.control.x - this.start.x));
-        const y = (x - middle.x) * normalVector[1] / normalVector[0] + middle.y;
-        return new Point(x, y);
+
+        // the center of the circle is such that startToControl vector is
+        // perpendicular to centerToStart vector
+        // equation 1: startToControl dot centerToStart = 0
+        const startToControl = Vector.vectorBetweenPoints(this.start, this.control);
+
+        // the center of the circle is on the line that goes through the 
+        // control point and that is perpendicular to the vector between start and end
+        // equation 2: centerY = control + slope * centerX
+        const normalVector = Vector.perp(Vector.vectorBetweenPoints(this.start, this.end));
+        const slope = normalVector.y / normalVector.x;
+
+        // insert equation 2 in equation 1, then solve for centerX
+        const centerX = (this.start.x * startToControl.x 
+                    + (this.control.x * slope - this.control.y + this.start.y) * startToControl.y) 
+                  / (slope * startToControl.y + startToControl.x);
+        // replace centerX in equation 2
+        const centerY = (centerX - this.control.x) * slope + this.control.y;
+        return new Point(centerX, centerY);
     }
 
     private _computeRadius = (): number => {

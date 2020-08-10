@@ -20,6 +20,9 @@ export class Vector {
 
     // Computes the angle between 2 vectors.
     static angleBetween = (v1: Vector, v2: Vector): number => {
+        if (v1.norm() === 0 || v2.norm() === 0) {
+            throw new Error("division by 0");
+        }
         return Math.acos(Vector.dotProduct(v1, v2) / (v1.norm() * v2.norm()));
     }
 

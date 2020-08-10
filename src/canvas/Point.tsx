@@ -1,22 +1,14 @@
 export class Point implements IPoint {
-    private _x: number;
-    private _y: number;
+    x: number;
+    y: number;
 
     constructor (x: number, y: number) {
-        this._x = x;
-        this._y = y;
-    }
-
-    getX = (): number => {
-        return this._x;
-    }
-
-    getY = (): number => {
-        return this._y;
+        this.x = x;
+        this.y = y;
     }
 
     equals = (o: Point): boolean => {
-        return this._x === o.getX() && this._y === o.getY();
+        return this.x === o.x && this.y === o.y;
     }
 
     isWithinRadius = (o: Point, radius: number): boolean => {
@@ -24,8 +16,8 @@ export class Point implements IPoint {
     }
     
     distanceSquared = (point: Point): number => {
-        const dx = this._x - point.getX();
-        const dy = this._y - point.getY();
+        const dx = this.x - point.x;
+        const dy = this.y - point.y;
         return dx * dx + dy * dy;
     }
 
@@ -35,10 +27,10 @@ export class Point implements IPoint {
     getPointOnMidline = (other: Point, t: number): Point => {
         // TODO: use vectors here
         const middle = this.computeMiddlePoint(other);
-        const normalVector = [this._y - other._y, other._x - this._x];
+        const normalVector = [this.y - other.y, other.x - this.x];
         const norm = Math.sqrt(this.distanceSquared(other));
         const normalUnitVector = normalVector.map((value) => (value/norm));
-        return new Point(middle.getX() + t * normalUnitVector[0], middle.getY() + t * normalUnitVector[1]);
+        return new Point(middle.x + t * normalUnitVector[0], middle.y + t * normalUnitVector[1]);
     }
 
     closestDistanceSquaredFromSetOfPoints = (points: Point[]): number => {
@@ -55,8 +47,8 @@ export class Point implements IPoint {
     }
 
     computeMiddlePoint = (point2: Point): Point => {
-        const middleX = (this.getX() + point2.getX()) / 2;
-        const middleY = (this.getY() + point2.getY()) / 2;
+        const middleX = (this.x + point2.x) / 2;
+        const middleY = (this.y + point2.y) / 2;
         
         return new Point(middleX, middleY);
     }

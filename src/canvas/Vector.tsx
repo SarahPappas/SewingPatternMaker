@@ -11,7 +11,7 @@ export class Vector {
 
     // constructs vector going from p1 to p2
     static vectorBetweenPoints(startingPoint: Point, endPoint: Point): Vector {
-        return new Vector(endPoint.getX() - startingPoint.getX(), endPoint.getY() - startingPoint.getY());
+        return new Vector(endPoint.x - startingPoint.x, endPoint.y - startingPoint.y);
     }
 
     static dotProduct = (v1: Vector, v2: Vector): number => {

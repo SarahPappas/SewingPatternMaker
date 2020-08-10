@@ -13,8 +13,8 @@ export class ArcCurve extends Curve {
         this.center = this.computeCenter();
         this.radius = this.computeRadius();
         // TODO: use vectors here
-        this.startAngle = Math.atan2((this.start.getY() - this.center.getY()), (this.start.getX() - this.center.getX()));
-        this.endAngle = Math.atan2((this.end.getY() - this.center.getY()), (this.end.getX() - this.center.getX()));
+        this.startAngle = Math.atan2((this.start.y - this.center.y), (this.start.x - this.center.x));
+        this.endAngle = Math.atan2((this.end.y - this.center.y), (this.end.x - this.center.x));
         //make sure we go in the right direction on the circle
         if (Math.abs(this.endAngle - this.startAngle) > Math.PI) {
             if (this.startAngle < this.endAngle) {
@@ -28,10 +28,10 @@ export class ArcCurve extends Curve {
     computeCenter = (): Point => {
         // TODO: check for divisions by 0
         // TODO: use Vector class here
-        const normalVector = [this.start.getY() - this.end.getY(), this.end.getX() - this.start.getX()];
+        const normalVector = [this.start.y - this.end.y, this.end.x - this.start.x];
         const middle = this.start.computeMiddlePoint(this.end);
-        const x = (this.start.getX() * (this.control.getX() - this.start.getX()) + (middle.getX() * normalVector[1] / normalVector[0] - middle.getY() + this.start.getY()) * (this.control.getY() - this.start.getY())) / (normalVector[1] * (this.control.getY() - this.start.getY()) / normalVector[0] + (this.control.getX() - this.start.getX()));
-        const y = (x - middle.getX()) * normalVector[1] / normalVector[0] + middle.getY();
+        const x = (this.start.x * (this.control.x - this.start.x) + (middle.x * normalVector[1] / normalVector[0] - middle.y + this.start.y) * (this.control.y - this.start.y)) / (normalVector[1] * (this.control.y - this.start.y) / normalVector[0] + (this.control.x - this.start.x));
+        const y = (x - middle.x) * normalVector[1] / normalVector[0] + middle.y;
         return new Point(x, y);
     }
 
@@ -40,16 +40,16 @@ export class ArcCurve extends Curve {
     }
 
     computePoint = (t: number): Point => {     
-        const x = this.center.getX() + 
+        const x = this.center.x + 
                   this.radius * Math.cos(this.lerp(this.startAngle, this.endAngle, t));
-        const y = this.center.getY() + 
+        const y = this.center.y + 
                   this.radius * Math.sin(this.lerp(this.startAngle, this.endAngle, t));
         return new Point(x, y);
     };
 
     drawCurve = (path: Path2D): void => {
-        path.arcTo(this.control.getX(), this.control.getY(), 
-                   this.end.getX(), this.end.getY(), 
+        path.arcTo(this.control.x, this.control.y, 
+                   this.end.x, this.end.y, 
                    this.radius);
     }
 

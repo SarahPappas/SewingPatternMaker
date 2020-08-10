@@ -38,7 +38,7 @@ export class PatternPath implements IPatternPath {
 
         // If it is the first time we are adding a point to the Path2D, use moveTo.
         if (this._lastIndexAddedToPath2D === -1 && this._points.length) {
-            this._path2D.moveTo(this._points[0].getX(), this._points[0].getY());
+            this._path2D.moveTo(this._points[0].x, this._points[0].y);
             this._lastIndexAddedToPath2D++;
         }
 
@@ -91,7 +91,7 @@ export class PatternPath implements IPatternPath {
         const firstPoint = this._points[0];
         this._path2D = new Path2D();
         this._isPath2DValid = true;
-        this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
+        this._path2D.moveTo(firstPoint.x, firstPoint.y);
 
         this._fittedCurve = CurveFitter.Fit(this._points);
         this._fittedCurve.drawCurve(this._path2D);  
@@ -170,7 +170,7 @@ export class PatternPath implements IPatternPath {
         const prevPoint = this._points[this._lastIndexAddedToPath2D];
 
         const midPoint = prevPoint.computeMiddlePoint(currPoint);
-        this._path2D.quadraticCurveTo(prevPoint.getX(), prevPoint.getY(), midPoint.getX(), midPoint.getY());
+        this._path2D.quadraticCurveTo(prevPoint.x, prevPoint.y, midPoint.x, midPoint.y);
     }
 
     private _updatePath2DStraightLine = (): void => {
@@ -179,7 +179,7 @@ export class PatternPath implements IPatternPath {
         
         this._path2D = new Path2D();
         this._isPath2DValid = true;
-        this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
-        this._path2D.lineTo(lastPoint.getX(), lastPoint.getY());
+        this._path2D.moveTo(firstPoint.x, firstPoint.y);
+        this._path2D.lineTo(lastPoint.x, lastPoint.y);
     }
 }

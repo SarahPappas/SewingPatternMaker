@@ -47,8 +47,6 @@ type IPatternPathType = {
 }
 
 type IPoint = {
-    getX: () => number;
-    getY: () => number;
     equals: (o: Point) => boolean;
 };
 

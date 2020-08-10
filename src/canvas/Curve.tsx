@@ -1,5 +1,4 @@
 import { Point } from './Point';
-import { Vector } from './Vector';
 
 export abstract class Curve {
     start: Point;
@@ -29,14 +28,14 @@ export abstract class Curve {
         let length = 0;
         // compute the total distance from start to control + from control to end in order to 
         // find an upper bound on the curve length.
-        const startToControl = Vector.vectorBetweenPoints(this.start, this.control);
-        const controlToEnd = Vector.vectorBetweenPoints(this.control, this.end);
-        const upperBound = Math.ceil(startToControl.norm() + controlToEnd.norm());
+        const startToControl = this.start.distanceTo(this.control);
+        const controlToEnd = this.control.distanceTo(this.end);
+        const upperBound = Math.ceil(startToControl + controlToEnd);
         // find the number of points to take on the curve as a function of the upperbound
         const NUMPOINTS = upperBound / 5;
         const pointsOnCurve = this.computePointsOnCurve(NUMPOINTS);
         for (let i = 0; i < NUMPOINTS - 1; i++) {
-            length += Math.sqrt(pointsOnCurve[i+1].distanceSquared(pointsOnCurve[i]));
+            length += pointsOnCurve[i+1].distanceTo(pointsOnCurve[i]);
         }
         return length;
     }

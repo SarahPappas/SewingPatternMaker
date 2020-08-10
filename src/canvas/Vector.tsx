@@ -46,4 +46,9 @@ export class Vector {
         this.x = this.x / norm;
         this.y = this.y / norm;
     }
+
+    // returns the angle between this and the (1, 0) vector in radians 
+    getAngle = (): number => {
+        return Math.atan2(this.y, this.x);
+    }
 }

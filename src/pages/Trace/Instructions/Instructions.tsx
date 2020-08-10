@@ -29,12 +29,11 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     }, [arePatternsEnclosed, showDoneButton]);
 
     const handleClickDone = (): void => {
-        console.log("click");
         setShowWarning(!globalDocument.arePatternPiecesEnclosed());
     };
     const showWarningButton: ActionButton = {label: 'DONE', action: handleClickDone};
     if (showDoneButton.current && !showWarning) {
-        doneContainer = <ActionButton button={showWarningButton}></ActionButton>;
+        doneContainer = <div className='navButton'><ActionButton button={showWarningButton}></ActionButton></div>;
     }
 
     if (showDoneButton.current && arePatternsEnclosed.current) {

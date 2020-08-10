@@ -12,10 +12,12 @@ export class ArcCurve extends Curve {
         super(start, end, control);
         this.center = this._computeCenter();
         this.radius = this._computeRadius();
-        // TODO: use vectors here
-        this.startAngle = Math.atan2((this.start.y - this.center.y), (this.start.x - this.center.x));
-        this.endAngle = Math.atan2((this.end.y - this.center.y), (this.end.x - this.center.x));
-        //make sure we go in the right direction on the circle
+        const centerToStart = Vector.vectorBetweenPoints(this.center, start);
+        this.startAngle = Math.atan2(centerToStart.y, centerToStart.x);
+        const centerToEnd = Vector.vectorBetweenPoints(this.center, end);
+        this.endAngle = Math.atan2(centerToEnd.y, centerToEnd.x);
+        // make sure we go in the right direction on the circle: always use the shortest
+        // way around the circle
         if (Math.abs(this.endAngle - this.startAngle) > Math.PI) {
             if (this.startAngle < this.endAngle) {
                 this.startAngle += 2 * Math.PI;
@@ -45,6 +47,7 @@ export class ArcCurve extends Curve {
                   / (slope * startToControl.y + startToControl.x);
         // replace centerX in equation 2
         const centerY = (centerX - this.control.x) * slope + this.control.y;
+        
         return new Point(centerX, centerY);
     }
 

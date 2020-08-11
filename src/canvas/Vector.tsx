@@ -15,6 +15,9 @@ export class Vector {
 
     normalize = (): void => {
         const norm = this.norm();
+        if (norm === 0) {
+            throw new Error("division by 0");
+        }
         this.x /= norm;
         this.y /= norm;
     };

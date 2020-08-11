@@ -94,7 +94,7 @@ export class Renderer implements IRenderer {
         }) as EventListener);
 
         return this._canvas;
-    }
+    };
 
     measurementInit = (): void  => {
         const patternPaths = this._document.getPatternPaths();
@@ -120,7 +120,7 @@ export class Renderer implements IRenderer {
 
         this._canvas.onmouseup = null;
         this._canvas.onmouseout = null;
-    }
+    };
 
     private _endTracing = (position: Point): void => {
         if (this._currPath) {
@@ -133,13 +133,13 @@ export class Renderer implements IRenderer {
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }
         this._resetTracing();
-    }
+    };
 
     private _draw = (): void => {
         this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
     
         this._drawPatternPaths();
-    }
+    };
 
     private _drawPatternPaths = (): void => {
         const context = this._context;
@@ -165,28 +165,28 @@ export class Renderer implements IRenderer {
             context.strokeStyle = pathColor;
             context.stroke(path2D);
         });
-    }
+    };
 
     private _resetTracing = (): void => {
         this._isTracing = false;  
         this._currPath = null;
         this._toolType = ToolType.StraightLine;
-    }
+    };
 
     private _setPathType = (type: number): void => {
         this._pathType = type;
-    }
+    };
 
     private _setToolType = (type: number): void => {
         this._toolType = type;
-    }
+    };
 
     private _tick = (): void => {
         // this._update();
         this._draw();
     
         requestAnimationFrame(this._tick);
-    }
+    };
 
     // private _update = (): void => {
     //     console.log("update");

@@ -9,6 +9,21 @@ export class Vector {
         this.y = y;
     }
 
+    norm = (): number => {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    };
+
+    normalize = (): void => {
+        const norm = this.norm();
+        this.x /= norm;
+        this.y /= norm;
+    };
+
+    // returns the angle between this and the (1, 0) vector in radians 
+    getAngle = (): number => {
+        return Math.atan2(this.y, this.x);
+    };
+
     // constructs vector going from p1 to p2
     static vectorBetweenPoints = (startingPoint: Point, endPoint: Point): Vector => {
         return new Vector(endPoint.x - startingPoint.x, endPoint.y - startingPoint.y);
@@ -35,20 +50,5 @@ export class Vector {
 
     static perp = (vector: Vector): Vector => {
         return new Vector(-1 * vector.y, vector.x);
-    };
-
-    norm = (): number => {
-        return Math.sqrt(this.x * this.x + this.y * this.y);
-    };
-
-    normalize = (): void => {
-        const norm = this.norm();
-        this.x /= norm;
-        this.y /= norm;
-    };
-
-    // returns the angle between this and the (1, 0) vector in radians 
-    getAngle = (): number => {
-        return Math.atan2(this.y, this.x);
     };
 }

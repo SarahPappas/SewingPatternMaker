@@ -1,8 +1,11 @@
 import React, { useRef, useEffect } from 'react';
-import { useHistory } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 import { PathTypeButtonGrid } from 'components/PathTypeButtonGrid/PathTypeButtonGrid';
 import { PatternPathType } from 'canvas/Enums';
 import { ToolButtonGrid } from 'components/ToolButtonGrid/ToolButtonGrid';
+import { ReactComponent as ExitIcon } from '../../../assets/x-icon.svg';
+import { NavButton } from 'components/NavButton/NavButton';
+import './AddPath.css';
 
 interface AddPathProps {
     curPathType: PatternPathType;
@@ -29,7 +32,13 @@ export const AddPath: React.FC<AddPathProps> = ({curPathType, setPathType}) => {
         history.push('/Trace/Review');
     });
 
+    const exitButton: NavButton = {label:'', to:'/Trace/Instructions'};    
     return (<>
+        <div className='exitButton'>
+            <NavButton button={exitButton}>
+                <ExitIcon/>
+            </NavButton>
+        </div>
         <ToolButtonGrid curPathType={curPathType}/>
         <PathTypeButtonGrid isEnabled={false} curPathType={curPathType} setPathType={setPathType}/>
     </>);

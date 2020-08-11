@@ -118,7 +118,7 @@ export abstract class PatternPath implements IPatternPath {
         if (updatedFirstPoint || updatedLastPoint) {
             this._updatePath2D();
         }
-    }
+    };
 
     abstract getLengthInPixels(): number;
     protected abstract _updatePath2D(): void;

@@ -1,11 +1,6 @@
 import { PatternPath } from "./PatternPath";
-import { PatternPathType, ToolType } from "./Enums";
 
 export class StraightLinePath extends PatternPath {
-    constructor (pathType: PatternPathType) {
-        super(pathType, ToolType.StraightLine);
-    }
-
     getLengthInPixels = (): number => {
         return Math.sqrt(this._points[0].distanceSquared(this._points[this._points.length - 1]));
     };

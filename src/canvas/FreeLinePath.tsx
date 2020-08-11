@@ -1,5 +1,5 @@
 import { PatternPath } from "./PatternPath";
-import { PatternPathType, ToolType } from "./Enums";
+import { PatternPathType } from "./Enums";
 import { Curve } from './Curve';
 import { CurveFitter } from './CurveFitter';
 
@@ -7,7 +7,7 @@ export class FreeLinePath extends PatternPath {
     private _fittedCurve: Curve | null;
     
     constructor (pathType: PatternPathType) {
-        super(pathType, ToolType.Freeline);
+        super(pathType);
         
         this._fittedCurve = null;
     }

@@ -1,17 +1,15 @@
 import { Point } from './Point';
-import { PatternPathType, ToolType } from './Enums';
+import { PatternPathType } from './Enums';
 
 export abstract class PatternPath implements IPatternPath {
     protected _points: Point[];
     protected _type: PatternPathType;
-    protected _toolType: ToolType;
     protected _path2D: Path2D;
     protected _isPath2DValid: boolean;
     protected _lastIndexAddedToPath2D: number;
 
-    constructor (pathType: PatternPathType, toolType: ToolType) {
+    constructor (pathType: PatternPathType) {
         this._type = pathType;
-        this._toolType = toolType;
         this._points = new Array<Point>();
         this._path2D = new Path2D();
         this._isPath2DValid = false;

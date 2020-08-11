@@ -19,5 +19,4 @@ export class StraightLinePath extends PatternPath {
         this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
         this._path2D.lineTo(lastPoint.getX(), lastPoint.getY());
     }
-
 }

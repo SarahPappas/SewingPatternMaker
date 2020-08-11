@@ -32,7 +32,7 @@ export class BoundingBox {
         this.width = this.width * factor;
         this.maxX = this.minX + this.width;
         this.maxY = this.minY + this.height;
-    }
+    };
 
     private build = (points: Point[]): void => {
         points.forEach(point => {
@@ -50,13 +50,13 @@ export class BoundingBox {
                 this.maxY = y;
             }
         });
-    }
+    };
 
     private calcHeight = (): void => {
         this.height = this.maxY - this.minY;
-    }
+    };
 
     private calcWidth = (): void => {
         this.width = this.maxX - this.minX;
-    }
+    };
 }

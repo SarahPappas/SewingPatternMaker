@@ -59,6 +59,6 @@ export class CurveFitter {
         }
 
         return bestCurve;
-    }
+    };
 }
 

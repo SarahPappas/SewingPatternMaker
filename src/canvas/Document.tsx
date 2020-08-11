@@ -7,7 +7,7 @@ export class Document implements IDocument {
     constructor () {
         this._patternPaths = new Array<PatternPath>();
         this._sizeRatio = null;
-    };
+    }
 
     getPatternPaths = (): PatternPath[] => {
         return [...this._patternPaths];

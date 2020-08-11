@@ -20,14 +20,14 @@ export class FreeLinePath extends PatternPath {
 
         this._fittedCurve = CurveFitter.Fit(this._points);
         this._path2D.quadraticCurveTo(this._fittedCurve.control.getX(), this._fittedCurve.control.getY(), this._fittedCurve.end.getX(), this._fittedCurve.end.getY());        
-    }
+    };
 
     getLengthInPixels = (): number => {
         if (!this._fittedCurve) {
             throw new Error();
         }
         return this._fittedCurve.getLength();
-    }
+    };
 
         /* 
     * The algorithm for starting and ending the line is not quite right. The first segment of the path will be 
@@ -41,5 +41,5 @@ export class FreeLinePath extends PatternPath {
 
         const midPoint = prevPoint.computeMiddlePoint(currPoint);
         this._path2D.quadraticCurveTo(prevPoint.getX(), prevPoint.getY(), midPoint.getX(), midPoint.getY());
-    }
+    };
 }

@@ -7,7 +7,7 @@ export class Document implements IDocument {
     constructor () {
         this._patternPaths = new Array<PatternPath>();
         this._sizeRatio = null;
-    }
+    };
 
     getPatternPaths = (): PatternPath[] => {
         return [...this._patternPaths];
@@ -29,12 +29,12 @@ export class Document implements IDocument {
             throw new Error("Tried to remove path from document, but there are no paths to remove");
         }
         return Boolean(this._patternPaths.pop());
-    }
+    };
 
     // Sets the pixels per inch ratio according to the input measurement
     setSizeRatio = (inputMeasurementInInches: number, selectedPath: PatternPath): void => {
         this._sizeRatio = selectedPath.getLengthInPixels() / inputMeasurementInInches;
-    }
+    };
 
     getSizeRatio = (): number => {
         if (!this._sizeRatio) {
@@ -42,5 +42,5 @@ export class Document implements IDocument {
             return -1;
         } 
         return this._sizeRatio;        
-    }
+    };
 }

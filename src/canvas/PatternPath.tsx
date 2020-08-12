@@ -93,7 +93,7 @@ export class PatternPath implements IPatternPath {
         this._isPath2DValid = true;
         this._path2D.moveTo(firstPoint.x, firstPoint.y);
 
-        this._fittedCurve = CurveFitter.Fit(this._points);
+        this._fittedCurve = (new CurveFitter(this._points)).fit();
         this._fittedCurve.drawCurve(this._path2D);  
     }
 

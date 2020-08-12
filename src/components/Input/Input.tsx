@@ -15,7 +15,7 @@ export const Input: React.FC<InputButtonProps> = ({ input, button }) => {
             <label htmlFor={input.id}> 
                 <Button 
                     label={button.label} 
-                    className={button.className}>
+                    className={button.className || ''}>
                 </Button>
             </label>
         );

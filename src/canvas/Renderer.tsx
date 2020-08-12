@@ -1,11 +1,13 @@
 import { PatternPath } from './PatternPath';
 import { Document } from './Document';
+import { PathSelection } from './PathSelection';
 import { Point } from './Point';
 import { PatternPathColor } from './PatternPathColor';
 import { PatternPathType, ToolType } from './Enums';
-import { PathSelection } from './PathSelection';
+import { StraightLinePath } from './StraightLinePath';
+import { FreeLinePath } from './FreeLinePath';
 
-class Renderer implements IRenderer {
+export class Renderer implements IRenderer {
     private _canvas: HTMLCanvasElement;
     private _context: CanvasRenderingContext2D;
     private _document: Document;
@@ -15,7 +17,7 @@ class Renderer implements IRenderer {
     private _toolType: ToolType;
     private _pathSelection: PathSelection;
 
-    constructor () {
+    constructor (DocumentModel: Document, PathSelectionModel: PathSelection) {
         this._canvas = document.createElement('canvas');
         this._canvas.width = 300;
         this._canvas.height = 400;
@@ -26,13 +28,13 @@ class Renderer implements IRenderer {
         }
 
         this._context = contextOrNull;
-        this._document = new Document();
+        this._document = DocumentModel;
         this._isTracing = false;
         this._currPath = null;
         this._pathType = PatternPathType.UNDEFINED;
         // The default tool type is a straight line tool.
         this._toolType = ToolType.StraightLine;
-        this._pathSelection = new PathSelection();
+        this._pathSelection = PathSelectionModel;
     }
 
     init = (): HTMLCanvasElement => {
@@ -45,8 +47,15 @@ class Renderer implements IRenderer {
 
             this._isTracing = true;
             
-            // TODO: setTool Type when creating a new path.
-            this._currPath = new PatternPath(this._pathType, this._toolType);
+            switch(this._toolType) {
+                case(ToolType.StraightLine):
+                    this._currPath = new StraightLinePath(this._pathType);
+                    break;
+                case(ToolType.Freeline):
+                    this._currPath = new FreeLinePath(this._pathType);
+                    break;
+            }
+
             this._document.addPatternPath(this._currPath);
             this._currPath.addPoint(new Point(e.offsetX, e.offsetY));
         };
@@ -85,7 +94,7 @@ class Renderer implements IRenderer {
         }) as EventListener);
 
         return this._canvas;
-    }
+    };
 
     measurementInit = (): void  => {
         const patternPaths = this._document.getPatternPaths();
@@ -111,33 +120,26 @@ class Renderer implements IRenderer {
 
         this._canvas.onmouseup = null;
         this._canvas.onmouseout = null;
-    }
-    
-    getPathSelection = (): PatternPath | null => {
-        return this._pathSelection.getSelectedPath();
-    }
-
-    getDocument = (): Document => {
-        return this._document;
-    }
+    };
 
     private _endTracing = (position: Point): void => {
         if (this._currPath) {
             this._currPath.addPoint(position); 
             this._currPath.snapEndpoints(this._document.getPatternPaths());
-            if (this._toolType === ToolType.Freeline) {
+            if (this._currPath instanceof FreeLinePath) {
                 this._currPath.fitCurve();
-            }  
+            }
+
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }
         this._resetTracing();
-    }
+    };
 
     private _draw = (): void => {
         this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
     
         this._drawPatternPaths();
-    }
+    };
 
     private _drawPatternPaths = (): void => {
         const context = this._context;
@@ -163,35 +165,31 @@ class Renderer implements IRenderer {
             context.strokeStyle = pathColor;
             context.stroke(path2D);
         });
-    }
+    };
 
     private _resetTracing = (): void => {
         this._isTracing = false;  
         this._currPath = null;
         this._toolType = ToolType.StraightLine;
-    }
+    };
 
     private _setPathType = (type: number): void => {
         this._pathType = type;
-    }
+    };
 
     private _setToolType = (type: number): void => {
         this._toolType = type;
-    }
+    };
 
     private _tick = (): void => {
         // this._update();
         this._draw();
     
         requestAnimationFrame(this._tick);
-    }
+    };
 
     // private _update = (): void => {
     //     console.log("update");
     // }
 
 }
-
-const renderer = new Renderer();
-
-export { renderer };

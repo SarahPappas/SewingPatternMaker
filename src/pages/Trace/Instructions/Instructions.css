@@ -17,6 +17,10 @@
     flex-direction: column;
 }
 
+.alignBottom {
+    margin-top: auto;
+}
+
 .arrow {
     height: 145px;
     background-image: url('../../../assets/background-arrow-white.svg');

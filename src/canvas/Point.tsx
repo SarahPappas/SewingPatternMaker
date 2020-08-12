@@ -11,21 +11,21 @@ export class Point implements IPoint {
 
     equals = (other: Point): boolean => {
         return this.x === other.x && this.y === other.y;
-    }
+    };
 
     isWithinRadius = (other: Point, radius: number): boolean => {
         return this.distanceSquared(other) < radius * radius;
-    }
+    };
     
     distanceSquared = (other: Point): number => {
         const dx = this.x - other.x;
         const dy = this.y - other.y;
         return dx * dx + dy * dy;
-    }
+    };
 
     distanceTo = (other: Point): number => {
         return Math.sqrt(this.distanceSquared(other));
-    }
+    };
 
     closestDistanceSquaredFromSetOfPoints = (points: Point[]): number => {
         let minDistance = Number.MAX_VALUE;
@@ -38,14 +38,14 @@ export class Point implements IPoint {
         }
 
         return minDistance;
-    }
+    };
 
     static computeMiddlePoint = (p1: Point, p2: Point): Point => {
         const middleX = (p1.x + p2.x) / 2;
         const middleY = (p1.y + p2.y) / 2;
         
         return new Point(middleX, middleY);
-    }
+    };
 
     // generates points on the line formed by all points that are equidistant 
     // from points p1 and p2.
@@ -56,5 +56,5 @@ export class Point implements IPoint {
         normalVector.normalize();
         return new Point(middle.x + t * normalVector.x, 
                          middle.y + t * normalVector.y);
-    }
+    };
 }

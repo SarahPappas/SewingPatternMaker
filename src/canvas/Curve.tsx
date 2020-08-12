@@ -41,7 +41,7 @@ export abstract class Curve {
             length += pointsOnCurve[i+1].distanceTo(pointsOnCurve[i]);
         }
         return length;
-    }
+    };
 
     protected lerp = (start: number, end: number, t: number): number => {
         return start + t * (end - start);

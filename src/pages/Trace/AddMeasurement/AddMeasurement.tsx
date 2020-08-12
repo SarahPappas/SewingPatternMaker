@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, ChangeEvent } from 'react';
-import './AddMeasurement.css';
+import { App } from '../../../canvas/AppController';
 import checkIcon from '../../../assets/check-icon.svg';
-import { renderer } from 'canvas/Renderer';
-import { InstructionModal } from 'components/InstructionModal/InstructionModal';
+import { Modal } from 'components/Modal/Modal';
 import { Input } from 'components/Input/Input';
 import { NavButton } from 'components/NavButton/NavButton';
 import { ActionButton } from 'components/ActionButton/ActionButton';
+import { ModalType } from 'canvas/Enums';
+import './AddMeasurement.css';
 
 interface AddMeasurementProps {
     setUploadedFileData: React.Dispatch<React.SetStateAction<string>>;
@@ -20,30 +21,33 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
     useEffect(() => {
         canvasContainerRef.current = document.getElementsByClassName('canvasContainer')[0];
         canvasContainerRef.current.classList.remove('canvasContainerBackground');
-        renderer.measurementInit();
+        App.renderer.measurementInit();
         setUploadedFileData("");
     }, [canvasContainerRef, setUploadedFileData]);
 
+    const selectionWarning: Modal = {text: ['Please select a path'], type: ModalType.Warning}; 
+    const numberWarning: Modal = {text: ['Please enter a decimal number'], type: ModalType.Warning};
+    const warningModal = useRef(<></>);
+
     const handleSubmit = () => {
         if (parseFloat(inputMeasurement).toString() !== inputMeasurement.trim()) {
-            // TODO: pop an error modal to the user
-            console.log('Please enter a decimal number');
+            warningModal.current = <Modal modal={numberWarning} />;
         } else {
-            const selectedPath = renderer.getPathSelection();
+            const selectedPath = App.pathSelection.getSelectedPath();
             if (!selectedPath) {
-                // TODO: pop an error modal to the user
-                console.log('Please select a path');
+                warningModal.current = <Modal modal={selectionWarning} />;
             } else {
-                console.log('ok');
-                renderer.getDocument().setSizeRatio(parseFloat(inputMeasurement), selectedPath);
+                warningModal.current = <></>;
+                App.document.setSizeRatio(parseFloat(inputMeasurement), selectedPath);
             }
         }
     };
 
-    const instructModal: InstructModal = {text: ['Choose a line to measure.']};
+    const instructModal: Modal = {text: ['Choose a line to measure.'], type: ModalType.Instruction};
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         setInputMeasurement(e.target.value);
+        warningModal.current = <></>;
     };
 
     const input: Input = { 
@@ -54,16 +58,17 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
     };
 
     // TODO: link this navButton to final review/printing page
-    const navButton: NavButton = {label: '', to: '/Trace/AddMeasurement'};
+    const navButton: Button = {label: ''};
     
-    const actionButton: ActionButton = {label: '', action: handleSubmit};
+    const actionButton: Button = {label: ''};
     
     return (
         <>
             <div className={'measurementInstructionsContainer'}>
-                <InstructionModal instructModal={instructModal}></InstructionModal>
+                <Modal modal={instructModal}></Modal>
             </div>
             <div className={'measurementBottomContainer'}>
+                {warningModal.current}
                 <div className={'text'}>
                     Measurement
                 </div>
@@ -74,8 +79,8 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
                         IN
                     </div>
 
-                    <NavButton button={navButton}>
-                        <ActionButton button={actionButton}>
+                    <NavButton button={navButton} to={'/Trace/AddMeasurement'}>
+                        <ActionButton button={actionButton} action={handleSubmit}>
                             <img className='submitIcon' src={checkIcon} alt='submit'/>
                         </ActionButton>
                     </NavButton>

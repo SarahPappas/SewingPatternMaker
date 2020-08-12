@@ -1,19 +1,20 @@
 import React from 'react';
 import { NavButton } from 'components/NavButton/NavButton';
-import { InstructionModal } from 'components/InstructionModal/InstructionModal';
+import { Modal as InstructionModal } from 'components/Modal/Modal';
 import backgroundArrow from '../../assets/background-arrow-grey.svg';
 import './GetStarted.css';
-
-const button: NavButton = {label: "GET STARTED", to: "/AddPhoto" };
-const intro: InstructModal = {text: ["Let’s Make a \npattern in 3 \nsteps"]};
-const steps: InstructModal = {text: ["1. Upload photo", "2. Trace pattern", "3. Print pdf"]};
+import { ModalType } from 'canvas/Enums';
 
 export const GetStarted: React.FC = () => {
+    const button: Button = {label: "GET STARTED"};
+    const intro: Modal = {text: ["Let’s Make a \npattern in 3 \nsteps"], type: ModalType.Instruction};
+    const steps: Modal = {text: ["1. Upload photo", "2. Trace pattern", "3. Print pdf"], type: ModalType.Instruction};
+
     return (<>
         <div className={'backgroundImageTop'}></div>
         <img className={'backgroundImageBottom'} src={backgroundArrow} alt='down arrow'></img>
-        <InstructionModal instructModal={intro}/>
-        <div className={'introSteps'}><InstructionModal instructModal={steps}/></div>
-        <NavButton button={button}/> 
+        <InstructionModal modal={intro}/>
+        <div className={'introSteps'}><InstructionModal modal={steps}/></div>
+        <NavButton button={button} to={'/AddPhoto'}/> 
     </>);
 };

@@ -35,9 +35,9 @@ export const PathButton: React.FC<PathButtonProps> = ({type, isEnabled, curPathT
     let buttonLabelClass = 'pathButtonLabel';
     buttonLabelClass = (curPathType && curPathType !== type) ? buttonLabelClass + ' notActive' : buttonLabelClass;
 
-    const buttonProps = {label: typeName, action: handleSetPathType};
+    const buttonProps = {label: typeName};
     return (<>
-        <ActionButton button={buttonProps}>
+        <ActionButton button={buttonProps} action={handleSetPathType}>
             <div className={className}>
                 <div className='colorBlock'></div>
                 <div className={buttonLabelClass}>{typeName}</div>

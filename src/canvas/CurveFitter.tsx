@@ -3,43 +3,36 @@ import { Curve } from './Curve';
 import { BoundingBox } from './BoundingBox';
 import { BezierCurve } from './BezierCurve';
 import { ArcCurve } from './ArcCurve';
+import { CurveSelection } from './CurveSelection';
 
 export class CurveFitter {
     // The number of points on the potential curve that will be used to test the curve's fit.
     private static readonly numPointsOnPotentialcurve = 51;
 
-    private _points: Point[];
-    private _startPoint: Point;
-    private _endPoint: Point;
-    private _bestCurveDelta: number;
-    private _bestCurve: Curve;
-
-    constructor(points: Point[]) {
+    static fit = (points: Point[]): Curve => {
         // If there are two points or less, return void becuase this cannnot be fit to a curve.
         if (points.length <= 2) {
             throw new Error("not enough points");
         }
-        this._points = points;
-        this._startPoint = this._points[0];
-        this._endPoint = this._points[this._points.length -1];
-        this._bestCurveDelta = Number.MAX_VALUE;
-        this._bestCurve = new BezierCurve(this._startPoint, this._endPoint, this._endPoint); 
-    }
 
-    fit = (): Curve => {
+        const curveSelection = new CurveSelection(points, CurveFitter.numPointsOnPotentialcurve);
+
         // Check candidate bezier curves
-        this._guessAndCheckPointsForBestBezierCurve();
+        CurveFitter._guessAndCheckPointsForBestBezierCurve(points, curveSelection);
 
         //also test circle arcs that curve from start to end
-        this._guessAndCheckPointsForBestArcCurve();
+        CurveFitter._guessAndCheckPointsForBestArcCurve(points, curveSelection);
 
-        console.log(this._bestCurve instanceof ArcCurve ? "arc" : "bezier");
-        return this._bestCurve;
+        console.log(curveSelection.bestCurve instanceof ArcCurve ? "arc" : "bezier");
+        return curveSelection.bestCurve;
     };
 
-    private _guessAndCheckPointsForBestBezierCurve = (): void => {
+    private static _guessAndCheckPointsForBestBezierCurve = (points: Point[], curveSelection: CurveSelection): void => {
+        const startPoint = points[0];
+        const endPoint = points[points.length -1];
+        
         // Get the bounds of the drawing.
-        const boundingBox = new BoundingBox(this._points);
+        const boundingBox = new BoundingBox(points);
         boundingBox.expand(2.5);
 
         // The number of samples taken on the x and y axis to test as a control point for the curve.
@@ -54,13 +47,16 @@ export class CurveFitter {
                 const boundRelativeX = x / (numSamples - 1);
                 const controlPointX = boundingBox.minX + boundingBox.width * boundRelativeX;
 
-                const curve = new BezierCurve(this._startPoint, this._endPoint, new Point(controlPointX, controlPointY));
-                this._considerPotentialCurve(curve);
+                const curve = new BezierCurve(startPoint, endPoint, new Point(controlPointX, controlPointY));
+                curveSelection.evaluate(curve);
             }
         }
     };
 
-    private _guessAndCheckPointsForBestArcCurve = (): void => {      
+    private static _guessAndCheckPointsForBestArcCurve = (points: Point[], curveSelection: CurveSelection): void => {      
+        const startPoint = points[0];
+        const endPoint = points[points.length -1];
+        
         for (let i = -500; i <= 500; i += 10) {
             // we avoid having control point aligned with startPoint and endPoint, 
             // since that would yield a degenerate curve (a line)
@@ -68,25 +64,10 @@ export class CurveFitter {
                 continue;
             }
             
-            const controlPoint = Point.getPointOnMidline(this._startPoint, this._endPoint, i);
-            const curve = new ArcCurve(this._startPoint, this._endPoint, controlPoint);
-            this._considerPotentialCurve(curve);
+            const controlPoint = Point.getPointOnMidline(startPoint, endPoint, i);
+            const curve = new ArcCurve(startPoint, endPoint, controlPoint);
+            curveSelection.evaluate(curve);
         }
     };
-
-    private _considerPotentialCurve = (curve: Curve): void => {
-        const potentialCurvePoints = curve.computePointsOnCurve(CurveFitter.numPointsOnPotentialcurve);
-        
-        let curveDelta = 0;
-        for (let i = 0; i < CurveFitter.numPointsOnPotentialcurve; i++) {
-            const delta = potentialCurvePoints[i].closestDistanceSquaredFromSetOfPoints(this._points);
-            curveDelta += delta;
-        }
-
-        if (curveDelta < this._bestCurveDelta) {
-            this._bestCurveDelta = curveDelta;
-            this._bestCurve = curve;
-        }
-    }
 }
 

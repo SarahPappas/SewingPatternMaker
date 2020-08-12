@@ -74,7 +74,7 @@ export class Document implements IDocument {
     };
 
     isEmpty = (): boolean => {
-        return Boolean(this._patternPaths.length);
+        return !this._patternPaths.length;
     };
 
     // Sets the pixels per inch ratio according to the input measurement

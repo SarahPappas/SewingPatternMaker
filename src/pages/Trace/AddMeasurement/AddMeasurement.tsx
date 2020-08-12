@@ -58,9 +58,9 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
     };
 
     // TODO: link this navButton to final review/printing page
-    const navButton: NavButton = {label: '', to: '/Trace/AddMeasurement'};
+    const navButton: Button = {label: ''};
     
-    const actionButton: ActionButton = {label: '', action: handleSubmit};
+    const actionButton: Button = {label: ''};
     
     return (
         <>
@@ -79,8 +79,8 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
                         IN
                     </div>
 
-                    <NavButton button={navButton}>
-                        <ActionButton button={actionButton}>
+                    <NavButton button={navButton} to={'/Trace/AddMeasurement'}>
+                        <ActionButton button={actionButton} action={handleSubmit}>
                             <img className='submitIcon' src={checkIcon} alt='submit'/>
                         </ActionButton>
                     </NavButton>

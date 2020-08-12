@@ -1,17 +1,7 @@
 /* COMPONENT TYPES */
-type NavButton = {
-    label: string;
-    to: string;
-};
-
-type ActionButton = {
-    label: string;
-    action: (...args: any[]) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
-};
-
 type Button = {
     label: string;
-    className: string;
+    className?: string;
 };
 
 type Modal = {

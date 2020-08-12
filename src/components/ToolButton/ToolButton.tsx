@@ -31,10 +31,10 @@ export const ToolButton: React.FC<ToolButtonProps> = ( {toolType, selectedType, 
         canvasRef.current?.dispatchEvent(setCanvasToolType);
     };
 
-    const button = {label:"", action:handleSetTool};
+    const button = {label:""};
 
     return (
-        <ActionButton button={button}>
+        <ActionButton button={button} action={handleSetTool}>
             <div className='toolContainer' style={toolBorder}>
                 {props.children}
             </div>

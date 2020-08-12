@@ -32,10 +32,10 @@ export const AddPath: React.FC<AddPathProps> = ({curPathType, setPathType}) => {
         history.push('/Trace/Review');
     });
 
-    const exitButton: NavButton = {label:'', to:'/Trace/Instructions'};    
+    const exitButton: Button = {label:''};    
     return (<>
         <div className='exitButton'>
-            <NavButton button={exitButton}>
+            <NavButton button={exitButton} to='/Trace/Instructions'>
                 <ExitIcon/>
             </NavButton>
         </div>

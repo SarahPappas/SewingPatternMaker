@@ -14,8 +14,8 @@ interface InstructionsProps {
 }
 
 export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathType}) => {
-    const showNavButton: NavButton = {label: 'DONE', to: 'AddMeasurement' };
-    const addPathButton: NavButton = {label:'', to: 'AddPath'};
+    const navButton: Button = {label: 'DONE'};
+    const addPathButton: Button = {label:''};
     const warning: Modal = {text: ['Your pattern is incomplete. Please add another line.'], type: ModalType.Warning};
     const instruction: Modal = {text: ['Choose seam, fold, or edge to add to your pattern'], type: ModalType.Instruction};
     
@@ -32,13 +32,14 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     const handleClickDone = (): void => {
         setShowWarning(!AppModels.document.arePatternPiecesEnclosed());
     };
-    const showWarningButton: ActionButton = {label: 'DONE', action: handleClickDone};
+
+    const warningButton: Button = {label: 'DONE', className: 'navButton'};
     if (showDoneButton.current && !showWarning) {
-        doneContainer = <div className='navButton'><ActionButton button={showWarningButton}></ActionButton></div>;
+        doneContainer = <ActionButton button={warningButton} action={handleClickDone}></ActionButton>;
     }
 
     if (showDoneButton.current && arePatternsEnclosed.current) {
-        doneContainer = <NavButton button={showNavButton}/>;
+        doneContainer = <NavButton button={navButton} to={'AddMeasurement'}/>;
     }
 
     if (showWarning) {
@@ -73,7 +74,7 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
                 <div className='arrow'></div>
             </div>
         </div>
-        <NavButton button={addPathButton}>
+        <NavButton button={addPathButton} to={'AddPath'}>
             <PathTypeButtonGrid isEnabled={true} curPathType={curPathType} setPathType={setPathType}/>
         </NavButton>
     </>);

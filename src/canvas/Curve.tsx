@@ -1,9 +1,9 @@
 import { Point } from './Point';
 
 export abstract class Curve {
-    start: Point;
-    end: Point;
-    control: Point;
+    protected start: Point;
+    protected end: Point;
+    protected control: Point;
 
     constructor (start: Point, end: Point, control: Point) {
         if (start.equals(end)) {
@@ -14,7 +14,7 @@ export abstract class Curve {
         this.control = control;
     }
 
-    abstract computePoint(t: number): Point;
+    protected abstract computePoint(t: number): Point;
 
     abstract drawCurve(path: Path2D): void;
 
@@ -43,7 +43,7 @@ export abstract class Curve {
         return length;
     }
 
-    lerp = (start: number, end: number, t: number): number => {
+    protected lerp = (start: number, end: number, t: number): number => {
         return start + t * (end - start);
     };
 }

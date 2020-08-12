@@ -18,27 +18,27 @@ export class CurveFitter {
         const curveSelection = new CurveSelection(points, CurveFitter.numPointsOnPotentialcurve);
 
         // Check candidate bezier curves
-        CurveFitter._guessAndCheckPointsForBestBezierCurve(points, curveSelection);
+        CurveFitter.guessAndCheckPointsForBestBezierCurve(points, curveSelection);
 
-        //also test circle arcs that curve from start to end
-        CurveFitter._guessAndCheckPointsForBestArcCurve(points, curveSelection);
+        // Check candidate circle arcs that curve from start to end
+        CurveFitter.guessAndCheckPointsForBestArcCurve(points, curveSelection);
 
         console.log(curveSelection.getBestCurve() instanceof ArcCurve ? "arc" : "bezier");
         return curveSelection.getBestCurve();
     };
 
-    private static _guessAndCheckPointsForBestBezierCurve = (points: Point[], curveSelection: CurveSelection): void => {
+    private static guessAndCheckPointsForBestBezierCurve = (points: Point[], curveSelection: CurveSelection): void => {
         const startPoint = points[0];
         const endPoint = points[points.length -1];
         
-        // Get the bounds of the drawing.
+        // Get the bounds of the drawing
         const boundingBox = new BoundingBox(points);
         boundingBox.expand(2.5);
 
-        // The number of samples taken on the x and y axis to test as a control point for the curve.
+        // The number of samples taken on the x and y axis to test as a control point for the curve
         const numSamples = 101;
 
-        // test bezier curves with control points within the bounding box
+        // Test bezier curves with control points within the bounding box
         for (let y = 0; y < numSamples; y++) {
             const boundRelativeY = y / (numSamples - 1);
             const controlPointY = boundingBox.minY + boundingBox.height * boundRelativeY;
@@ -53,13 +53,14 @@ export class CurveFitter {
         }
     };
 
-    private static _guessAndCheckPointsForBestArcCurve = (points: Point[], curveSelection: CurveSelection): void => {      
+    private static guessAndCheckPointsForBestArcCurve = (points: Point[], curveSelection: CurveSelection): void => {      
         const startPoint = points[0];
         const endPoint = points[points.length -1];
         
+        // Test arc curves with control points along the midline between start and end
         for (let i = -500; i <= 500; i += 10) {
             // we avoid having control point aligned with startPoint and endPoint, 
-            // since that would yield a degenerate curve (a line)
+            // since that would yield a degenerate arc curve (a line)
             if (i === 0) { 
                 continue;
             }

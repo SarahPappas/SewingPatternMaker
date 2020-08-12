@@ -11,17 +11,17 @@ export class PathSelection {
 
     getSelectedPath = (): PatternPath | null => {
         return this._selectedPath;
-    }
+    };
 
     setSelectedPath = (path: PatternPath): void => {
         this._selectedPath = path;
-    }
+    };
 
     getHighlightedPath = (): PatternPath | null => {
         return this._highlightedPath;
-    }
+    };
 
     setHighlightedPath = (path: PatternPath | null): void => {
         this._highlightedPath = path;
-    }
+    };
 }

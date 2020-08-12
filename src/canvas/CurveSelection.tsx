@@ -3,30 +3,34 @@ import { BezierCurve } from "./BezierCurve";
 import { Point } from "./Point";
 
 export class CurveSelection{
-    bestCurve: Curve;
-    bestCurveDelta: number;
-    numPointsOnPotentialCurve: number;
-    points: Point[];
+    private _bestCurve: Curve;
+    private _bestCurveDelta: number;
+    private _numPointsOnPotentialCurve: number;
+    private _points: Point[];
 
     constructor(points: Point[], numPointsOnPotentialCurve: number) {
-        this.bestCurve = new BezierCurve(new Point(0, 0), new Point(1, 0), new Point(1, 0));
-        this.bestCurveDelta = Number.MAX_VALUE;
-        this.numPointsOnPotentialCurve = numPointsOnPotentialCurve;
-        this.points = points;
+        this._bestCurve = new BezierCurve(new Point(0, 0), new Point(1, 0), new Point(1, 0));
+        this._bestCurveDelta = Number.MAX_VALUE;
+        this._numPointsOnPotentialCurve = numPointsOnPotentialCurve;
+        this._points = points;
     }
 
-    evaluate = (potentialCurve: Curve): void => {
-        const potentialCurvePoints = potentialCurve.computePointsOnCurve(this.numPointsOnPotentialCurve);
+    considerPotentialCurve = (potentialCurve: Curve): void => {
+        const potentialCurvePoints = potentialCurve.computePointsOnCurve(this._numPointsOnPotentialCurve);
         
         let curveDelta = 0;
-        for (let i = 0; i < this.numPointsOnPotentialCurve; i++) {
-            const delta = potentialCurvePoints[i].closestDistanceSquaredFromSetOfPoints(this.points);
+        for (let i = 0; i < this._numPointsOnPotentialCurve; i++) {
+            const delta = potentialCurvePoints[i].closestDistanceSquaredFromSetOfPoints(this._points);
             curveDelta += delta;
         }
 
-        if (curveDelta < this.bestCurveDelta) {
-            this.bestCurveDelta = curveDelta;
-            this.bestCurve = potentialCurve;
+        if (curveDelta < this._bestCurveDelta) {
+            this._bestCurveDelta = curveDelta;
+            this._bestCurve = potentialCurve;
         }
+    }
+
+    getBestCurve = (): Curve => {
+        return this._bestCurve;
     }
 }

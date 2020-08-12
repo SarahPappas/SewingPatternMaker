@@ -9,7 +9,7 @@ export class CurveFitter {
     // The number of points on the potential curve that will be used to test the curve's fit.
     private static readonly numPointsOnPotentialcurve = 51;
 
-    static fit = (points: Point[]): Curve => {
+    static Fit = (points: Point[]): Curve => {
         // If there are two points or less, return void becuase this cannnot be fit to a curve.
         if (points.length <= 2) {
             throw new Error("not enough points");
@@ -23,8 +23,8 @@ export class CurveFitter {
         //also test circle arcs that curve from start to end
         CurveFitter._guessAndCheckPointsForBestArcCurve(points, curveSelection);
 
-        console.log(curveSelection.bestCurve instanceof ArcCurve ? "arc" : "bezier");
-        return curveSelection.bestCurve;
+        console.log(curveSelection.getBestCurve() instanceof ArcCurve ? "arc" : "bezier");
+        return curveSelection.getBestCurve();
     };
 
     private static _guessAndCheckPointsForBestBezierCurve = (points: Point[], curveSelection: CurveSelection): void => {
@@ -48,7 +48,7 @@ export class CurveFitter {
                 const controlPointX = boundingBox.minX + boundingBox.width * boundRelativeX;
 
                 const curve = new BezierCurve(startPoint, endPoint, new Point(controlPointX, controlPointY));
-                curveSelection.evaluate(curve);
+                curveSelection.considerPotentialCurve(curve);
             }
         }
     };
@@ -66,7 +66,7 @@ export class CurveFitter {
             
             const controlPoint = Point.getPointOnMidline(startPoint, endPoint, i);
             const curve = new ArcCurve(startPoint, endPoint, controlPoint);
-            curveSelection.evaluate(curve);
+            curveSelection.considerPotentialCurve(curve);
         }
     };
 }

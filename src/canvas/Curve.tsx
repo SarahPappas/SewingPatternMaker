@@ -6,6 +6,9 @@ export abstract class Curve {
     control: Point;
 
     constructor (start: Point, end: Point, control: Point) {
+        if (start.equals(end)) {
+            throw new Error("starting point of Curve must be different from end point");
+        }
         this.start = start;
         this.end = end;
         this.control = control;

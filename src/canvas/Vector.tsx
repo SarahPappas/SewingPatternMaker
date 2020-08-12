@@ -51,7 +51,7 @@ export class Vector {
         return Math.acos(Vector.dotProduct(v1, v2) / (v1.norm() * v2.norm()));
     };
 
-    static perp = (vector: Vector): Vector => {
+    static findPerpVector = (vector: Vector): Vector => {
         return new Vector(-1 * vector.y, vector.x);
     };
 }

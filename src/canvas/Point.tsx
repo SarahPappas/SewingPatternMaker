@@ -52,7 +52,7 @@ export class Point implements IPoint {
     // at t=0, is returns the point in the middle of this point and the other point.
     static getPointOnMidline = (p1: Point, p2: Point, t: number): Point => {
         const middle = Point.computeMiddlePoint(p1, p2);
-        const normalVector = Vector.perp(Vector.vectorBetweenPoints(p1, p2));
+        const normalVector = Vector.findPerpVector(Vector.vectorBetweenPoints(p1, p2));
         normalVector.normalize();
         // TODO: override + and * operations for points and vectors?
         return new Point(middle.x + t * normalVector.x, 

@@ -59,7 +59,9 @@ export class CurveFitter {
         }
 
         //also test arc curves
-        for (let i = -500; i <= 500; i += 20) {
+        for (let i = -500; i <= 500 && i !== 0; i += 20) {
+            // avoid having control point aligned with startPoint and endPoint, 
+            // since that would yield a degenerate curve (a line)
             const controlPoint = Point.getPointOnMidline(startPoint, endPoint, i);
             const curve = new ArcCurve(startPoint, endPoint, controlPoint);
             const potentialCurvePoints = curve.computePointsOnCurve(numPointsOnPotentialcurve);

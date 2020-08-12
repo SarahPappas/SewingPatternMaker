@@ -33,6 +33,7 @@ export class CurveFitter {
         let bestCurveDelta = Number.MAX_VALUE;
         let bestCurve = new BezierCurve(startPoint, endPoint, endPoint); 
 
+        // test bezier curves with control points within the bounding box
         for (let y = 0; y < numSamples; y++) {
             const boundRelativeY = y / (numSamples - 1);
             const controlPointY = boundingBox.minY + boundingBox.height * boundRelativeY;
@@ -44,6 +45,7 @@ export class CurveFitter {
                 const curve = new BezierCurve(startPoint, endPoint, new Point(controlPointX, controlPointY));
                 const potentialCurvePoints = curve.computePointsOnCurve(numPointsOnPotentialcurve);
 
+                //TODO: factor this duplicated code
                 let curveDelta = 0;
                 for (let i = 0; i < numPointsOnPotentialcurve; i++) {
                     const delta = potentialCurvePoints[i].closestDistanceSquaredFromSetOfPoints(points);
@@ -58,14 +60,15 @@ export class CurveFitter {
             }
         }
 
-        //also test arc curves
+        //also test circle arcs that curve from start to end
         for (let i = -500; i <= 500 && i !== 0; i += 20) {
-            // avoid having control point aligned with startPoint and endPoint, 
+            // we avoid having control point aligned with startPoint and endPoint, 
             // since that would yield a degenerate curve (a line)
             const controlPoint = Point.getPointOnMidline(startPoint, endPoint, i);
             const curve = new ArcCurve(startPoint, endPoint, controlPoint);
             const potentialCurvePoints = curve.computePointsOnCurve(numPointsOnPotentialcurve);
 
+            //TODO: factor this duplicated code
             let curveDelta = 0;
             for (let i = 0; i < numPointsOnPotentialcurve; i++) {
                 const delta = potentialCurvePoints[i].closestDistanceSquaredFromSetOfPoints(points);
@@ -81,6 +84,6 @@ export class CurveFitter {
 
         console.log(bestCurve instanceof ArcCurve ? "arc" : "bezier");
         return bestCurve;
-    }
+    };
 }
 

@@ -62,7 +62,8 @@ export class ArcCurve extends Curve {
 
             // insert equation 2 in equation 1, then solve for centerX
             centerX = (this.start.x * startToControl.x 
-                        + (this.control.x * slope - startToControl.y) * startToControl.y) 
+                        + (this.control.x * slope - startToControl.y) 
+                            * startToControl.y) 
                       / (slope * startToControl.y + startToControl.x);
                       // having the denominator = 0 would mean that startToControl
                       // is perperdicular to the normal which is impossible

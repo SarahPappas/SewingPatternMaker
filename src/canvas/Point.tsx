@@ -54,7 +54,6 @@ export class Point implements IPoint {
         const middle = Point.computeMiddlePoint(p1, p2);
         const normalVector = Vector.findPerpVector(Vector.vectorBetweenPoints(p1, p2));
         normalVector.normalize();
-        // TODO: override + and * operations for points and vectors?
         return new Point(middle.x + t * normalVector.x, 
                          middle.y + t * normalVector.y);
     }

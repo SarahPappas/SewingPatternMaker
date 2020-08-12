@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { AppModels } from "../../canvas/App";
+import { App } from "../../canvas/AppController";
 import './CanvasContainer.css';
 
 interface CanvasContainerProps {
@@ -10,7 +10,7 @@ export const CanvasContainer: React.FC<CanvasContainerProps> = ({ uploadedFileDa
   const canvasContainerRef = React.useRef(document.createElement("div"));
 
   useEffect(() => {
-    const canvas = AppModels.renderer.init();
+    const canvas = App.renderer.init();
     if (canvasContainerRef.current) {
       canvasContainerRef.current.appendChild(canvas);
     }

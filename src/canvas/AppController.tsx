@@ -2,7 +2,7 @@ import { Renderer } from './Renderer';
 import { Document } from './Document';
 import { PathSelection } from './PathSelection';
 
-class App {
+class AppController {
     renderer: Renderer;
     document: Document;
     pathSelection: PathSelection;
@@ -14,5 +14,5 @@ class App {
     }
 }
 
-const AppModels = new App();
-export { AppModels };
+const App = new AppController();
+export { App };

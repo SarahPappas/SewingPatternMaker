@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { AppModels } from '../../../canvas/App';
+import { App } from '../../../canvas/AppController';
 import { NavButton } from 'components/NavButton/NavButton';
 import { Modal } from 'components/Modal/Modal';
 import { PathTypeButtonGrid } from 'components/PathTypeButtonGrid/PathTypeButtonGrid';
@@ -21,16 +21,16 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     
     const [showWarning, setShowWarning] = React.useState<boolean>(false);
     let doneContainer = <></>;
-    const showDoneButton = useRef(AppModels.document.isEmpty());
-    const arePatternsEnclosed = useRef(AppModels.document.arePatternPiecesEnclosed());
+    const showDoneButton = useRef(App.document.isEmpty());
+    const arePatternsEnclosed = useRef(App.document.arePatternPiecesEnclosed());
 
     useEffect(() => {
-        showDoneButton.current = AppModels.document.isEmpty();
-        arePatternsEnclosed.current = AppModels.document.arePatternPiecesEnclosed();
+        showDoneButton.current = App.document.isEmpty();
+        arePatternsEnclosed.current = App.document.arePatternPiecesEnclosed();
     }, [arePatternsEnclosed, showDoneButton]);
 
     const handleClickDone = (): void => {
-        setShowWarning(!AppModels.document.arePatternPiecesEnclosed());
+        setShowWarning(!App.document.arePatternPiecesEnclosed());
     };
 
     const warningButton: Button = {label: 'DONE', className: 'navButton'};

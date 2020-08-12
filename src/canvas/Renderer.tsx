@@ -17,7 +17,7 @@ export class Renderer implements IRenderer {
     private _toolType: ToolType;
     private _pathSelection: PathSelection;
 
-    constructor (DocumentModel: Document, PathSelectionModel: PathSelection) {
+    constructor (documentModel: Document, pathSelectionModel: PathSelection) {
         this._canvas = document.createElement('canvas');
         this._canvas.width = 300;
         this._canvas.height = 400;
@@ -28,13 +28,13 @@ export class Renderer implements IRenderer {
         }
 
         this._context = contextOrNull;
-        this._document = DocumentModel;
+        this._document = documentModel;
         this._isTracing = false;
         this._currPath = null;
         this._pathType = PatternPathType.UNDEFINED;
         // The default tool type is a straight line tool.
         this._toolType = ToolType.StraightLine;
-        this._pathSelection = PathSelectionModel;
+        this._pathSelection = pathSelectionModel;
     }
 
     init = (): HTMLCanvasElement => {

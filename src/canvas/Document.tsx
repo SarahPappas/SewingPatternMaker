@@ -1,4 +1,5 @@
 import { PatternPath } from './PatternPath';
+import { Point } from './Point';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
@@ -32,34 +33,34 @@ export class Document implements IDocument {
     };
 
     arePatternPiecesEnclosed = (): boolean => {
-        const endpoints = new Array(this._patternPaths.length * 2);
+        const endpoints: {point: Point; matched: boolean}[] = [];
 
         this._patternPaths.forEach(path => {
             const points = path.getPoints();
-            endpoints.push(points[0]);
-            endpoints.push(points[points.length - 1]);
+            endpoints.push({point: points[0], matched: false});
+            endpoints.push({point: points[points.length - 1], matched:false});
         });
 
         for(let i = 0; i < endpoints.length; i++) {
-            const point = endpoints[i];
-            if (!point) {
+            const point = endpoints[i].point;
+            const matched = endpoints[i].matched;
+            if (matched) {
                 continue;
             }
 
-            let foundMatch = false;
-            for (let j = i + 1; j < endpoints.length && !foundMatch; j++) {
+            for (let j = i + 1; j < endpoints.length; j++) {
                 const o = endpoints[j];
                 if(!o) {
                     continue;
                 }
 
-                if (point.equals(o)) {
-                    foundMatch = true;
-                    endpoints[j] = null;
+                if (point.equals(o.point)) {
+                    endpoints[i].matched = true;
+                    endpoints[j].matched = true;
                 }
             }
 
-            if (!foundMatch) {
+            if (!endpoints[i].matched) {
                 return false;
             }
         }

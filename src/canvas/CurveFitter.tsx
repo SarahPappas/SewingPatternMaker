@@ -31,7 +31,7 @@ export class CurveFitter {
         const numPointsOnPotentialcurve = 51;
 
         let bestCurveDelta = Number.MAX_VALUE;
-        let bestCurve = new BezierCurve(startPoint, endPoint, endPoint); 
+        let bestCurve: Curve = new BezierCurve(startPoint, endPoint, endPoint); 
 
         // test bezier curves with control points within the bounding box
         for (let y = 0; y < numSamples; y++) {

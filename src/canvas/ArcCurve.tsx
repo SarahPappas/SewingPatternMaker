@@ -3,10 +3,10 @@ import { Point } from "./Point";
 import { Vector } from "./Vector";
 
 export class ArcCurve extends Curve {
-    radius: number;
-    center: Point;
-    startAngle: number;
-    endAngle: number;
+    private radius: number;
+    private center: Point;
+    private startAngle: number;
+    private endAngle: number;
 
     // pre: start != end and control != middlePoint between start and end
     // pre: control is equidistant from start and end
@@ -76,7 +76,8 @@ export class ArcCurve extends Curve {
         return new Point(centerX, centerY);
     }
 
-    computePoint = (t: number): Point => {     
+    // override abstract method in parent
+    protected computePoint = (t: number): Point => {     
         const x = this.center.x + 
                   this.radius * Math.cos(this.lerp(this.startAngle, this.endAngle, t));
         const y = this.center.y + 
@@ -84,6 +85,7 @@ export class ArcCurve extends Curve {
         return new Point(x, y);
     };
 
+    // override abstract method in parent
     drawCurve = (path: Path2D): void => {
         path.arcTo(this.control.x, this.control.y, 
                    this.end.x, this.end.y, 

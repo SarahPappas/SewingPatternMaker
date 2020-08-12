@@ -9,7 +9,6 @@ interface ActionButtonProps {
 
 export const ActionButton: React.FC<ActionButtonProps> = (props) => {    
     const hasChildren = React.Children.count(props.children);
-    const button = props.button;
 
     if (hasChildren) {
         return (

@@ -9,10 +9,10 @@ export class CurveFitter {
     private static readonly numPointsOnPotentialcurve = 51;
 
     private _points: Point[];
-    private _bestCurve: Curve;
-    private _bestCurveDelta: number;
     private _startPoint: Point;
     private _endPoint: Point;
+    private _bestCurveDelta: number;
+    private _bestCurve: Curve;
 
     constructor(points: Point[]) {
         // If there are two points or less, return void becuase this cannnot be fit to a curve.
@@ -44,6 +44,7 @@ export class CurveFitter {
 
         // The number of samples taken on the x and y axis to test as a control point for the curve.
         const numSamples = 101;
+
         // test bezier curves with control points within the bounding box
         for (let y = 0; y < numSamples; y++) {
             const boundRelativeY = y / (numSamples - 1);
@@ -54,13 +55,13 @@ export class CurveFitter {
                 const controlPointX = boundingBox.minX + boundingBox.width * boundRelativeX;
 
                 const curve = new BezierCurve(this._startPoint, this._endPoint, new Point(controlPointX, controlPointY));
-                this._evaluatePotentialCurve(curve);
+                this._considerPotentialCurve(curve);
             }
         }
     };
 
     private _guessAndCheckPointsForBestArcCurve = (): void => {      
-        for (let i = -500; i <= 500; i += 20) {
+        for (let i = -500; i <= 500; i += 10) {
             // we avoid having control point aligned with startPoint and endPoint, 
             // since that would yield a degenerate curve (a line)
             if (i === 0) { 
@@ -69,11 +70,11 @@ export class CurveFitter {
             
             const controlPoint = Point.getPointOnMidline(this._startPoint, this._endPoint, i);
             const curve = new ArcCurve(this._startPoint, this._endPoint, controlPoint);
-            this._evaluatePotentialCurve(curve);
+            this._considerPotentialCurve(curve);
         }
     };
 
-    private _evaluatePotentialCurve = (curve: Curve): void => {
+    private _considerPotentialCurve = (curve: Curve): void => {
         const potentialCurvePoints = curve.computePointsOnCurve(CurveFitter.numPointsOnPotentialcurve);
         
         let curveDelta = 0;

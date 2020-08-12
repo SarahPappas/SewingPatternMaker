@@ -8,8 +8,8 @@ export class ArcCurve extends Curve {
     startAngle: number;
     endAngle: number;
 
-    // pre: start != end and control does not lie on the line
-    //      between start and end
+    // pre: start != end and control != middlePoint between start and end
+    // pre: control is equidistant from start and end
     constructor(start: Point, end: Point, control: Point) {
         super(start, end, control);
         if (control.equals(Point.computeMiddlePoint(start, end))) {

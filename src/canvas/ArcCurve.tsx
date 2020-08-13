@@ -74,7 +74,7 @@ export class ArcCurve extends Curve {
         }
 
         return new Point(centerX, centerY);
-    }
+    };
 
     // override abstract method in parent
     protected computePoint = (t: number): Point => {     
@@ -90,7 +90,7 @@ export class ArcCurve extends Curve {
         path.arcTo(this.control.x, this.control.y, 
                    this.end.x, this.end.y, 
                    this.radius);
-    }
+    };
 
     // override the approximation algorithm from parent class
     getLength = (): number => {
@@ -100,5 +100,5 @@ export class ArcCurve extends Curve {
         // theta is the central angle between starting point and end point on the circle
         const theta = Math.PI - alpha;
         return theta * this.radius;
-    }
+    };
 }

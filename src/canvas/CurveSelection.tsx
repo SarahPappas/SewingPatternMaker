@@ -28,9 +28,9 @@ export class CurveSelection{
             this._bestCurveDelta = curveDelta;
             this._bestCurve = potentialCurve;
         }
-    }
+    };
 
     getBestCurve = (): Curve => {
         return this._bestCurve;
-    }
+    };
 }

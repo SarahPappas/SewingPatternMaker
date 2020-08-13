@@ -22,12 +22,12 @@ export class Vector {
         this.y /= norm;
     };
 
-    // returns the angle between this and the (1, 0) vector in radians 
+    // Returns the angle between this and the (1, 0) vector in radians 
     getAngle = (): number => {
         return Math.atan2(this.y, this.x);
     };
 
-    // constructs vector going from p1 to p2
+    // Constructs vector going from p1 to p2
     static vectorBetweenPoints = (startingPoint: Point, endPoint: Point): Vector => {
         return new Vector(endPoint.x - startingPoint.x, endPoint.y - startingPoint.y);
     };

@@ -18,5 +18,5 @@ export class BezierCurve extends Curve {
     // override abstract method in parent
     drawCurve = (path: Path2D): void => {
         path.quadraticCurveTo(this.control.x, this.control.y, this.end.x, this.end.y);   
-    }
+    };
 }

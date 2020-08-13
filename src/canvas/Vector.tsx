@@ -14,12 +14,15 @@ export class Vector {
     };
 
     normalize = (): void => {
-        const norm = this.norm();
-        if (norm === 0) {
-            throw new Error("division by 0");
+        this.divideByScalar(this.norm());
+    };
+
+    divideByScalar = (value: number) => {
+        if (value === 0) {
+            throw new Error("division by zero");
         }
-        this.x /= norm;
-        this.y /= norm;
+        this.x /= value;
+        this.y /= value;
     };
 
     // Returns the angle between this and the (1, 0) vector in radians 
@@ -30,13 +33,6 @@ export class Vector {
     // Constructs vector going from p1 to p2
     static vectorBetweenPoints = (startingPoint: Point, endPoint: Point): Vector => {
         return new Vector(endPoint.x - startingPoint.x, endPoint.y - startingPoint.y);
-    };
-
-    static divide = (vector: Vector, value: number) => {
-        if (value === 0) {
-            throw new Error("division by zero");
-        }
-        return new Vector(vector.x / value, vector.y / value);
     };
 
     static dotProduct = (v1: Vector, v2: Vector): number => {

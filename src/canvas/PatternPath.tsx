@@ -1,25 +1,19 @@
 import { Point } from './Point';
-import { PatternPathType, ToolType } from './Enums';
-import { CurveFitter } from './CurveFitter';
-import { Curve } from './Curve';
+import { PatternPathType } from './Enums';
 
-export class PatternPath implements IPatternPath {
-    private _points: Point[];
-    private _type: PatternPathType;
-    private _toolType: ToolType;
-    private _path2D: Path2D;
-    private _isPath2DValid: boolean;
-    private _lastIndexAddedToPath2D: number;
-    private _fittedCurve: Curve | null;
+export abstract class PatternPath implements IPatternPath {
+    protected _points: Point[];
+    protected _type: PatternPathType;
+    protected _path2D: Path2D;
+    protected _isPath2DValid: boolean;
+    protected _lastIndexAddedToPath2D: number;
 
-    constructor (pathType: PatternPathType, toolType: ToolType) {
+    constructor (pathType: PatternPathType) {
         this._type = pathType;
-        this._toolType = toolType;
         this._points = new Array<Point>();
         this._path2D = new Path2D();
         this._isPath2DValid = false;
         this._lastIndexAddedToPath2D = -1;
-        this._fittedCurve = null;
     }
 
     getPoints = (): Point[] => {
@@ -52,14 +46,7 @@ export class PatternPath implements IPatternPath {
         // Otherwise, continue adding to the Path2D. We do not need to loop through all of the points.
         // Instead we can approximate the curve from the last point that was added to the path2D and the
         // Most recent point added to the paths array.
-        switch(this._toolType) {
-            case ToolType.StraightLine:
-                this._updatePath2DStraightLine();
-                break;
-            case ToolType.Freeline:
-                this._updatePath2DWithQuadraticCurve();
-                break;
-        }
+        this._updatePath2D();
 
         this._lastIndexAddedToPath2D = this._points.length - 1;
         this._isPath2DValid = true;
@@ -86,16 +73,6 @@ export class PatternPath implements IPatternPath {
         this._isPath2DValid = false;
         return true;
     };
-
-    fitCurve = (): void => {
-        const firstPoint = this._points[0];
-        this._path2D = new Path2D();
-        this._isPath2DValid = true;
-        this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
-
-        this._fittedCurve = CurveFitter.Fit(this._points);
-        this._path2D.quadraticCurveTo(this._fittedCurve.control.getX(), this._fittedCurve.control.getY(), this._fittedCurve.end.getX(), this._fittedCurve.end.getY());        
-    }
 
     snapEndpoints = (paths: PatternPath[]): void => {
         const myFirstPoint = this._points[0];
@@ -137,49 +114,10 @@ export class PatternPath implements IPatternPath {
         });
 
         if (updatedFirstPoint || updatedLastPoint) {
-            if (this._toolType === ToolType.StraightLine) {
-                this._updatePath2DStraightLine();
-            }
-
-            if (this._toolType === ToolType.Freeline) {
-                this._updatePath2DWithQuadraticCurve();
-            }
+            this._updatePath2D();
         }
-    }
+    };
 
-    public getLengthInPixels = (): number => {
-        switch(this._toolType) {
-            case ToolType.StraightLine:
-                return Math.sqrt(this._points[0].distanceSquared(this._points[this._points.length - 1]));
-            case ToolType.Freeline: 
-                if (!this._fittedCurve) {
-                    throw new Error();
-                }
-                return this._fittedCurve.getLength();
-        }
-    }
-
-    /* 
-    * The algorithm for starting and ending the line is not quite right. The first segment of the path will be 
-    * a straight line because a bezier curve with a control point equal to one of is extremities points will 
-    * just be a line. Additionally, The line will not end on the exact last point. Instead, it will end on the 
-    * middle of the last two points. We decided this is okay for now, but may need to be updated in the future.
-    */
-    private _updatePath2DWithQuadraticCurve = (): void => {
-        const currPoint = this._points[this._points.length - 1];
-        const prevPoint = this._points[this._lastIndexAddedToPath2D];
-
-        const midPoint = prevPoint.computeMiddlePoint(currPoint);
-        this._path2D.quadraticCurveTo(prevPoint.getX(), prevPoint.getY(), midPoint.getX(), midPoint.getY());
-    }
-
-    private _updatePath2DStraightLine = (): void => {
-        const firstPoint = this._points[0];
-        const lastPoint = this._points[this._points.length -1];
-        
-        this._path2D = new Path2D();
-        this._isPath2DValid = true;
-        this._path2D.moveTo(firstPoint.getX(), firstPoint.getY());
-        this._path2D.lineTo(lastPoint.getX(), lastPoint.getY());
-    }
+    abstract getLengthInPixels(): number;
+    protected abstract _updatePath2D(): void;
 }

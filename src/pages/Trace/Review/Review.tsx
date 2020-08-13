@@ -4,8 +4,8 @@ import { ActionButton } from 'components/ActionButton/ActionButton';
 import './Review.css';
 
 export const Review: React.FC = () => {
-    const keepButton: NavButton = {label: 'KEEP', to: '/Trace/Instructions' };
-    const deleteButtonNav: NavButton = {label:'DELETE', to: '/Trace/Instructions'};
+    const keepButton: Button = {label: 'KEEP'};
+    const deleteButtonNav: Button = {label:'DELETE'};
 
     const canvasContainerRef = useRef(document.getElementsByClassName('canvasContainer')[0]);
     const canvasRef = useRef(document.querySelector('canvas'));
@@ -21,16 +21,15 @@ export const Review: React.FC = () => {
     // Add event listener to remove the most recently added path.
     const removePath = new Event('removePath', {});
     const handleRemovePath = () => {
-        console.log("button handle remove path");
         canvasRef.current?.dispatchEvent(removePath);
     };
-    const deleteButotonAction: ActionButton = {label: '', action: handleRemovePath};
+    const deleteButotonAction: Button = {label: ''};
     
     return (<>
         <div className={'reviewButtonsConatainer'}>
-            <NavButton button={keepButton}/>
-            <ActionButton button={deleteButotonAction}>
-                <NavButton button={deleteButtonNav}/>
+            <NavButton button={keepButton} to={'/Trace/Instructions'}/>
+            <ActionButton button={deleteButotonAction} action={handleRemovePath}>
+                <NavButton button={deleteButtonNav} to='/Trace/Instructions'/>
             </ActionButton>
         </div>
     </>);

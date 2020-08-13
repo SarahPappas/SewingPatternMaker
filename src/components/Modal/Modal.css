@@ -12,3 +12,14 @@
 .instructionItem {
     display: block;
 }
+
+.warningModal {
+    border: solid 1px #F53F08;
+    background-color: white;
+    color: #F53F08;
+    font-size: 1em;
+    line-height: 100%;
+    padding: 10px 20px;
+    text-align: left;
+    width: calc(300px - 40px);
+}

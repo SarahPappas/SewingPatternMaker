@@ -3,7 +3,7 @@ import './AddPhoto.css';
 import { NavButton } from 'components/NavButton/NavButton';
 import { UploadPhoto } from 'components/UploadPhoto/UploadPhoto';
 
-const button: NavButton = { label: "START TRACING", to: "/trace/instructions" };
+const button: Button = { label: "START TRACING"};
 
 interface AddPhotoProps {
     setUploadedFileData: React.Dispatch<React.SetStateAction<string>>;
@@ -16,7 +16,7 @@ export const AddPhoto: React.FC<AddPhotoProps> = ({ setUploadedFileData, uploade
     return (<>
         <UploadPhoto setUploadedFileData={setUploadedFileData}></UploadPhoto>
         <div style={{visibility: isVisible ? 'visible' : 'hidden'}}>
-            <NavButton button={button}></NavButton>
+            <NavButton button={button} to="/trace/instructions"></NavButton>
         </div>
     </>);
 };

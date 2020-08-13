@@ -1,4 +1,5 @@
 import { PatternPath } from './PatternPath';
+import { Point } from './Point';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
@@ -29,12 +30,57 @@ export class Document implements IDocument {
             throw new Error("Tried to remove path from document, but there are no paths to remove");
         }
         return Boolean(this._patternPaths.pop());
-    }
+    };
+
+    arePatternPiecesEnclosed = (): boolean => {
+        const endpoints: {point: Point; matched: boolean}[] = [];
+
+        this._patternPaths.forEach(path => {
+            const points = path.getPoints();
+            endpoints.push({point: points[0], matched: false});
+            endpoints.push({point: points[points.length - 1], matched:false});
+        });
+
+        for(let i = 0; i < endpoints.length; i++) {
+            const point = endpoints[i].point;
+            const matched = endpoints[i].matched;
+            if (matched) {
+                continue;
+            }
+
+            // Check if end point matches any other endpoint.
+            for (let j = 0; j < endpoints.length && !endpoints[i].matched; j++) {
+                const o = endpoints[j];
+
+                if (o === endpoints[i]) {
+                    continue;
+                }
+
+                if (point.equals(o.point)) {
+                    endpoints[i].matched = true;
+                    endpoints[j].matched = true;
+                }
+            }
+
+            // TODO: Check if end points are on line;
+
+            if (!endpoints[i].matched) {
+                return false;
+            }
+        }
+
+        return true;
+
+    };
+
+    isEmpty = (): boolean => {
+        return !this._patternPaths.length;
+    };
 
     // Sets the pixels per inch ratio according to the input measurement
     setSizeRatio = (inputMeasurementInInches: number, selectedPath: PatternPath): void => {
         this._sizeRatio = selectedPath.getLengthInPixels() / inputMeasurementInInches;
-    }
+    };
 
     getSizeRatio = (): number => {
         if (!this._sizeRatio) {
@@ -42,5 +88,5 @@ export class Document implements IDocument {
             return -1;
         } 
         return this._sizeRatio;        
-    }
+    };
 }

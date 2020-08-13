@@ -30,7 +30,7 @@ export class Curve {
             length += Math.sqrt(pointsOnCurve[i+1].distanceSquared(pointsOnCurve[i]));
         }
         return length;
-    }
+    };
 
     // using De Casteljau's algorithm (slower but more stable than the direct approach)
     private computePoint = (t: number): Point => {

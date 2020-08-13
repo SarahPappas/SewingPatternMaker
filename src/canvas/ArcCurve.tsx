@@ -8,8 +8,8 @@ export class ArcCurve extends Curve {
     private startAngle: number;
     private endAngle: number;
 
-    // pre: start != end and control != middlePoint between start and end
-    // pre: control is equidistant from start and end
+    // precondition: start != end and control != middlePoint between start and end
+    // precondition: control is equidistant from start and end
     constructor(start: Point, end: Point, control: Point) {
         super(start, end, control);
         if (control.equals(Point.computeMiddlePoint(start, end))) {
@@ -19,8 +19,9 @@ export class ArcCurve extends Curve {
         this.radius = this.center.distanceTo(start);
         this.startAngle = Vector.vectorBetweenPoints(this.center, start).getAngle();
         this.endAngle = Vector.vectorBetweenPoints(this.center, end).getAngle();
-        // make sure we go in the right direction on the circle: always use the shortest
+        // Make sure we go in the right direction on the circle: always use the shortest
         // way around the circle
+        // todo: comment more
         if (Math.abs(this.endAngle - this.startAngle) > Math.PI) {
             if (this.startAngle < this.endAngle) {
                 this.startAngle += 2 * Math.PI;
@@ -37,46 +38,47 @@ export class ArcCurve extends Curve {
         const startToControl = Vector.vectorBetweenPoints(this.start, this.control);
         const normalVector = Vector.findPerpVector(Vector.vectorBetweenPoints(this.start, this.end));
         
-        if (normalVector.x === 0) { // start and end are horizontally aligned
-            // the center is aligned vertically with the control point
+        if (normalVector.x === 0) { // Start and end are horizontally aligned
+            // The center is aligned vertically with the control point
             centerX = this.control.x;
 
-            // the center of the circle is such that startToControl vector is
-            // perpendicular to startToCenter vector    
+            // The center of the circle is such that startToControl vector is
+            // perpendicular to startToCenter vector. 
             // equation: startToControl dot startToCenter = 0      
             centerY = this.start.y - 
                         ((startToControl.x * startToControl.x) 
                             / (startToControl.y));
-            //here we safely avoid division by zero because of the check in
-            //the constructor: startToControl cannot be horizontal
+            // In the above, we safely avoid division by zero because of the check in
+            // the constructor: 
+            // TODO: rewrite this?
         } else {
-            // the center of the circle is such that startToControl vector is
-            // perpendicular to startToCenter vector    
+            // The center of the circle is such that startToControl vector is
+            // perpendicular to startToCenter vector.
             // equation 1: startToControl dot startToCenter = 0
 
-            // the center of the circle is on the line that goes through the 
-            // control point and that is perpendicular to the vector between start and end
-            // equation 2: centerY = control + slope * centerX
+            // The center of the circle is on the line that goes through the 
+            // control point and that is perpendicular to the vector between start and end.
+            // Equation 2: centerY = control + slope * centerX
             const slope = normalVector.y / normalVector.x;
-                //division by zero is avoided because of the if check
+                // In the above, division by zero is avoided because of the if check
 
-            // insert equation 2 in equation 1, then solve for centerX
+            // We insert equation 2 in equation 1, then solve for centerX.
             centerX = (this.start.x * startToControl.x 
                         + (this.control.x * slope - startToControl.y) 
                             * startToControl.y) 
                       / (slope * startToControl.y + startToControl.x);
-                      // having the denominator = 0 would mean that startToControl
-                      // is perperdicular to the normal which is impossible
-                      // since the control is never aligned with start and end
-                      // per the constructor
-            // replace centerX in equation 2
-            centerY = (centerX - this.control.x) * slope + this.control.y;
+                      // In the above, having the denominator = 0 would mean that startToControl
+                      // is perperdicular to the normal. That cannot happen, because
+                      // the control point is never aligned with start and end
+                      // per the constructor.
+            // Replace centerX in equation 2
+            centerY = this.control.y + slope * (centerX - this.control.x);
         }
 
         return new Point(centerX, centerY);
     };
 
-    // override abstract method in parent
+    // Override abstract method in parent
     protected computePoint = (t: number): Point => {     
         const x = this.center.x + 
                   this.radius * Math.cos(this.lerp(this.startAngle, this.endAngle, t));
@@ -85,20 +87,16 @@ export class ArcCurve extends Curve {
         return new Point(x, y);
     };
 
-    // override abstract method in parent
+    // Override abstract method in parent
     drawCurve = (path: Path2D): void => {
         path.arcTo(this.control.x, this.control.y, 
                    this.end.x, this.end.y, 
                    this.radius);
     };
 
-    // override the approximation algorithm from parent class
+    // Override the approximation algorithm from parent class
+    // TODO: TEST THIS
     getLength = (): number => {
-        const u = Vector.vectorBetweenPoints(this.control, this.start);
-        const v = Vector.vectorBetweenPoints(this.control, this.end);
-        const alpha = Vector.angleBetween(u, v);
-        // theta is the central angle between starting point and end point on the circle
-        const theta = Math.PI - alpha;
-        return theta * this.radius;
+        return Math.abs(this.startAngle - this.endAngle) * this.radius;
     };
 }

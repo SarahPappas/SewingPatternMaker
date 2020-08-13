@@ -2,8 +2,8 @@ import { Point } from "./Point";
 import { Curve } from "./Curve";
 
 export class BezierCurve extends Curve {
-    // using De Casteljau's algorithm (slower but more stable than the direct approach)
-    // override abstract method in parent
+    // Using De Casteljau's algorithm (slower but more stable than the direct approach)
+    // Overrides abstract method in parent
     protected computePoint = (t: number): Point => {
         const startToControlX = this.lerp(this.start.x, this.control.x, t);
         const startToControlY = this.lerp(this.start.y, this.control.y, t);
@@ -15,7 +15,7 @@ export class BezierCurve extends Curve {
                     this.lerp(startToControlY, controlToEndY, t));
     };
 
-    // override abstract method in parent
+    // Override abstract method in parent
     drawCurve = (path: Path2D): void => {
         path.quadraticCurveTo(this.control.x, this.control.y, this.end.x, this.end.y);   
     };

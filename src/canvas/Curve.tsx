@@ -29,13 +29,15 @@ export abstract class Curve {
 
     getLength = (): number => {
         let length = 0;
-        // compute the total distance from start to control + from control to end in order to 
+        // Compute the total distance from start to control + from control to end in order to 
         // find an upper bound on the curve length.
         const startToControl = this.start.distanceTo(this.control);
         const controlToEnd = this.control.distanceTo(this.end);
         const upperBound = Math.ceil(startToControl + controlToEnd);
-        // find the number of points to take on the curve as a function of the upperbound
-        const NUMPOINTS = upperBound / 5;
+        // Find the number of points to take on the curve as a function of the upperbound. 
+        // TODO: explain more
+        const MAX_DIST_BETWEEN_POINTS = 5;
+        const NUMPOINTS = upperBound / MAX_DIST_BETWEEN_POINTS;
         const pointsOnCurve = this.computePointsOnCurve(NUMPOINTS);
         for (let i = 0; i < NUMPOINTS - 1; i++) {
             length += pointsOnCurve[i+1].distanceTo(pointsOnCurve[i]);

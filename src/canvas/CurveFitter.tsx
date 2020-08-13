@@ -59,7 +59,7 @@ export class CurveFitter {
         
         // Test arc curves with control points along the midline between start and end
         for (let i = -500; i <= 500; i += 10) {
-            // we avoid having control point aligned with startPoint and endPoint, 
+            // We avoid having control point aligned with startPoint and endPoint, 
             // since that would yield a degenerate arc curve (a line)
             if (i === 0) { 
                 continue;

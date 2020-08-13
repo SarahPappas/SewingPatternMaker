@@ -48,9 +48,11 @@ export class Document implements IDocument {
                 continue;
             }
 
-            for (let j = i + 1; j < endpoints.length; j++) {
+            // Check if end point matches any other endpoint.
+            for (let j = 0; j < endpoints.length && !endpoints[i].matched; j++) {
                 const o = endpoints[j];
-                if(!o) {
+
+                if (o === endpoints[i]) {
                     continue;
                 }
 
@@ -59,6 +61,8 @@ export class Document implements IDocument {
                     endpoints[j].matched = true;
                 }
             }
+
+            // TODO: Check if end points are on line;
 
             if (!endpoints[i].matched) {
                 return false;
@@ -70,7 +74,7 @@ export class Document implements IDocument {
     };
 
     isEmpty = (): boolean => {
-        return Boolean(this._patternPaths.length);
+        return !this._patternPaths.length;
     };
 
     // Sets the pixels per inch ratio according to the input measurement

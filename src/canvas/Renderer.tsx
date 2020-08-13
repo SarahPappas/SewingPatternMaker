@@ -17,7 +17,7 @@ export class Renderer implements IRenderer {
     private _toolType: ToolType;
     private _pathSelection: PathSelection;
 
-    constructor (DocumentModel: Document, PathSelectionModel: PathSelection) {
+    constructor (documentModel: Document, pathSelectionModel: PathSelection) {
         this._canvas = document.createElement('canvas');
         this._canvas.width = 300;
         this._canvas.height = 400;
@@ -28,13 +28,13 @@ export class Renderer implements IRenderer {
         }
 
         this._context = contextOrNull;
-        this._document = DocumentModel;
+        this._document = documentModel;
         this._isTracing = false;
         this._currPath = null;
         this._pathType = PatternPathType.UNDEFINED;
         // The default tool type is a straight line tool.
         this._toolType = ToolType.StraightLine;
-        this._pathSelection = PathSelectionModel;
+        this._pathSelection = pathSelectionModel;
     }
 
     init = (): HTMLCanvasElement => {
@@ -111,7 +111,7 @@ export class Renderer implements IRenderer {
         this._canvas.onmousemove = (e) => {
             this._pathSelection.setHighlightedPath(null);
             for (let i = 0; i < patternPaths.length; i++) {
-                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
+                if (this.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
                     this._pathSelection.setHighlightedPath(patternPaths[i]);
                     break;
                 }
@@ -121,6 +121,10 @@ export class Renderer implements IRenderer {
         this._canvas.onmouseup = null;
         this._canvas.onmouseout = null;
     };
+
+    isPointInStroke = (path2D: Path2D, x: number, y: number): boolean => {
+        return this._context.isPointInStroke(path2D, x, y);
+    }
 
     private _endTracing = (position: Point): void => {
         if (this._currPath) {

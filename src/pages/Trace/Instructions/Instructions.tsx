@@ -21,11 +21,11 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     
     const [showWarning, setShowWarning] = React.useState<boolean>(false);
     let doneContainer = <></>;
-    const showDoneButton = useRef(App.document.isEmpty());
-    const arePatternsEnclosed = useRef(App.document.arePatternPiecesEnclosed());
+    const showDoneButton = useRef(false);
+    const arePatternsEnclosed = useRef(false);
 
     useEffect(() => {
-        showDoneButton.current = App.document.isEmpty();
+        showDoneButton.current = !App.document.isEmpty();
         arePatternsEnclosed.current = App.document.arePatternPiecesEnclosed();
     }, [arePatternsEnclosed, showDoneButton]);
 

@@ -1,11 +1,11 @@
-import { PatternPath } from './PatternPath';
+import { PatternPath } from './PatternPaths/PatternPath';
 import { Document } from './Document';
 import { PathSelection } from './PathSelection';
-import { Point } from './Point';
-import { PatternPathColor } from './PatternPathColor';
+import { Point } from './Geometry/Point';
+import { PatternPathColor } from './PatternPaths/PatternPathColor';
 import { PatternPathType, ToolType } from './Enums';
-import { StraightLinePath } from './StraightLinePath';
-import { FreeLinePath } from './FreeLinePath';
+import { StraightLinePath } from './PatternPaths/StraightLinePath';
+import { FreeLinePath } from './PatternPaths/FreeLinePath';
 
 export class Renderer implements IRenderer {
     private _canvas: HTMLCanvasElement;
@@ -111,7 +111,7 @@ export class Renderer implements IRenderer {
         this._canvas.onmousemove = (e) => {
             this._pathSelection.setHighlightedPath(null);
             for (let i = 0; i < patternPaths.length; i++) {
-                if (this.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
+                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
                     this._pathSelection.setHighlightedPath(patternPaths[i]);
                     break;
                 }
@@ -122,17 +122,11 @@ export class Renderer implements IRenderer {
         this._canvas.onmouseout = null;
     };
 
-    isPointInStroke = (path2D: Path2D, x: number, y: number): boolean => {
-        return this._context.isPointInStroke(path2D, x, y);
-    }
-
     private _endTracing = (position: Point): void => {
         if (this._currPath) {
             this._currPath.addPoint(position); 
             this._currPath.snapEndpoints(this._document.getPatternPaths());
-            if (this._currPath instanceof FreeLinePath) {
-                this._currPath.fitCurve();
-            }
+            this._currPath.setFittedSegment();
 
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }

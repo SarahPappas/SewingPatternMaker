@@ -1,5 +1,6 @@
-import { Point } from './Point';
-import { PatternPathType } from './Enums';
+import { Point } from '../Geometry/Point';
+import { PatternPathType } from '../Enums';
+import { Segment } from 'canvas/Geometry/Segment';
 
 export abstract class PatternPath implements IPatternPath {
     protected _points: Point[];
@@ -7,6 +8,7 @@ export abstract class PatternPath implements IPatternPath {
     protected _path2D: Path2D;
     protected _isPath2DValid: boolean;
     protected _lastIndexAddedToPath2D: number;
+    protected _fittedSegment: Segment | null;
 
     constructor (pathType: PatternPathType) {
         this._type = pathType;
@@ -14,6 +16,7 @@ export abstract class PatternPath implements IPatternPath {
         this._path2D = new Path2D();
         this._isPath2DValid = false;
         this._lastIndexAddedToPath2D = -1;
+        this._fittedSegment = null;
     }
 
     getPoints = (): Point[] => {
@@ -32,7 +35,7 @@ export abstract class PatternPath implements IPatternPath {
 
         // If it is the first time we are adding a point to the Path2D, use moveTo.
         if (this._lastIndexAddedToPath2D === -1 && this._points.length) {
-            this._path2D.moveTo(this._points[0].getX(), this._points[0].getY());
+            this._path2D.moveTo(this._points[0].x, this._points[0].y);
             this._lastIndexAddedToPath2D++;
         }
 
@@ -118,6 +121,13 @@ export abstract class PatternPath implements IPatternPath {
         }
     };
 
-    abstract getLengthInPixels(): number;
+    getLengthInPixels = (): number => {
+        if (!this._fittedSegment) {
+            throw new Error();
+        }
+        return this._fittedSegment.getLength();
+    };
+
+    abstract setFittedSegment(): void;
     protected abstract _updatePath2D(): void;
 }

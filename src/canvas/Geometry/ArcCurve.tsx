@@ -8,7 +8,6 @@ export class ArcCurve extends Curve {
     private startAngle: number;
     private endAngle: number;
 
-    // Precondition: start != end
     // Precondition: control is equidistant from start and end
     // Precondition: control != middlePoint between start and end
     constructor(start: Point, end: Point, control: Point) {
@@ -96,7 +95,7 @@ export class ArcCurve extends Curve {
     };
 
     // Overrides the abstract method in the parent class.
-    drawCurve = (path: Path2D): void => {
+    draw = (path: Path2D): void => {
         path.arcTo(this.control.x, this.control.y, 
                    this.end.x, this.end.y, 
                    this.radius);

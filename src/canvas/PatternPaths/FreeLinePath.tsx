@@ -20,7 +20,7 @@ export class FreeLinePath extends PatternPath {
         this._path2D.moveTo(firstPoint.x, firstPoint.y);
 
         this._fittedCurve = CurveFitter.Fit(this._points);
-        this._fittedCurve.drawCurve(this._path2D);      
+        this._fittedCurve.draw(this._path2D);      
     };
 
     getLengthInPixels = (): number => {

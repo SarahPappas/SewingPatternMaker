@@ -1,22 +1,15 @@
 import { Point } from './Point';
+import { Segment } from './Segment';
 
-export abstract class Curve {
-    protected start: Point;
-    protected end: Point;
+export abstract class Curve extends Segment {
     protected control: Point;
 
     constructor (start: Point, end: Point, control: Point) {
-        if (start.equals(end)) {
-            throw new Error("starting point of Curve must be different from end point");
-        }
-        this.start = start;
-        this.end = end;
+        super(start, end);
         this.control = control;
     }
 
     protected abstract computePoint(t: number): Point;
-
-    abstract drawCurve(path: Path2D): void;
 
     computePointsOnCurve = (numPoints: number): Point[] => {
         const resultingPoints = new Array<Point>();
@@ -27,6 +20,7 @@ export abstract class Curve {
         return resultingPoints;
     };
 
+    // Overrides abstract class in parent.
     getLength = (): number => {
         let length = 0;
         // Compute the total distance from start to control + from control to end in order to 

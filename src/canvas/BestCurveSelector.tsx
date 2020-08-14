@@ -2,7 +2,7 @@ import { Curve } from "./Curve";
 import { BezierCurve } from "./BezierCurve";
 import { Point } from "./Point";
 
-export class CurveSelection{
+export class BestCurveSelector {
     private _bestCurve: Curve;
     private _bestCurveDelta: number;
     private _numPointsOnPotentialCurve: number;

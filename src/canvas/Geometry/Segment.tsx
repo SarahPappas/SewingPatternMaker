@@ -17,7 +17,7 @@ export abstract class Segment {
     draw = (path: Path2D): void => {
         path.moveTo(this.start.x, this.start.y);
         this._drawTo(path);
-    }
+    };
 
     protected abstract _drawTo(path: Path2D): void;
 }

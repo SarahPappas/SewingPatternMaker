@@ -30,7 +30,7 @@ export class FreeLinePath extends PatternPath {
         return this._fittedCurve.getLength();
     };
 
-        /* 
+    /* 
     * The algorithm for starting and ending the line is not quite right. The first segment of the path will be 
     * a straight line because a bezier curve with a control point equal to one of is extremities points will 
     * just be a line. Additionally, The line will not end on the exact last point. Instead, it will end on the 

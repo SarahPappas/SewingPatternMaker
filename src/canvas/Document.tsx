@@ -24,7 +24,7 @@ export class Document implements IDocument {
         return false;  
     };
 
-    // Removes the most recently added Pattern Path
+    // Removes the most recently added Pattern Path.
     removePatternPath = (): boolean => {
         if (!this._patternPaths.length) {
             throw new Error("Tried to remove path from document, but there are no paths to remove");
@@ -62,7 +62,7 @@ export class Document implements IDocument {
                 }
             }
 
-            // TODO: Check if end points are on line;
+            // TODO: Check if end points are on line.
 
             if (!endpoints[i].matched) {
                 return false;
@@ -77,8 +77,9 @@ export class Document implements IDocument {
         return !this._patternPaths.length;
     };
 
-    // Sets the pixels per inch ratio according to the input measurement
+    // Sets the pixels per inch ratio according to the input measurement.
     setSizeRatio = (inputMeasurementInInches: number, selectedPath: PatternPath): void => {
+        console.log('selected path length: ' + selectedPath.getLengthInPixels());
         this._sizeRatio = selectedPath.getLengthInPixels() / inputMeasurementInInches;
     };
 

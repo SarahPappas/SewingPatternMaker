@@ -47,9 +47,9 @@ export class Point implements IPoint {
         return new Point(middleX, middleY);
     };
 
-    // generates points on the line formed by all points that are equidistant 
+    // Generates points on the line formed by all points that are equidistant 
     // from points p1 and p2.
-    // at t=0, is returns the point in the middle of this point and the other point.
+    // At t=0, it returns the middle point between the two inputted points.
     static getPointOnMidline = (p1: Point, p2: Point, t: number): Point => {
         const middle = Point.computeMiddlePoint(p1, p2);
         const normalVector = Vector.findPerpVector(Vector.vectorBetweenPoints(p1, p2));

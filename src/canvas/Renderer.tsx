@@ -111,7 +111,7 @@ export class Renderer implements IRenderer {
         this._canvas.onmousemove = (e) => {
             this._pathSelection.setHighlightedPath(null);
             for (let i = 0; i < patternPaths.length; i++) {
-                if (this.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
+                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
                     this._pathSelection.setHighlightedPath(patternPaths[i]);
                     break;
                 }
@@ -121,10 +121,6 @@ export class Renderer implements IRenderer {
         this._canvas.onmouseup = null;
         this._canvas.onmouseout = null;
     };
-
-    isPointInStroke = (path2D: Path2D, x: number, y: number): boolean => {
-        return this._context.isPointInStroke(path2D, x, y);
-    }
 
     private _endTracing = (position: Point): void => {
         if (this._currPath) {

@@ -95,7 +95,7 @@ export class ArcCurve extends Curve {
     };
 
     // Overrides the abstract method in the parent class.
-    draw = (path: Path2D): void => {
+    protected _drawTo = (path: Path2D): void => {
         path.arcTo(this.control.x, this.control.y, 
                    this.end.x, this.end.y, 
                    this.radius);

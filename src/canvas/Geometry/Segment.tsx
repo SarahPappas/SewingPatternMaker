@@ -13,5 +13,11 @@ export abstract class Segment {
     }
 
     abstract getLength(): number;
-    abstract draw(path: Path2D): void;
+    
+    draw = (path: Path2D): void => {
+        path.moveTo(this.start.x, this.start.y);
+        this._drawTo(path);
+    }
+
+    protected abstract _drawTo(path: Path2D): void;
 }

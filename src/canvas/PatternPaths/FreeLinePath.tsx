@@ -1,33 +1,13 @@
 import { PatternPath } from "./PatternPath";
-import { PatternPathType } from "../Enums";
-import { Curve } from '../Geometry/Curve';
 import { CurveFitter } from '../Geometry/CurveFitter';
 import { Point } from "../Geometry/Point";
 
-export class FreeLinePath extends PatternPath {
-    private _fittedCurve: Curve | null;
-    
-    constructor (pathType: PatternPathType) {
-        super(pathType);
-        
-        this._fittedCurve = null;
-    }
-
-    fitCurve = (): void => {
-        const firstPoint = this._points[0];
+export class FreeLinePath extends PatternPath {    
+    setFittedSegment = (): void => {
         this._path2D = new Path2D();
         this._isPath2DValid = true;
-        this._path2D.moveTo(firstPoint.x, firstPoint.y);
-
-        this._fittedCurve = CurveFitter.Fit(this._points);
-        this._fittedCurve.draw(this._path2D);      
-    };
-
-    getLengthInPixels = (): number => {
-        if (!this._fittedCurve) {
-            throw new Error();
-        }
-        return this._fittedCurve.getLength();
+        this._fittedSegment = CurveFitter.Fit(this._points);
+        this._fittedSegment.draw(this._path2D);
     };
 
     /* 

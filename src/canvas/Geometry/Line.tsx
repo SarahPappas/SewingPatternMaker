@@ -5,7 +5,7 @@ export class Line extends Segment {
         return Math.sqrt(this.start.distanceSquared(this.end));
     }
 
-    draw = (path: Path2D): void => {
+    protected _drawTo = (path: Path2D): void => {
         path.lineTo(this.end.x, this.end.y);
     }
 }

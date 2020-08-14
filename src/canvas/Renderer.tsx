@@ -126,9 +126,7 @@ export class Renderer implements IRenderer {
         if (this._currPath) {
             this._currPath.addPoint(position); 
             this._currPath.snapEndpoints(this._document.getPatternPaths());
-            if (this._currPath instanceof FreeLinePath) {
-                this._currPath.fitCurve();
-            }
+            this._currPath.setFittedSegment();
 
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }

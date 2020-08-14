@@ -63,6 +63,19 @@ export class Renderer implements IRenderer {
         this._canvas.onmousemove = (e) => {
             if (this._isTracing && this._currPath) {
                 this._currPath.addPoint(new Point(e.offsetX, e.offsetY));
+
+                this._onPatternPathsCross(e.offsetX, e.offsetY, (pathCrossed: PatternPath) => {
+                    if (pathCrossed === this._currPath) {
+                        return;
+                    }
+                    const newPoint = new Point(e.offsetX, e.offsetY);
+                    const pointsOnPathCrossed = pathCrossed.getPoints(); 
+                    if (!newPoint.isWithinRadius(pointsOnPathCrossed[0], 5) 
+                        && !newPoint.isWithinRadius(pointsOnPathCrossed[pointsOnPathCrossed.length -1], 2.5)) {
+                            this._endTracing(newPoint);
+
+                    }
+                });
             }
         };
         
@@ -100,12 +113,17 @@ export class Renderer implements IRenderer {
         const patternPaths = this._document.getPatternPaths();
         
         this._canvas.onmousedown = (e) => {
-            for (let i = 0; i < patternPaths.length; i++) {
-                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
-                    this._pathSelection.setSelectedPath(patternPaths[i]);
-                    break;
-                }
-            }
+            this._onPatternPathsCross(e.offsetX, e.offsetY, (pathToSelect: PatternPath) => {
+                this._pathSelection.setSelectedPath(pathToSelect);
+                console.log("crossed");
+            });
+
+            // for (let i = 0; i < patternPaths.length; i++) {
+            //     if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
+            //         this._pathSelection.setSelectedPath(patternPaths[i]);
+            //         break;
+            //     }
+            // }
         };
 
         this._canvas.onmousemove = (e) => {
@@ -120,17 +138,6 @@ export class Renderer implements IRenderer {
 
         this._canvas.onmouseup = null;
         this._canvas.onmouseout = null;
-    };
-
-    private _endTracing = (position: Point): void => {
-        if (this._currPath) {
-            this._currPath.addPoint(position); 
-            this._currPath.snapEndpoints(this._document.getPatternPaths());
-            this._currPath.setFittedSegment();
-
-            this._canvas.dispatchEvent(new Event('endTracing'));     
-        }
-        this._resetTracing();
     };
 
     private _draw = (): void => {
@@ -163,6 +170,27 @@ export class Renderer implements IRenderer {
             context.strokeStyle = pathColor;
             context.stroke(path2D);
         });
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private _onPatternPathsCross = (x: number, y: number, callBack: (path: PatternPath) => any): void => {
+        const patternPaths = this._document.getPatternPaths();
+        for (let i = 0; i < patternPaths.length; i++) {
+            if (this._context.isPointInStroke(patternPaths[i].getPath2D(), x, y)) {
+                return callBack(patternPaths[i]);
+            }
+        }
+    };
+
+    private _endTracing = (position: Point): void => {
+        if (this._currPath) {
+            this._currPath.addPoint(position); 
+            this._currPath.snapEndpoints(this._document.getPatternPaths());
+            this._currPath.setFittedSegment();
+
+            this._canvas.dispatchEvent(new Event('endTracing'));     
+        }
+        this._resetTracing();
     };
 
     private _resetTracing = (): void => {

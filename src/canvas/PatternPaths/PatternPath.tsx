@@ -1,5 +1,5 @@
-import { Point } from './Point';
-import { PatternPathType } from './Enums';
+import { Point } from '../Geometry/Point';
+import { PatternPathType } from '../Enums';
 
 export abstract class PatternPath implements IPatternPath {
     protected _points: Point[];

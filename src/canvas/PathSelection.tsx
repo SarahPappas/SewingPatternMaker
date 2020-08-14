@@ -1,4 +1,4 @@
-import { PatternPath } from "./PatternPath";
+import { PatternPath } from "./PatternPaths/PatternPath";
 
 export class PathSelection {
     private _selectedPath: PatternPath | null;

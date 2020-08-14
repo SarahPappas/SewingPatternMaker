@@ -1,8 +1,8 @@
 import { PatternPath } from "./PatternPath";
-import { PatternPathType } from "./Enums";
-import { Curve } from './Curve';
-import { CurveFitter } from './CurveFitter';
-import { Point } from "./Point";
+import { PatternPathType } from "../Enums";
+import { Curve } from '../Geometry/Curve';
+import { CurveFitter } from '../Geometry/CurveFitter';
+import { Point } from "../Geometry/Point";
 
 export class FreeLinePath extends PatternPath {
     private _fittedCurve: Curve | null;

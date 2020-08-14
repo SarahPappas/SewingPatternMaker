@@ -1,5 +1,5 @@
-import { PatternPath } from './PatternPath';
-import { Point } from './Point';
+import { PatternPath } from './PatternPaths/PatternPath';
+import { Point } from './Geometry/Point';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];

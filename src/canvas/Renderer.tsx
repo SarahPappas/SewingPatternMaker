@@ -1,11 +1,11 @@
-import { PatternPath } from './PatternPath';
+import { PatternPath } from './PatternPaths/PatternPath';
 import { Document } from './Document';
 import { PathSelection } from './PathSelection';
-import { Point } from './Point';
-import { PatternPathColor } from './PatternPathColor';
+import { Point } from './Geometry/Point';
+import { PatternPathColor } from './PatternPaths/PatternPathColor';
 import { PatternPathType, ToolType } from './Enums';
-import { StraightLinePath } from './StraightLinePath';
-import { FreeLinePath } from './FreeLinePath';
+import { StraightLinePath } from './PatternPaths/StraightLinePath';
+import { FreeLinePath } from './PatternPaths/FreeLinePath';
 
 export class Renderer implements IRenderer {
     private _canvas: HTMLCanvasElement;

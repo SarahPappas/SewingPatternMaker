@@ -1,4 +1,4 @@
-import { PatternPathType } from './Enums';
+import { PatternPathType } from '../Enums';
 
 const PatternPathColor: Map<PatternPathType | string, string> = new Map();
 PatternPathColor.set(PatternPathType.Edge, '#F2E74B');

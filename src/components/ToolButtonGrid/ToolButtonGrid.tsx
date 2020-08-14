@@ -2,7 +2,7 @@ import React from 'react';
 import { PatternPathType, ToolType } from 'canvas/Enums';
 import { ReactComponent as FreeLineToolIcon } from '../../assets/free-line-tool.svg';
 import { ReactComponent as StraightLineToolIcon } from '../../assets/straight-line-tool.svg';
-import { PatternPathColor} from 'canvas/PatternPathColor';
+import { PatternPathColor} from 'canvas/PatternPaths/PatternPathColor';
 import { ToolButton } from 'components/ToolButton/ToolButton';
 import './ToolButtonGrid.css';
 

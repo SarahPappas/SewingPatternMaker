@@ -57,4 +57,8 @@ export class Point implements IPoint {
         return new Point(middle.x + t * normalVector.x, 
                          middle.y + t * normalVector.y);
     };
+
+    toString = (): string => {
+        return "[" + this.x + ", " + this.y + "]";
+    }
 }

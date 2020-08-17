@@ -105,4 +105,14 @@ export class ArcCurve extends Curve {
     getLength = (): number => {
         return Math.abs(this.startAngle - this.endAngle) * this.radius;
     };
+
+    getStartDirection = (): number => {
+        const startVector = Vector.vectorBetweenPoints(this.start, this.control);
+        return startVector.getAngle();
+    };
+
+    getReverseStartDirection = (): number => {
+        const reverseStartVector = Vector.vectorBetweenPoints(this.end, this.control);
+        return reverseStartVector.getAngle();
+    };
 }

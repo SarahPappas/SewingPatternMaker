@@ -13,6 +13,8 @@ export abstract class Segment {
     }
 
     abstract getLength(): number;
+    abstract getStartDirection(): number;
+    abstract getReverseStartDirection(): number;
     
     draw = (path: Path2D): void => {
         path.moveTo(this.start.x, this.start.y);

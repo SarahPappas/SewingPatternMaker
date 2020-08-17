@@ -5,9 +5,14 @@ export class Document implements IDocument {
     private _patternPaths: PatternPath[];
     private _sizeRatio: null | number; // in pixels per inch
 
+    private _vertices: Set<Point>;
+    private _edges: Edge[];
+
     constructor () {
         this._patternPaths = new Array<PatternPath>();
         this._sizeRatio = null;
+        this._vertices = new Set<Point>();
+        this._edges = [];
     }
 
     getPatternPaths = (): PatternPath[] => {
@@ -89,5 +94,51 @@ export class Document implements IDocument {
             return -1;
         } 
         return this._sizeRatio;        
+    };
+
+    print = (): void => {
+        this._updateEdgeAndVerticesLists();
+        this._vertices.forEach(vertex => {
+            console.log("" + vertex);
+        });
+        this._edges.forEach(edge => {
+            console.log(edge);
+        });
+    };
+
+    private _updateEdgeAndVerticesLists = (): void => {
+        this._patternPaths.forEach(path => {
+            const points = path.getPoints();
+            const startPoint = points[0];
+            const endPoint = points[points.length - 1];
+
+            this._vertices.add(startPoint);
+            this._vertices.add(endPoint);
+
+            this._edges.push({
+                origin: startPoint, 
+                startDirection: path.getStartDirection(), 
+                destination: endPoint, 
+                path: path
+            });
+            this._edges.push({
+                origin: endPoint,
+                startDirection: path.getReverseStartDirection(),
+                destination: startPoint,
+                path: path
+            });
+        });
+    };
+
+    private buildOrderedEdgeLists = (): void => {
+        this._vertices.forEach(vertex => {
+            const leavingEdges: Array<Edge> = [];
+            this._edges.forEach(edge => {
+                if (edge.origin.equals(vertex)) {
+                    leavingEdges.push(edge);
+                }
+            });
+            leavingEdges.sort((a, b) => a.startDirection - b.startDirection);
+        });
     };
 }

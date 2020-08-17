@@ -7,12 +7,14 @@ export class Document implements IDocument {
 
     private _vertices: Set<Point>;
     private _edges: Edge[];
+    private _patternPieces: Set<Set<PatternPath>>;
 
     constructor () {
         this._patternPaths = new Array<PatternPath>();
         this._sizeRatio = null;
         this._vertices = new Set<Point>();
         this._edges = [];
+        this._patternPieces = new Set<Set<PatternPath>>();
     }
 
     getPatternPaths = (): PatternPath[] => {
@@ -97,40 +99,49 @@ export class Document implements IDocument {
     };
 
     print = (): void => {
-        this._updateEdgeAndVerticesLists();
-        this._vertices.forEach(vertex => {
-            console.log("" + vertex);
-        });
-        this._edges.forEach(edge => {
-            console.log(edge);
-        });
+        this._findPatternPieces();
     };
 
     private _updateEdgeAndVerticesLists = (): void => {
+        let i = 0;
         this._patternPaths.forEach(path => {
+            i++;
+
             const points = path.getPoints();
             const startPoint = points[0];
             const endPoint = points[points.length - 1];
 
             this._vertices.add(startPoint);
             this._vertices.add(endPoint);
-
+            
             this._edges.push({
                 origin: startPoint, 
                 startDirection: path.getStartDirection(), 
                 destination: endPoint, 
-                path: path
+                path: path,
+                id: i
             });
             this._edges.push({
                 origin: endPoint,
                 startDirection: path.getReverseStartDirection(),
                 destination: startPoint,
-                path: path
+                path: path,
+                id: (-1 * i)
             });
+            
         });
+
+        // this._vertices.forEach(vertex => {
+        //     console.log("" + vertex);
+        // });
+        // console.log("found " + this._edges.length + " edges");
     };
 
-    private buildOrderedEdgeLists = (): void => {
+    private _findPatternPieces = (): void => {
+        this._updateEdgeAndVerticesLists();
+
+        //build ordered edge lists
+        const leavingEdgesMap: Map<Point, Array<Edge>> = new Map();
         this._vertices.forEach(vertex => {
             const leavingEdges: Array<Edge> = [];
             this._edges.forEach(edge => {
@@ -139,6 +150,48 @@ export class Document implements IDocument {
                 }
             });
             leavingEdges.sort((a, b) => a.startDirection - b.startDirection);
+            leavingEdgesMap.set(vertex, leavingEdges);
         });
+        // console.log("leaving edges map size: " + leavingEdgesMap.size);
+        leavingEdgesMap.forEach((value, key) => {
+            console.log("key: " + key);
+            value.forEach(element => {
+                console.log("leaving edge: " + element.id);
+            });
+        });
+
+        //find faces
+        this._edges.forEach(edge => {
+            const face = new Set<PatternPath>();
+            let current = edge;
+            console.log("current: " + current.id);
+            do {
+                face.add(current.path);
+                const leavingEdges = leavingEdgesMap.get(current.destination);
+                if (!leavingEdges) {
+                    throw new Error();
+                }
+                // find the index of the edge that is the reverse of current in leavingEdges
+                let index = -1;
+                for (let i = 0; i < leavingEdges.length; i++) {
+                    console.log("leavingEdges[i].id = " + leavingEdges[i].id);
+                    if (leavingEdges[i].id === (-1 * current.id)) {
+                        index = i;
+                        console.log("match");
+                        break;
+                    }
+                }
+                if (index === -1) {
+                    throw new Error();
+                }
+                // choose the next edge leaving the vertex clockwise
+                current = leavingEdges[(index - 1) % leavingEdges.length];
+                console.log("current: " + current.id);
+            } while (current.id !== edge.id);// while not back
+            console.log("adding a face");
+            this._patternPieces.add(face);
+        });
+
+        console.log(this._patternPieces);
     };
 }

@@ -1,5 +1,3 @@
-import { Point } from "canvas/Geometry/Point";
-
 /* COMPONENT TYPES */
 type Button = {
     label: string;
@@ -17,13 +15,6 @@ type Input = {
     accept?: string;
     onChange: ChangeEvent<HTMLInputElement>;
     className?: string;
-};
-
-type Edge = {
-    origin: Point; 
-    startDirection: number; //angle at which the edge leaves the start vertex, in [-PI, PI]
-    destination: Point; 
-    path: PatternPath;
 };
 
 /* CANVAS TYPES */
@@ -53,4 +44,12 @@ type IPoint = {
 
 type IRenderer = {
     init: () => HTMLCanvasElement;
+};
+
+type Edge = {
+    origin: Point;
+    startDirection: number;
+    destination: Point;
+    path: PatternPath;
+    id: number;
 };

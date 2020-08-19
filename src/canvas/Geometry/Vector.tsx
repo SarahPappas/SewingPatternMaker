@@ -45,6 +45,11 @@ export class Vector {
         return v1.x * v2.x + v1.y * v2.y;
     };
 
+    // Returns the value of the dot product between the two inputted vectors.
+    static crossProduct = (v1: Vector, v2: Vector): number => {
+        return v1.x * v2.y - v1.y * v2.x; 
+    };
+
     // Computes the smallest angle between 2 vectors in radians.
     // Throws an error of either of the 2 vectors has a norm of 0.
     static angleBetween = (v1: Vector, v2: Vector): number => {

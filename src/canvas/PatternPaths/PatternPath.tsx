@@ -72,7 +72,7 @@ export abstract class PatternPath implements IPatternPath {
         }
     
         // If not, then we can add the point.
-        this._points.push(point);
+        this._addPoint(point);
         this._isPath2DValid = false;
         return true;
     };
@@ -130,4 +130,5 @@ export abstract class PatternPath implements IPatternPath {
 
     abstract setFittedSegment(): void;
     protected abstract _updatePath2D(): void;
+    protected abstract _addPoint(point: Point): void;
 }

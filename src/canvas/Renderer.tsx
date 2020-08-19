@@ -6,6 +6,7 @@ import { PatternPathColor } from './PatternPaths/PatternPathColor';
 import { PatternPathType, ToolType } from './Enums';
 import { StraightLinePath } from './PatternPaths/StraightLinePath';
 import { FreeLinePath } from './PatternPaths/FreeLinePath';
+import { Line } from './Geometry/Line';
 
 export class Renderer implements IRenderer {
     private _canvas: HTMLCanvasElement;
@@ -62,26 +63,23 @@ export class Renderer implements IRenderer {
 
         this._canvas.onmousemove = (e) => {
             if (this._isTracing && this._currPath) {
-                this._currPath.addPoint(new Point(e.offsetX, e.offsetY));
-
-                this._onPatternPathsCross(e.offsetX, e.offsetY, (pathCrossed: PatternPath) => {
-                    if (pathCrossed === this._currPath) {
-                        return;
-                    }
-                    const newPoint = new Point(e.offsetX, e.offsetY);
-                    const pointsOnPathCrossed = pathCrossed.getPoints(); 
-                    if (!newPoint.isWithinRadius(pointsOnPathCrossed[0], 5) 
-                        && !newPoint.isWithinRadius(pointsOnPathCrossed[pointsOnPathCrossed.length -1], 2.5)) {
-                            this._endTracing(newPoint);
-
-                    }
-                });
+                const position = new Point(e.offsetX, e.offsetY);
+                const intersection = this._findIntersection(position);
+                if (intersection) {
+                    this._isTracing = false;
+                    this._endTracing(intersection);
+                } else {
+                    this._currPath.addPoint(position);
+                }
             }
         };
         
         this._canvas.onmouseup = (e) => {
             const position = new Point(e.offsetX, e.offsetY);
             if (this._isTracing) {
+                // Moved this._isTracing = false out of _resetTracing beecause onmouseup and onmouseout are both fired.
+                // This means that _endTracing was called multiple times.
+                this._isTracing = false;
                 this._endTracing(position);
             }
         };
@@ -90,6 +88,7 @@ export class Renderer implements IRenderer {
         this._canvas.onmouseout = (e) => {
             const position = new Point(e.offsetX, e.offsetY);
             if(this._isTracing) {
+                this._isTracing = false;
                 this._endTracing(position);
             }
         };
@@ -113,17 +112,12 @@ export class Renderer implements IRenderer {
         const patternPaths = this._document.getPatternPaths();
         
         this._canvas.onmousedown = (e) => {
-            this._onPatternPathsCross(e.offsetX, e.offsetY, (pathToSelect: PatternPath) => {
-                this._pathSelection.setSelectedPath(pathToSelect);
-                console.log("crossed");
-            });
-
-            // for (let i = 0; i < patternPaths.length; i++) {
-            //     if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
-            //         this._pathSelection.setSelectedPath(patternPaths[i]);
-            //         break;
-            //     }
-            // }
+            for (let i = 0; i < patternPaths.length; i++) {
+                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
+                    this._pathSelection.setSelectedPath(patternPaths[i]);
+                    break;
+                }
+            }
         };
 
         this._canvas.onmousemove = (e) => {
@@ -172,19 +166,9 @@ export class Renderer implements IRenderer {
         });
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private _onPatternPathsCross = (x: number, y: number, callBack: (path: PatternPath) => any): void => {
-        const patternPaths = this._document.getPatternPaths();
-        for (let i = 0; i < patternPaths.length; i++) {
-            if (this._context.isPointInStroke(patternPaths[i].getPath2D(), x, y)) {
-                return callBack(patternPaths[i]);
-            }
-        }
-    };
-
     private _endTracing = (position: Point): void => {
         if (this._currPath) {
-            this._currPath.addPoint(position); 
+            this._currPath.addPoint(position);
             this._currPath.snapEndpoints(this._document.getPatternPaths());
             this._currPath.setFittedSegment();
 
@@ -193,8 +177,61 @@ export class Renderer implements IRenderer {
         this._resetTracing();
     };
 
+    // Precondition: Call before current point is added.
+    private _findIntersection = (point: Point): Point | null => {
+        const numPointsInCurrPath = this._currPath?.getPoints().length;
+        if (!this._currPath || !numPointsInCurrPath) {
+            return null;
+        }
+        
+        const patternPaths = this._document.getPatternPaths();
+        // The line segment where we are are searching for interesection should be a line between the current point and last point added.
+        let prevPtIndex = numPointsInCurrPath - 1;
+        // Keep this, because sometimes onMouseMove has already added this point
+        while(prevPtIndex >= 0 && this._currPath.getPoints()[prevPtIndex].equals(point)) {
+            prevPtIndex--;
+        }
+
+        if (prevPtIndex < 0) {
+            return null;
+        }
+
+        const thisLineSeg = new Line(this._currPath.getPoints()[prevPtIndex], point);
+        
+        for (let i = 0; i < patternPaths.length; i++) {
+            const comparisonPath = patternPaths[i];
+            const comparisonPts = comparisonPath.getPoints();
+            const cpStartPt = comparisonPts[0];
+            const cpEndPt = comparisonPts[comparisonPts.length - 1];
+            // If the current path is the path this iteration, do not look for interstection.
+            if (patternPaths[i] !== this._currPath 
+                // TODO if with in radius of endpoints, snap.
+                && !point.isWithinRadius(cpStartPt, 10) 
+                && !point.isWithinRadius(cpEndPt, 10)) {
+               
+                for (let j = 1; j < comparisonPts.length; j+=5 ) {
+                    const otherLineSeg = new Line(comparisonPts[j], comparisonPts[j - 1]);
+                    const intersectionPoint = thisLineSeg.findIntersectionPoint(otherLineSeg);
+                    if (intersectionPoint) {
+                        // eslint-disable-next-line no-debugger
+                        console.log("possible instersection found", intersectionPoint);
+
+                        console.log("is intersection on thisline?", thisLineSeg.isPointOnLine(intersectionPoint, .1));
+                        console.log("is intersection on otherline?", otherLineSeg.isPointOnLine(intersectionPoint, .1));
+                    }
+                    if (intersectionPoint 
+                        && thisLineSeg.isPointOnLine(intersectionPoint, .1)
+                        && otherLineSeg.isPointOnLine(intersectionPoint, .1)) {
+                        return intersectionPoint;
+                    }
+                }
+            } 
+        }
+
+        return null;
+    }
+
     private _resetTracing = (): void => {
-        this._isTracing = false;  
         this._currPath = null;
         this._toolType = ToolType.StraightLine;
     };

@@ -9,6 +9,10 @@ export class FreeLinePath extends PatternPath {
         this._fittedSegment = CurveFitter.Fit(this._points);
         this._fittedSegment.draw(this._path2D);
     };
+    
+    protected _addPoint = (point: Point): void => {
+        this._points.push(point);
+    };
 
     /* 
     * The algorithm for starting and ending the line is not quite right. The first segment of the path will be 

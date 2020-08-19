@@ -7,14 +7,14 @@ export class Document implements IDocument {
 
     private _vertices: Set<Point>;
     private _edges: Edge[];
-    private _patternPieces: Set<Set<PatternPath>>;
+    private _patternPieces: Set<Edge[]>;
 
     constructor () {
         this._patternPaths = new Array<PatternPath>();
         this._sizeRatio = null;
         this._vertices = new Set<Point>();
         this._edges = [];
-        this._patternPieces = new Set<Set<PatternPath>>();
+        this._patternPieces = new Set<Edge[]>();
     }
 
     getPatternPaths = (): PatternPath[] => {
@@ -86,7 +86,7 @@ export class Document implements IDocument {
 
     // Sets the pixels per inch ratio according to the input measurement.
     setSizeRatio = (inputMeasurementInInches: number, selectedPath: PatternPath): void => {
-        console.log('selected path length: ' + selectedPath.getLengthInPixels());
+        //console.log('selected path length: ' + selectedPath.getLengthInPixels());
         this._sizeRatio = selectedPath.getLengthInPixels() / inputMeasurementInInches;
     };
 
@@ -118,6 +118,8 @@ export class Document implements IDocument {
                 origin: startPoint, 
                 startDirection: path.getStartDirection(), 
                 destination: endPoint, 
+                destinationDirection: path.getDestinationDirection(),
+                pathDirectionChange: path.getPathDirectionChange(),
                 path: path,
                 id: i
             });
@@ -125,16 +127,12 @@ export class Document implements IDocument {
                 origin: endPoint,
                 startDirection: path.getReverseStartDirection(),
                 destination: startPoint,
+                destinationDirection: path.getReverseDestinationDirection(),
+                pathDirectionChange: path.getReversePathDirectionChange(),
                 path: path,
                 id: (-1 * i)
-            });
-            
+            }); 
         });
-
-        // this._vertices.forEach(vertex => {
-        //     console.log("" + vertex);
-        // });
-        // console.log("found " + this._edges.length + " edges");
     };
 
     private _findPatternPieces = (): void => {
@@ -162,11 +160,12 @@ export class Document implements IDocument {
 
         //find faces
         this._edges.forEach(edge => {
-            const face = new Set<PatternPath>();
+            const face: Edge[] = [];
             let current = edge;
-            console.log("current: " + current.id);
+            //console.log("current: " + current.id);
             do {
-                face.add(current.path);
+                face.push(current);
+                console.log("adding edge " + current.id + " to current face" );
                 const leavingEdges = leavingEdgesMap.get(current.destination);
                 if (!leavingEdges) {
                     throw new Error();
@@ -174,10 +173,10 @@ export class Document implements IDocument {
                 // find the index of the edge that is the reverse of current in leavingEdges
                 let index = -1;
                 for (let i = 0; i < leavingEdges.length; i++) {
-                    console.log("leavingEdges[i].id = " + leavingEdges[i].id);
+                    //console.log("leavingEdges[i].id = " + leavingEdges[i].id);
                     if (leavingEdges[i].id === (-1 * current.id)) {
                         index = i;
-                        console.log("match");
+                        //console.log("match");
                         break;
                     }
                 }
@@ -185,13 +184,32 @@ export class Document implements IDocument {
                     throw new Error();
                 }
                 // choose the next edge leaving the vertex clockwise
-                current = leavingEdges[(index - 1) % leavingEdges.length];
-                console.log("current: " + current.id);
+                //console.log("index of next edge: " + ((index + leavingEdges.length - 1) % leavingEdges.length));
+                current = leavingEdges[(index + leavingEdges.length - 1) % leavingEdges.length];
+                //console.log("current: " + current.id);
             } while (current.id !== edge.id);// while not back
-            console.log("adding a face");
-            this._patternPieces.add(face);
+
+            // the algorithm will find the same face multiple times, for example: [1, 3, 2], [3, 2, 1], [2, 1, 3].
+            // In order to keep that face only once, we only keep the representation that has
+            // the smallest id (in absolute value) in the first position in the list.
+            const firstId = Math.abs(face[0].id);
+            let addFace = true;
+            for (let i = 1; i < face.length; i++) {
+                if (firstId > Math.abs(face[i].id)) {
+                    addFace = false;
+                }
+            }
+
+            // TODO: if the sum of angles is (neg? pos?) the face is the outside of the graph, so addFace = false
+
+            if (addFace) {
+                this._patternPieces.add(face);
+                console.log("accept face");
+            } else {
+                console.log("reject face");
+            }
         });
 
-        console.log(this._patternPieces);
+        console.log(this._patternPieces.size);
     };
 }

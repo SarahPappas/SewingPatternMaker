@@ -50,6 +50,8 @@ type Edge = {
     origin: Point;
     startDirection: number;
     destination: Point;
+    destinationDirection: number;
+    pathDirectionChange: number;
     path: PatternPath;
     id: number;
 };

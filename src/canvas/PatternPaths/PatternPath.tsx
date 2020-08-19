@@ -142,6 +142,27 @@ export abstract class PatternPath implements IPatternPath {
         return this._fittedSegment.getReverseStartDirection();
     };
 
+    getDestinationDirection = (): number => {
+        // TODO: implement this
+        return -1;
+    }
+
+    getReverseDestinationDirection = (): number => {
+        // TODO: implement this
+        return -1;
+    }
+
+    getPathDirectionChange = (): number => {
+        // TODO: implement this
+        return -1;
+    }
+
+    getReversePathDirectionChange = (): number => {
+        // TODO: implement this
+        return -1;
+    }
+
+
     abstract setFittedSegment(): void;
     protected abstract _updatePath2D(): void;
 }

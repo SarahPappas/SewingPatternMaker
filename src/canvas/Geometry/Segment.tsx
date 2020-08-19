@@ -1,8 +1,8 @@
 import { Point } from "./Point";
 
 export abstract class Segment {
-    protected start: Point;
-    protected end: Point;
+    start: Point;
+    end: Point;
 
     constructor(start: Point, end: Point) {
         if (start.equals(end)) {

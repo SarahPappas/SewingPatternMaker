@@ -7,6 +7,7 @@ import { PatternPathType, ToolType } from './Enums';
 import { StraightLinePath } from './PatternPaths/StraightLinePath';
 import { FreeLinePath } from './PatternPaths/FreeLinePath';
 import { Line } from './Geometry/Line';
+import { PathIntersection } from './PathIntersection';
 
 export class Renderer implements IRenderer {
     private _canvas: HTMLCanvasElement;
@@ -196,7 +197,7 @@ export class Renderer implements IRenderer {
             return null;
         }
 
-        const thisLineSeg = new Line(this._currPath.getPoints()[prevPtIndex], point);
+        const thisL = new Line(this._currPath.getPoints()[prevPtIndex], point);
         
         for (let i = 0; i < patternPaths.length; i++) {
             const comparisonPath = patternPaths[i];
@@ -210,18 +211,9 @@ export class Renderer implements IRenderer {
                 && !point.isWithinRadius(cpEndPt, 10)) {
                
                 for (let j = 1; j < comparisonPts.length; j+=5 ) {
-                    const otherLineSeg = new Line(comparisonPts[j], comparisonPts[j - 1]);
-                    const intersectionPoint = thisLineSeg.findIntersectionPoint(otherLineSeg);
+                    const thatL = new Line(comparisonPts[j], comparisonPts[j - 1]);
+                    const intersectionPoint = PathIntersection.findIntersectionPoint(thisL, thatL);
                     if (intersectionPoint) {
-                        // eslint-disable-next-line no-debugger
-                        console.log("possible instersection found", intersectionPoint);
-
-                        console.log("is intersection on thisline?", thisLineSeg.isPointOnLine(intersectionPoint, .1));
-                        console.log("is intersection on otherline?", otherLineSeg.isPointOnLine(intersectionPoint, .1));
-                    }
-                    if (intersectionPoint 
-                        && thisLineSeg.isPointOnLine(intersectionPoint, .1)
-                        && otherLineSeg.isPointOnLine(intersectionPoint, .1)) {
                         return intersectionPoint;
                     }
                 }

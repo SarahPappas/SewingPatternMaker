@@ -143,24 +143,46 @@ export abstract class PatternPath implements IPatternPath {
     };
 
     getDestinationDirection = (): number => {
-        // TODO: implement this
-        return -1;
-    }
+        // returns the direction opposite to getreversestartdirection
+        let result = Math.PI + this.getReverseStartDirection();
+        if (result > Math.PI) {
+            result = result - 2 * Math.PI;
+        } else if (result < (-1 * Math.PI)) {
+            result = result + 2 * Math.PI;
+        }
+        return result;
+    };
 
     getReverseDestinationDirection = (): number => {
-        // TODO: implement this
-        return -1;
-    }
+        // returns the direction opposite to getStartDirection
+        let result = Math.PI + this.getStartDirection();
+        if (result > Math.PI) {
+            result = result - 2 * Math.PI;
+        } else if (result < (-1 * Math.PI)) {
+            result = result + 2 * Math.PI;
+        }
+        return result;
+    };
 
     getPathDirectionChange = (): number => {
-        // TODO: implement this
-        return -1;
-    }
+        let result = this.getDestinationDirection() - this.getStartDirection();
+        if (result > Math.PI) {
+            result = result - 2 * Math.PI;
+        } else if (result < (-1 * Math.PI)) {
+            result = result + 2 * Math.PI;
+        }
+        return result;
+    };
 
     getReversePathDirectionChange = (): number => {
-        // TODO: implement this
-        return -1;
-    }
+        let result = this.getReverseDestinationDirection() - this.getReverseStartDirection();
+        if (result > Math.PI) {
+            result = result - 2 * Math.PI;
+        } else if (result < (-1 * Math.PI)) {
+            result = result + 2 * Math.PI;
+        }
+        return result;
+    };
 
 
     abstract setFittedSegment(): void;

@@ -161,11 +161,18 @@ export class Document implements IDocument {
         //find faces
         this._edges.forEach(edge => {
             const face: Edge[] = [];
+            const faceEdges: number[] = [];
             let current = edge;
+            let next = null;
+            let totalAngle = 0;
             //console.log("current: " + current.id);
             do {
                 face.push(current);
-                console.log("adding edge " + current.id + " to current face" );
+                faceEdges.push(current.id);
+                //console.log("adding edge " + current.id + " to current face" );
+                totalAngle += current.pathDirectionChange;
+                //console.log("this edge turns by " + current.pathDirectionChange);
+
                 const leavingEdges = leavingEdgesMap.get(current.destination);
                 if (!leavingEdges) {
                     throw new Error();
@@ -184,9 +191,17 @@ export class Document implements IDocument {
                     throw new Error();
                 }
                 // choose the next edge leaving the vertex clockwise
-                //console.log("index of next edge: " + ((index + leavingEdges.length - 1) % leavingEdges.length));
-                current = leavingEdges[(index + leavingEdges.length - 1) % leavingEdges.length];
-                //console.log("current: " + current.id);
+                next = leavingEdges[(index + leavingEdges.length - 1) % leavingEdges.length];
+                //console.log("next.startDirection: " + next.startDirection + "  current.destinationDirection: " + current.destinationDirection);
+                let angleBetween = next.startDirection - current.destinationDirection;
+                if (angleBetween > Math.PI) {
+                    angleBetween -= 2 * Math.PI;
+                } else if (angleBetween < (-1 * Math.PI)) {
+                    angleBetween += 2 * Math.PI;
+                }
+                totalAngle += angleBetween;
+                //console.log("from this edge to the next, we turn by " + (angleBetween));
+                current = next;
             } while (current.id !== edge.id);// while not back
 
             // the algorithm will find the same face multiple times, for example: [1, 3, 2], [3, 2, 1], [2, 1, 3].
@@ -200,13 +215,14 @@ export class Document implements IDocument {
                 }
             }
 
-            // TODO: if the sum of angles is (neg? pos?) the face is the outside of the graph, so addFace = false
+            console.log("totalAngle: " + totalAngle);
+            addFace = addFace && Math.abs(totalAngle - 2 * Math.PI) < 1e-10; //epsilon
 
             if (addFace) {
                 this._patternPieces.add(face);
-                console.log("accept face");
+                console.log("accept face " + faceEdges);
             } else {
-                console.log("reject face");
+                //console.log("reject face");
             }
         });
 

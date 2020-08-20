@@ -3,6 +3,7 @@ import { PatternPath } from 'canvas/PatternPaths/PatternPath';
 import { Point } from './Geometry/Point';
 import { Vector } from './Geometry/Vector';
 import { BoundingBox } from './Geometry/BoundingBox';
+import { Curve } from './Geometry/Curve';
 
 export class PathIntersection {
     intersectionPt: Point | null;
@@ -43,16 +44,28 @@ export class PathIntersection {
                 return null;
             }
             
-            const comparisonPath = allPaths[i];
-            const comparisonPts = comparisonPath.getPoints();
-            const cpStartPt = comparisonPts[0];
-            const cpEndPt = comparisonPts[comparisonPts.length - 1];
+            const compareSegment = allPaths[i].getFittedSegment();
+            if (!compareSegment) {
+                return null;
+            }
+
+            // Get points to compare, depending on the Segment type.
+            let comparePts: Point [] = [];
+            if (compareSegment instanceof Curve) {
+                comparePts = compareSegment.computePointsOnCurve(100);
+            } else{
+                comparePts.push(compareSegment.start);
+                comparePts.push(compareSegment.end);
+            }
+
+            const firstPtInCompareSegment = comparePts[0];
+            const lastPtInCompoareSegment = comparePts[comparePts.length - 1];
             // If the point is within a radius of an endpoint, we should snap to that endpoint.
-            if (!point.isWithinRadius(cpStartPt, 10) 
-                && !point.isWithinRadius(cpEndPt, 10)) {
+            if (!point.isWithinRadius(firstPtInCompareSegment, 10) 
+                && !point.isWithinRadius(lastPtInCompoareSegment, 10)) {
                
-                for (let j = 1; j < comparisonPts.length; j+=5 ) {
-                    const thatL = new Line(comparisonPts[j], comparisonPts[j - 1]);
+                for (let j = 1; j < comparePts.length; j++ ) {
+                    const thatL = new Line(comparePts[j], comparePts[j - 1]);
                     const intersectionPoint = PathIntersection._findPotentialIntersectionPoint(thisL, thatL);
                     if (intersectionPoint) {
                         return intersectionPoint;

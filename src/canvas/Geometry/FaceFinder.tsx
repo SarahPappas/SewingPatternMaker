@@ -21,76 +21,52 @@ class FaceFinder {
      * face in the inputted segments array.
      */
     static FindFaces = (segments: Segment[]): number[][] => {
-        const vertices = new Set<Point>();
-        const edges: Edge[] = [];
-        for (let i = 0; i < segments.length; i++) {
-            const segment = segments[i];
-            vertices.add(segment.getStart());
-            vertices.add(segment.getEnd());
-
-            edges.push({
-                origin: segment.getStart(), 
-                destination: segment.getEnd(), 
-                tangentAtOrigin: segment.getTangent(0), 
-                tangentAtDestination: segment.getTangent(1), 
-                index: i
-            });
-            edges.push({
-                origin: segment.getEnd(), 
-                destination: segment.getStart(), 
-                tangentAtOrigin: segment.getTangent(1).opposite(), 
-                tangentAtDestination: segment.getTangent(0).opposite(), 
-                index: i
-            });
-        }
+        const vertices = FaceFinder._findVertices(segments);
+        const edges = FaceFinder._findEdges(segments);
 
         // Create a map between vertices and an ordered array of all its
         // outgoing edges, ordered by angle of departure from the vertex
-        const leavingEdgesMap = new Map();
-        vertices.forEach(vertex => {
-            const leavingEdges: Array<Edge> = [];
-            edges.forEach(edge => {
-                if (edge.origin.equals(vertex)) {
-                    leavingEdges.push(edge);
-                }
-            });
-            leavingEdges.sort((a, b) => a.tangentAtOrigin.getAngle() - b.tangentAtOrigin.getAngle());
-            leavingEdgesMap.set(vertex, leavingEdges);
-        });  
+        const leavingEdgesMap = FaceFinder._createLeavingEdgesMap(vertices, edges);
 
         const faces = new Array<Array<number>>();
 
-        edges.forEach(edge => {
+        /**
+         * Starting from each edge, find the face to its left by cycling 
+         * back to the same edge, always choosing the path that curves 
+         * the most counterclockwise at intersections.
+         */
+        edges.forEach(startingEdge => {
             const faceEdgesIndices: number[] = [];
-            let current = edge;
+            let current = startingEdge;
             let next = null;
-            // The algorithm will find the same face multiple times, for example: [1, 4, 2], 
-            // [4, 2, 1], [2, 1, 4].
-            // In order to keep one unique representation per face, we only keep edge lists 
-            // that have the smallest index in the first position in the list.
-            const indexOfFirst = Math.abs(current.index);
+            // The algorithm will find the same face multiple times, for 
+            // example: [1, 4, 2], [4, 2, 1] and [2, 1, 4].
+            // In order to keep one unique representation per face, we 
+            // only keep edge lists that have the smallest index in the 
+            // first position in the list.
+            const indexOfFirst = current.index;
             let faceHasSmallestIndexFirst = true;
             // Only keep the face if the total angle while going around is 
             // -2PI. This means we have found an interior face, not the face
-            // that is the exterior of the graph (which will have a totalAngle of +2PI).
+            // that is the exterior of the graph (which will have a 
+            // totalAngle of +2PI).
             let totalAngle = 0;
             do {
                 faceEdgesIndices.push(current.index);
-                //console.log("adding edge " + current.id + " to current face" );
                 totalAngle += Vector.changeInAngle(current.tangentAtOrigin, current.tangentAtDestination);
-                //console.log("this edge turns by " + current.pathDirectionChange);
 
                 const leavingEdges = leavingEdgesMap.get(current.destination);
                 if (!leavingEdges) {
                     throw new Error();
                 }
+
                 // Find the index of the edge that is the reverse of current in leavingEdges
                 const currentIndex = current.index;
                 const indexOfReverse = leavingEdges.findIndex((edge: Edge) => 
                     edge.index === currentIndex
                 );
 
-                // Choose the next edge leaving the vertex
+                // Choose the leaving edge next to the reverse in the list
                 next = leavingEdges[(indexOfReverse + 1) % leavingEdges.length];
                 if (next.index < indexOfFirst) {
                     faceHasSmallestIndexFirst = false;
@@ -98,16 +74,13 @@ class FaceFinder {
                 }
                 
                 totalAngle += Vector.changeInAngle(current.tangentAtDestination, next.tangentAtOrigin);
-                //console.log("from this edge to the next, we turn by " + (angleBetween));
                 
                 current = next;
-            } while (current.index !== edge.index);// while not back
+            } while (current.index !== startingEdge.index);
 
             if (faceHasSmallestIndexFirst && Math.abs(totalAngle + 2 * Math.PI) < 1e-10) {
                 faces.push(faceEdgesIndices);
-                console.log("accept face " + faceEdgesIndices);
             }
-            //console.log("totalAngle: " + totalAngle);
         });
 
         // Compare the number of faces we found in our algorithm 
@@ -124,6 +97,53 @@ class FaceFinder {
 
         return faces;
     };   
+
+    private static _findVertices = (segments: Segment[]): Set<Point> => {
+        const vertices = new Set<Point>();
+        for (let i = 0; i < segments.length; i++) {
+            const segment = segments[i];
+            vertices.add(segment.getStart());
+            vertices.add(segment.getEnd());
+        }
+        return vertices;
+    };
+
+    private static _findEdges = (segments: Segment[]): Edge[] => {
+        const edges: Edge[] = [];
+        for (let i = 0; i < segments.length; i++) {
+            const segment = segments[i];
+            edges.push({
+                origin: segment.getStart(), 
+                destination: segment.getEnd(), 
+                tangentAtOrigin: segment.getTangent(0), 
+                tangentAtDestination: segment.getTangent(1), 
+                index: i
+            });
+            edges.push({
+                origin: segment.getEnd(), 
+                destination: segment.getStart(), 
+                tangentAtOrigin: segment.getTangent(1).opposite(), 
+                tangentAtDestination: segment.getTangent(0).opposite(), 
+                index: i
+            });
+        }
+        return edges;
+    };
+
+    private static _createLeavingEdgesMap = (vertices: Set<Point>, edges: Edge[]): Map<Point, Edge[]> => {
+        const leavingEdgesMap = new Map();
+        vertices.forEach(vertex => {
+            const leavingEdges: Array<Edge> = [];
+            edges.forEach(edge => {
+                if (edge.origin.equals(vertex)) {
+                    leavingEdges.push(edge);
+                }
+            });
+            leavingEdges.sort((a, b) => a.tangentAtOrigin.getAngle() - b.tangentAtOrigin.getAngle());
+            leavingEdgesMap.set(vertex, leavingEdges);
+        });  
+        return leavingEdgesMap;
+    }
 }
 
 export { FaceFinder };

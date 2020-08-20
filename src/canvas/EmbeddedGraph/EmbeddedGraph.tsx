@@ -38,15 +38,15 @@ export class EmbeddedGraph {
     findFaces = (): Edge[][] => {
         const faces = new Array<Array<Edge>>();
         this.edges.forEach(edge => {
-            const face: Edge[] = [];
-            const faceEdges: number[] = [];
+            const face: Edge[] = [];                
+            // The faceEdgesIds variable is only useful for console logging and debugging
+            const faceEdgesIds: number[] = [];
             let current = edge;
             let next = null;
             let totalAngle = 0;
-            //console.log("current: " + current.id);
             do {
                 face.push(current);
-                faceEdges.push(current.id);
+                faceEdgesIds.push(current.id);
                 //console.log("adding edge " + current.id + " to current face" );
                 totalAngle += current.getEdgeDirectionChange();
                 //console.log("this edge turns by " + current.pathDirectionChange);
@@ -55,27 +55,20 @@ export class EmbeddedGraph {
                 if (!leavingEdges) {
                     throw new Error();
                 }
-                // find the index of the edge that is the reverse of current in leavingEdges
-                let index = -1;
-                for (let i = 0; i < leavingEdges.length; i++) {
-                    //console.log("leavingEdges[i].id = " + leavingEdges[i].id);
-                    if (leavingEdges[i].id === (-1 * current.id)) {
-                        index = i;
-                        //console.log("match");
-                        break;
-                    }
-                }
-                if (index === -1) {
-                    throw new Error();
-                }
-                // choose the next edge leaving the vertex clockwise
-                next = leavingEdges[(index + leavingEdges.length - 1) % leavingEdges.length];
+                // Find the index of the edge that is the reverse of current in leavingEdges
+                const reverseEdgeId = (-1) * current.id;
+                const indexOfReverse = leavingEdges.findIndex((edge) => edge.id === reverseEdgeId);
+
+                // Choose the next edge leaving the vertex
+                next = leavingEdges[(indexOfReverse + 1) % leavingEdges.length];
+                
                 totalAngle += Vector.changeInAngle(current.tangentAtDestination, next.tangentAtOrigin);
                 //console.log("from this edge to the next, we turn by " + (angleBetween));
+                
                 current = next;
             } while (current.id !== edge.id);// while not back
 
-            // the algorithm will find the same face multiple times, for example: [1, 3, 2], [3, 2, 1], [2, 1, 3].
+            // The algorithm will find the same face multiple times, for example: [1, 3, 2], [3, 2, 1], [2, 1, 3].
             // In order to keep that face only once, we only keep the representation that has
             // the smallest id (in absolute value) in the first position in the list.
             const firstId = Math.abs(face[0].id);
@@ -87,11 +80,14 @@ export class EmbeddedGraph {
             }
 
             //console.log("totalAngle: " + totalAngle);
-            addFace = addFace && Math.abs(totalAngle - 2 * Math.PI) < 1e-10; //epsilon
+            // Only keep the face if the total angle while going around is 
+            // -2PI. This means we have found an interior face, not the face
+            // that is the exterior of the graph.
+            addFace = addFace && Math.abs(totalAngle + 2 * Math.PI) < 1e-10; //epsilon
 
             if (addFace) {
                 faces.push(face);
-                console.log("accept face " + faceEdges);
+                console.log("accept face " + faceEdgesIds);
             } else {
                 //console.log("reject face");
             }

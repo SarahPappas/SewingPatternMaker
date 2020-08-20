@@ -6,7 +6,6 @@ import { PatternPathColor } from './PatternPaths/PatternPathColor';
 import { PatternPathType, ToolType } from './Enums';
 import { StraightLinePath } from './PatternPaths/StraightLinePath';
 import { FreeLinePath } from './PatternPaths/FreeLinePath';
-import { Line } from './Geometry/Line';
 import { PathIntersection } from './PathIntersection';
 
 export class Renderer implements IRenderer {
@@ -65,7 +64,7 @@ export class Renderer implements IRenderer {
         this._canvas.onmousemove = (e) => {
             if (this._isTracing && this._currPath) {
                 const position = new Point(e.offsetX, e.offsetY);
-                const intersection = this._findIntersection(position);
+                const intersection = PathIntersection.findIntersection(position, this._currPath, this._document.getPatternPaths());
                 if (intersection) {
                     this._isTracing = false;
                     this._endTracing(intersection);
@@ -177,59 +176,6 @@ export class Renderer implements IRenderer {
         }
         this._resetTracing();
     };
-
-    // Precondition: Call before current point is added.
-    private _findIntersection = (point: Point): Point | null => {
-        const numPointsInCurrPath = this._currPath?.getPoints().length;
-        if (!this._currPath || !numPointsInCurrPath) {
-            return null;
-        }
-        
-        const patternPaths = this._document.getPatternPaths();
-        // The line segment where we are are searching for interesection should be a line between the current point and last point added.
-        let prevPtIndex = numPointsInCurrPath - 1;
-        // Keep this, because sometimes onMouseMove has already added this point
-        while(prevPtIndex >= 0 && this._currPath.getPoints()[prevPtIndex].equals(point)) {
-            prevPtIndex--;
-        }
-
-        if (prevPtIndex < 0) {
-            return null;
-        }
-
-        const thisL = new Line(this._currPath.getPoints()[prevPtIndex], point);
-        
-        for (let i = 0; i < patternPaths.length; i++) {
-            // If the current path is the path this iteration, do not look for interstection.
-            if (patternPaths[i] === this._currPath) {
-                return null;
-            }
-
-            // Check if paths' bounding boxes overlap
-            if (!PathIntersection.doBoundingBoxesOverlap(this._currPath, patternPaths[i])) {
-                return null;
-            }
-            
-            const comparisonPath = patternPaths[i];
-            const comparisonPts = comparisonPath.getPoints();
-            const cpStartPt = comparisonPts[0];
-            const cpEndPt = comparisonPts[comparisonPts.length - 1];
-            // TODO if with in radius of endpoints, snap.
-            if (!point.isWithinRadius(cpStartPt, 10) 
-                && !point.isWithinRadius(cpEndPt, 10)) {
-               
-                for (let j = 1; j < comparisonPts.length; j+=5 ) {
-                    const thatL = new Line(comparisonPts[j], comparisonPts[j - 1]);
-                    const intersectionPoint = PathIntersection.findIntersectionPoint(thisL, thatL);
-                    if (intersectionPoint) {
-                        return intersectionPoint;
-                    }
-                }
-            } 
-        }
-
-        return null;
-    }
 
     private _resetTracing = (): void => {
         this._currPath = null;

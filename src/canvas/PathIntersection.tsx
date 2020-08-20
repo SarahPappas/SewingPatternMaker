@@ -13,6 +13,59 @@ export class PathIntersection {
         this.paths = [];
     }
 
+    static findIntersection = (point: Point, curPath: PatternPath, allPaths: PatternPath[]): Point | null => {
+        const numPointsInCurrPath = curPath.getPoints().length;
+        if (!curPath || !numPointsInCurrPath) {
+            return null;
+        }
+        
+        // The line segment where we are are searching for interesection should be a line between the current point and last point added.
+        let prevPtIndex = numPointsInCurrPath - 1;
+        // Keep this, because sometimes onMouseMove has already added this point
+        while(prevPtIndex >= 0 && curPath.getPoints()[prevPtIndex].equals(point)) {
+            prevPtIndex--;
+        }
+
+        if (prevPtIndex < 0) {
+            return null;
+        }
+
+        const thisL = new Line(curPath.getPoints()[prevPtIndex], point);
+        
+        for (let i = 0; i < allPaths.length; i++) {
+            // If the current path is the path this iteration, do not look for interstection.
+            if (allPaths[i] === curPath) {
+                return null;
+            }
+
+            // Check if paths' bounding boxes overlap, if not paths cannot overlap, so return null.
+            if (!PathIntersection.doBoundingBoxesOverlap(curPath, allPaths[i])) {
+                return null;
+            }
+            
+            const comparisonPath = allPaths[i];
+            const comparisonPts = comparisonPath.getPoints();
+            const cpStartPt = comparisonPts[0];
+            const cpEndPt = comparisonPts[comparisonPts.length - 1];
+            // If the point is within a radius of an endpoint, we should snap to that endpoint.
+            if (!point.isWithinRadius(cpStartPt, 10) 
+                && !point.isWithinRadius(cpEndPt, 10)) {
+               
+                for (let j = 1; j < comparisonPts.length; j+=5 ) {
+                    const thatL = new Line(comparisonPts[j], comparisonPts[j - 1]);
+                    const intersectionPoint = PathIntersection._findPotentialIntersectionPoint(thisL, thatL);
+                    if (intersectionPoint) {
+                        return intersectionPoint;
+                    }
+                }
+            } else {
+                // TODO if with in radius of endpoints, snap.
+            }
+        }
+
+        return null;
+    };
+
     static doBoundingBoxesOverlap = (thisP: PatternPath, thatP: PatternPath): boolean => {
         const thisBB = new BoundingBox(thisP.getPoints());
         const thatBB = new BoundingBox(thatP.getPoints());
@@ -31,7 +84,7 @@ export class PathIntersection {
     }
 
     // Finds intersection on line, not necessarily on the segment of the line.
-    static findIntersectionPoint = (thisL: Line, thatL: Line): Point | null => { 
+    private static _findPotentialIntersectionPoint = (thisL: Line, thatL: Line): Point | null => { 
         // Line AB represented as a1x + b1y = c1 
         const a1 = thisL.end.y - thisL.start.y; 
         const b1 = thisL.start.x - thisL.end.x; 

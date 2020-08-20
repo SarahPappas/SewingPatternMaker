@@ -57,6 +57,10 @@ export abstract class PatternPath implements IPatternPath {
         return this._path2D;
     };
 
+    getFittedSegment = (): Segment | null => {
+        return this._fittedSegment;
+    };
+
     addPoint = (point: Point): boolean => {
         // If the points array is empty, we can just add the point.
         if (!this._points.length) {

@@ -48,6 +48,7 @@ export abstract class Curve extends Segment {
     };
 
     getTangent = (t: number): Vector => {
+        // TODO: for seam allowances, implement this for values of t between 0 and 1
         if (!(t === 0 || t === 1)) {
             throw new Error();
         }

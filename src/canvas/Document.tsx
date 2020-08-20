@@ -1,6 +1,6 @@
 import { PatternPath } from './PatternPaths/PatternPath';
 import { Point } from './Geometry/Point';
-import { EmbeddedGraph } from './EmbeddedGraph/EmbeddedGraph';
+import { FaceFinder } from './Geometry/FaceFinder';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
@@ -97,7 +97,7 @@ export class Document implements IDocument {
     // Precondition: arePatternPiecesEnclosed returned true 
     findPatternPieces = (): void => {
         const segments = this._patternPaths.map(path => path.getSegment());
-        const faces = EmbeddedGraph.findFaces(segments);
+        const faces = FaceFinder.FindFaces(segments);
         this._patternPieces = faces.map(face => face.map(i => this._patternPaths[i]));
         
         // Logging the pattern pieces for debugging

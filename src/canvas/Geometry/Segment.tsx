@@ -13,14 +13,6 @@ export abstract class Segment {
         this.end = end;
     }
 
-    abstract getLength(): number;
-    abstract getTangent(t: number): Vector;
-    
-    draw = (path: Path2D): void => {
-        path.moveTo(this.start.x, this.start.y);
-        this._drawTo(path);
-    };
-
     getStart = (): Point => {
         return this.start;
     }
@@ -28,6 +20,15 @@ export abstract class Segment {
     getEnd = (): Point => {
         return this.end;
     }
+
+    abstract getLength(): number;
+    
+    abstract getTangent(t: number): Vector;
+
+    draw = (path: Path2D): void => {
+        path.moveTo(this.start.x, this.start.y);
+        this._drawTo(path);
+    };
 
     protected abstract _drawTo(path: Path2D): void;
 }

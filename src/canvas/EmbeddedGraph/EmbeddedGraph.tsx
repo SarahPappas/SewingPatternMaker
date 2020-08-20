@@ -23,6 +23,8 @@ export class EmbeddedGraph {
             edges.push(new Edge(segment, -1 * i));
         });
 
+        // Create a map between vertices and an ordered array of all its
+        // outgoing edges, ordered by angle of departure from the vertex
         const leavingEdgesMap = new Map();
         vertices.forEach(vertex => {
             const leavingEdges: Array<Edge> = [];

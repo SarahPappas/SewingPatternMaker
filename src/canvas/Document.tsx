@@ -2,6 +2,7 @@ import { PatternPath } from './PatternPaths/PatternPath';
 import { Point } from './Geometry/Point';
 import { EmbeddedGraph } from './EmbeddedGraph/EmbeddedGraph';
 import { Edge } from './EmbeddedGraph/Edge';
+import { Segment } from './Geometry/Segment';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
@@ -96,7 +97,8 @@ export class Document implements IDocument {
     };
 
     findPatternPieces = (): void => {
-        const graph = new EmbeddedGraph(this._patternPaths);
+        const segments: Segment[] = this._patternPaths.map(path => path.getSegment());
+        const graph = new EmbeddedGraph(segments);
         this._patternPieces = graph.findFaces();
     };
 }

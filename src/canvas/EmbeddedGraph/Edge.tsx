@@ -1,22 +1,19 @@
 import { Point } from "canvas/Geometry/Point";
 import { Vector } from "canvas/Geometry/Vector";
-import { PatternPath } from "canvas/PatternPaths/PatternPath";
+import { Segment } from "canvas/Geometry/Segment";
 
 export class Edge {
     origin: Point;
     destination: Point;
     tangentAtOrigin: Vector;
     tangentAtDestination: Vector;
-    path: PatternPath;
     id: number;
 
-    constructor(path: PatternPath, id: number) {
+    constructor(segment: Segment, id: number) {
         if (id === 0) {
             throw new Error();
         }
-        this.path = path;
         this.id = id;
-        const segment = path.getSegment();
 
         if (id > 0) {
             // follow path direction

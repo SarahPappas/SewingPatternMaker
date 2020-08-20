@@ -1,25 +1,25 @@
 import { Point } from "canvas/Geometry/Point";
-import { PatternPath } from "canvas/PatternPaths/PatternPath";
 import { Edge } from "./Edge";
 import { Vector } from "canvas/Geometry/Vector";
+import { Segment } from "canvas/Geometry/Segment";
 
 export class EmbeddedGraph {
     vertices: Set<Point>;
     edges: Edge[];
     leavingEdgesMap: Map<Point, Array<Edge>>;
 
-    constructor(paths: PatternPath[]) {
+    constructor(segments: Segment[]) {
         let i = 0;
         this.vertices = new Set<Point>();
         this.edges = [];
-        paths.forEach(path => {
+        segments.forEach(segment => {
             i++;
 
-            this.vertices.add(path.getPoints()[0]);
-            this.vertices.add(path.getPoints()[path.getPoints().length - 1]);
+            this.vertices.add(segment.getStart());
+            this.vertices.add(segment.getEnd());
 
-            this.edges.push(new Edge(path, i));
-            this.edges.push(new Edge(path, -1 * i));
+            this.edges.push(new Edge(segment, i));
+            this.edges.push(new Edge(segment, -1 * i));
         });
 
         this.leavingEdgesMap = new Map();
@@ -96,6 +96,16 @@ export class EmbeddedGraph {
                 //console.log("reject face");
             }
         });
+
+        if (faces.length !== this.theoreticalNumberOfFaces() - 1) {
+            console.log("The findFaces algorithm failed");
+        }
+
         return faces;
     };
+
+    theoreticalNumberOfFaces = (): number => {
+        // according to Euler's formula for planar graphs
+        return 2 - this.vertices.size + (this.edges.length / 2);
+    }
 }

@@ -4,44 +4,39 @@ import { Vector } from "canvas/Geometry/Vector";
 import { Segment } from "canvas/Geometry/Segment";
 
 export class EmbeddedGraph {
-    vertices: Set<Point>;
-    edges: Edge[];
-    leavingEdgesMap: Map<Point, Array<Edge>>;
-
-    constructor(segments: Segment[]) {
+    // Precondition: the graph is planar and all faces are of finite area 
+    //               and all faces have exactly 2 edges meeting at each vertex.
+    // Returns an array of arrays, each array representing one face. Faces are
+    // represented by the indices of the segments forming them in the 
+    // array passed to the constructor
+    static findFaces = (segments: Segment[]): number[][] => {
         let i = 0;
-        this.vertices = new Set<Point>();
-        this.edges = [];
+        const vertices = new Set<Point>();
+        const edges: Edge[] = [];
         segments.forEach(segment => {
             i++;
 
-            this.vertices.add(segment.getStart());
-            this.vertices.add(segment.getEnd());
+            vertices.add(segment.getStart());
+            vertices.add(segment.getEnd());
 
-            this.edges.push(new Edge(segment, i));
-            this.edges.push(new Edge(segment, -1 * i));
+            edges.push(new Edge(segment, i));
+            edges.push(new Edge(segment, -1 * i));
         });
 
-        this.leavingEdgesMap = new Map();
-        this.vertices.forEach(vertex => {
+        const leavingEdgesMap = new Map();
+        vertices.forEach(vertex => {
             const leavingEdges: Array<Edge> = [];
-            this.edges.forEach(edge => {
+            edges.forEach(edge => {
                 if (edge.origin.equals(vertex)) {
                     leavingEdges.push(edge);
                 }
             });
             leavingEdges.sort((a, b) => a.tangentAtOrigin.getAngle() - b.tangentAtOrigin.getAngle());
-            this.leavingEdgesMap.set(vertex, leavingEdges);
-        });        
-    }
+            leavingEdgesMap.set(vertex, leavingEdges);
+        });  
 
-    // Precondition: the graph is planar and has
-    // Returns an array of arrays, each array representing one face. Facees are
-    // represented by the positions of the segments forming them in the 
-    // array passed to the constructor
-    findFaces = (): number[][] => {
         const faces = new Array<Array<number>>();
-        this.edges.forEach(edge => {
+        edges.forEach(edge => {
             const face: Edge[] = [];                
             const faceEdgesIndices: number[] = [];
             let current = edge;
@@ -54,13 +49,13 @@ export class EmbeddedGraph {
                 totalAngle += current.getEdgeDirectionChange();
                 //console.log("this edge turns by " + current.pathDirectionChange);
 
-                const leavingEdges = this.leavingEdgesMap.get(current.destination);
+                const leavingEdges = leavingEdgesMap.get(current.destination);
                 if (!leavingEdges) {
                     throw new Error();
                 }
                 // Find the index of the edge that is the reverse of current in leavingEdges
                 const reverseEdgeId = (-1) * current.id;
-                const indexOfReverse = leavingEdges.findIndex((edge) => edge.id === reverseEdgeId);
+                const indexOfReverse = leavingEdges.findIndex((edge: Edge) => edge.id === reverseEdgeId);
 
                 // Choose the next edge leaving the vertex
                 next = leavingEdges[(indexOfReverse + 1) % leavingEdges.length];
@@ -91,22 +86,17 @@ export class EmbeddedGraph {
             if (addFace) {
                 faces.push(faceEdgesIndices);
                 console.log("accept face " + faceEdgesIndices);
-            } else {
-                //console.log("reject face");
             }
         });
 
-        if (faces.length !== this.theoreticalNumberOfFaces() - 1) {
+        // Compare the number of faces we found in our algorithm 
+        // with the actual number of faces according to Euler's planar 
+        // graph formula, reduced by one because we excluded the face 
+        // that is the outside of the graph
+        if (faces.length !== (2 - vertices.size + segments.length - 1) ) {
             console.log("The findFaces algorithm failed");
         }
 
         return faces;
     };
-
-    // Returns the number of faces the graph should theoretically have 
-    // (including the face that is the outside of the graph)
-    theoreticalNumberOfFaces = (): number => {
-        // According to Euler's formula for planar graphs
-        return 2 - this.vertices.size + (this.edges.length / 2);
-    }
 }

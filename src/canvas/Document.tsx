@@ -97,8 +97,7 @@ export class Document implements IDocument {
     // Precondition: arePatternPiecesEnclosed returned true 
     findPatternPieces = (): void => {
         const segments = this._patternPaths.map(path => path.getSegment());
-        const graph = new EmbeddedGraph(segments);
-        const faces = graph.findFaces();
+        const faces = EmbeddedGraph.findFaces(segments);
         this._patternPieces = faces.map(face => face.map(i => this._patternPaths[i]));
         
         // Logging the pattern pieces for debugging

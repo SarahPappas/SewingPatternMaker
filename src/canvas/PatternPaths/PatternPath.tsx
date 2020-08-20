@@ -128,62 +128,12 @@ export abstract class PatternPath implements IPatternPath {
         return this._fittedSegment.getLength();
     };
 
-    getStartDirection = (): number => {
+    getSegment = (): Segment => {
         if (!this._fittedSegment) {
             throw new Error();
         }
-        return this._fittedSegment.getStartDirection();
-    };
-
-    getReverseStartDirection = (): number => {
-        if (!this._fittedSegment) {
-            throw new Error();
-        }
-        return this._fittedSegment.getReverseStartDirection();
-    };
-
-    getDestinationDirection = (): number => {
-        // returns the direction opposite to getreversestartdirection
-        let result = Math.PI + this.getReverseStartDirection();
-        if (result > Math.PI) {
-            result = result - 2 * Math.PI;
-        } else if (result < (-1 * Math.PI)) {
-            result = result + 2 * Math.PI;
-        }
-        return result;
-    };
-
-    getReverseDestinationDirection = (): number => {
-        // returns the direction opposite to getStartDirection
-        let result = Math.PI + this.getStartDirection();
-        if (result > Math.PI) {
-            result = result - 2 * Math.PI;
-        } else if (result < (-1 * Math.PI)) {
-            result = result + 2 * Math.PI;
-        }
-        return result;
-    };
-
-    getPathDirectionChange = (): number => {
-        let result = this.getDestinationDirection() - this.getStartDirection();
-        if (result > Math.PI) {
-            result = result - 2 * Math.PI;
-        } else if (result < (-1 * Math.PI)) {
-            result = result + 2 * Math.PI;
-        }
-        return result;
-    };
-
-    getReversePathDirectionChange = (): number => {
-        let result = this.getReverseDestinationDirection() - this.getReverseStartDirection();
-        if (result > Math.PI) {
-            result = result - 2 * Math.PI;
-        } else if (result < (-1 * Math.PI)) {
-            result = result + 2 * Math.PI;
-        }
-        return result;
-    };
-
+        return this._fittedSegment;
+    }
 
     abstract setFittedSegment(): void;
     protected abstract _updatePath2D(): void;

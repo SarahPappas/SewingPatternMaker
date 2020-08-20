@@ -39,7 +39,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
             } else {
                 warningModal.current = <></>;
                 App.document.setSizeRatio(parseFloat(inputMeasurement), selectedPath);
-                App.document.print();
+                App.document.findPatternPieces();
             }
         }
     };

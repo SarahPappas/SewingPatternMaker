@@ -1,5 +1,6 @@
 import { Point } from './Point';
 import { Segment } from './Segment';
+import { Vector } from './Vector';
 
 export abstract class Curve extends Segment {
     protected control: Point;
@@ -45,6 +46,17 @@ export abstract class Curve extends Segment {
         //       previous point, and if it is not we ask for another point that is closer on 
         //       the curve instead. This would allow us to bound our error on the total length. 
     };
+
+    getTangent = (t: number): Vector => {
+        if (!(t === 0 || t === 1)) {
+            throw new Error();
+        }
+        if (t === 0) {
+            return Vector.vectorBetweenPoints(this.start, this.control);
+        } else { // t === 1
+            return Vector.vectorBetweenPoints(this.control, this.end);
+        }
+    }
 
     protected lerp = (start: number, end: number, t: number): number => {
         return start + t * (end - start);

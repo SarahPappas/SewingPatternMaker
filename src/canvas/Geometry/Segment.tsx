@@ -1,4 +1,5 @@
 import { Point } from "./Point";
+import { Vector } from "./Vector";
 
 export abstract class Segment {
     protected start: Point;
@@ -13,13 +14,20 @@ export abstract class Segment {
     }
 
     abstract getLength(): number;
-    abstract getStartDirection(): number;
-    abstract getReverseStartDirection(): number;
+    abstract getTangent(t: number): Vector;
     
     draw = (path: Path2D): void => {
         path.moveTo(this.start.x, this.start.y);
         this._drawTo(path);
     };
+
+    getStart = (): Point => {
+        return this.start;
+    }
+
+    getEnd = (): Point => {
+        return this.end;
+    }
 
     protected abstract _drawTo(path: Path2D): void;
 }

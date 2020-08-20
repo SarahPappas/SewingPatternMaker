@@ -10,7 +10,7 @@ interface Edge {
     index: number; // the index of the segment
 }
 
-class FaceFinder {
+export class FaceFinder {
     
     /**
      * Precondition: the graph formed by the segments is planar, all faces are 
@@ -143,7 +143,5 @@ class FaceFinder {
             leavingEdgesMap.set(vertex, leavingEdges);
         });  
         return leavingEdgesMap;
-    }
+    };
 }
-
-export { FaceFinder };

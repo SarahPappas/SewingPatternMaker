@@ -2,6 +2,7 @@ import { Line } from 'canvas/Geometry/Line';
 import { PatternPath } from 'canvas/PatternPaths/PatternPath';
 import { Point } from './Geometry/Point';
 import { Vector } from './Geometry/Vector';
+import { BoundingBox } from './Geometry/BoundingBox';
 
 export class PathIntersection {
     intersectionPt: Point | null;
@@ -10,6 +11,23 @@ export class PathIntersection {
     constructor() {
         this.intersectionPt = null;
         this.paths = [];
+    }
+
+    static doBoundingBoxesOverlap = (thisP: PatternPath, thatP: PatternPath): boolean => {
+        const thisBB = new BoundingBox(thisP.getPoints());
+        const thatBB = new BoundingBox(thatP.getPoints());
+
+        // If one rectangle to the left of the other rectangle, return false.
+        if (thisBB.minX >= thatBB.maxX || thatBB.minX >= thisBB.maxX) {
+            return false;
+        }
+
+        // If one rectangle is above the other rectangle, return false.
+        if (thisBB.minY >= thatBB.maxY || thatBB.minY >= thisBB.maxY) {
+            return false; 
+        }
+
+        return true; 
     }
 
     // Finds intersection on line, not necessarily on the segment of the line.

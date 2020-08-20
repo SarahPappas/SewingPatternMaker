@@ -5,8 +5,8 @@ export class BoundingBox {
     minY = 0;
     height = 0;
     width = 0;
-    private maxX = 0;
-    private maxY = 0;
+    maxX = 0;
+    maxY = 0;
 
     constructor (points: Point[])  { // eslint-disable-line no-dupe-class-members
         if (!points.length) {

@@ -200,14 +200,22 @@ export class Renderer implements IRenderer {
         const thisL = new Line(this._currPath.getPoints()[prevPtIndex], point);
         
         for (let i = 0; i < patternPaths.length; i++) {
+            // If the current path is the path this iteration, do not look for interstection.
+            if (patternPaths[i] === this._currPath) {
+                return null;
+            }
+
+            // Check if paths' bounding boxes overlap
+            if (!PathIntersection.doBoundingBoxesOverlap(this._currPath, patternPaths[i])) {
+                return null;
+            }
+            
             const comparisonPath = patternPaths[i];
             const comparisonPts = comparisonPath.getPoints();
             const cpStartPt = comparisonPts[0];
             const cpEndPt = comparisonPts[comparisonPts.length - 1];
-            // If the current path is the path this iteration, do not look for interstection.
-            if (patternPaths[i] !== this._currPath 
-                // TODO if with in radius of endpoints, snap.
-                && !point.isWithinRadius(cpStartPt, 10) 
+            // TODO if with in radius of endpoints, snap.
+            if (!point.isWithinRadius(cpStartPt, 10) 
                 && !point.isWithinRadius(cpEndPt, 10)) {
                
                 for (let j = 1; j < comparisonPts.length; j+=5 ) {

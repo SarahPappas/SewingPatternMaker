@@ -35,18 +35,21 @@ export class EmbeddedGraph {
         });        
     }
 
-    findFaces = (): Edge[][] => {
-        const faces = new Array<Array<Edge>>();
+    // Precondition: the graph is planar and has
+    // Returns an array of arrays, each array representing one face. Facees are
+    // represented by the positions of the segments forming them in the 
+    // array passed to the constructor
+    findFaces = (): number[][] => {
+        const faces = new Array<Array<number>>();
         this.edges.forEach(edge => {
             const face: Edge[] = [];                
-            // The faceEdgesIds variable is only useful for console logging and debugging
-            const faceEdgesIds: number[] = [];
+            const faceEdgesIndices: number[] = [];
             let current = edge;
             let next = null;
             let totalAngle = 0;
             do {
                 face.push(current);
-                faceEdgesIds.push(current.id);
+                faceEdgesIndices.push(Math.abs(current.id) - 1);
                 //console.log("adding edge " + current.id + " to current face" );
                 totalAngle += current.getEdgeDirectionChange();
                 //console.log("this edge turns by " + current.pathDirectionChange);
@@ -79,15 +82,15 @@ export class EmbeddedGraph {
                 }
             }
 
-            //console.log("totalAngle: " + totalAngle);
             // Only keep the face if the total angle while going around is 
             // -2PI. This means we have found an interior face, not the face
             // that is the exterior of the graph.
             addFace = addFace && Math.abs(totalAngle + 2 * Math.PI) < 1e-10; //epsilon
+            //console.log("totalAngle: " + totalAngle);
 
             if (addFace) {
-                faces.push(face);
-                console.log("accept face " + faceEdgesIds);
+                faces.push(faceEdgesIndices);
+                console.log("accept face " + faceEdgesIndices);
             } else {
                 //console.log("reject face");
             }
@@ -100,8 +103,10 @@ export class EmbeddedGraph {
         return faces;
     };
 
+    // Returns the number of faces the graph should theoretically have 
+    // (including the face that is the outside of the graph)
     theoreticalNumberOfFaces = (): number => {
-        // according to Euler's formula for planar graphs
+        // According to Euler's formula for planar graphs
         return 2 - this.vertices.size + (this.edges.length / 2);
     }
 }

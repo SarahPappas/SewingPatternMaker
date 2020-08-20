@@ -1,18 +1,16 @@
 import { PatternPath } from './PatternPaths/PatternPath';
 import { Point } from './Geometry/Point';
 import { EmbeddedGraph } from './EmbeddedGraph/EmbeddedGraph';
-import { Edge } from './EmbeddedGraph/Edge';
-import { Segment } from './Geometry/Segment';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
     private _sizeRatio: null | number; // in pixels per inch
-    private _patternPieces: null | Edge[][];
+    private _patternPieces: PatternPath[][];
 
     constructor () {
         this._patternPaths = new Array<PatternPath>();
         this._sizeRatio = null;
-        this._patternPieces = null;
+        this._patternPieces = [];
     }
 
     getPatternPaths = (): PatternPath[] => {
@@ -95,10 +93,20 @@ export class Document implements IDocument {
         } 
         return this._sizeRatio;        
     };
-
+    
+    // Precondition: arePatternPiecesEnclosed returned true 
     findPatternPieces = (): void => {
-        const segments: Segment[] = this._patternPaths.map(path => path.getSegment());
+        const segments = this._patternPaths.map(path => path.getSegment());
         const graph = new EmbeddedGraph(segments);
-        this._patternPieces = graph.findFaces();
+        const faces = graph.findFaces();
+        this._patternPieces = faces.map(face => face.map(i => this._patternPaths[i]));
+        
+        // Logging the pattern pieces for debugging
+        this._patternPieces.forEach(patternPiece => {
+            console.log("pattern piece: ");
+            patternPiece.forEach(patternPath => {
+                console.log("patternPath: type " + patternPath.getType().toString() + ", length " + patternPath.getLengthInPixels());
+            });
+        });
     };
 }

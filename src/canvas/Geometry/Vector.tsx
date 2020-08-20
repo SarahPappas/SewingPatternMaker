@@ -46,20 +46,6 @@ export class Vector {
         return new Vector(endPoint.x - startingPoint.x, endPoint.y - startingPoint.y);
     };
 
-    // // Returns the value of the dot product between the two inputted vectors.
-    // static dotProduct = (v1: Vector, v2: Vector): number => {
-    //     return v1.x * v2.x + v1.y * v2.y;
-    // };
-
-    // // Computes the smallest angle between 2 vectors in radians (in [0, PI]).
-    // // Throws an error of either of the 2 vectors has a norm of 0.
-    // static angleBetween = (v1: Vector, v2: Vector): number => {
-    //     if (v1.norm() === 0 || v2.norm() === 0) {
-    //         throw new Error("division by 0");
-    //     }
-    //     return Math.acos(Vector.dotProduct(v1, v2) / (v1.norm() * v2.norm()));
-    // };
-
     // Computes and returns the change in the directional angle from vector v1 to vector v2. 
     // The change in angle is in [-PI, PI]. The sign of the change indicates the direction
     // of the turn when going from v1 to v2. 

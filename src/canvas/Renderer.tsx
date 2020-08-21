@@ -67,6 +67,7 @@ export class Renderer implements IRenderer {
                 const intersection = PathIntersection.findIntersection(position, this._currPath, this._document.getPatternPaths());
                 if (intersection) {
                     this._isTracing = false;
+                    PathIntersection.splitAtIntersect(this._document);
                     this._endTracing(intersection);
                 } else {
                     this._currPath.addPoint(position);

@@ -4,15 +4,50 @@ import { Point } from './Geometry/Point';
 import { Vector } from './Geometry/Vector';
 import { BoundingBox } from './Geometry/BoundingBox';
 import { Curve } from './Geometry/Curve';
+import { Document } from './Document';
+import { FreeLinePath } from './PatternPaths/FreeLinePath';
+import { StraightLinePath } from './PatternPaths/StraightLinePath';
+
 
 export class PathIntersection {
-    intersectionPt: Point | null;
-    paths: PatternPath[];
+    private static intersection: Point | null;
+    private static foundIndex: number;
+    private static foundPath: PatternPath;
 
-    constructor() {
-        this.intersectionPt = null;
-        this.paths = [];
-    }
+    static splitAtIntersect = (document: Document) => {
+        if (!PathIntersection.intersection) {
+            return;
+        }
+
+        document.removePatternPath(PathIntersection.foundPath);
+        let path1: PatternPath;
+        let path2: PatternPath;
+        if (PathIntersection.foundPath instanceof FreeLinePath) {
+            path1 = new FreeLinePath(PathIntersection.foundPath.getType());
+            path2 = new FreeLinePath(PathIntersection.foundPath.getType());
+        } else {
+            path1 = new StraightLinePath(PathIntersection.foundPath.getType());
+            path2 = new StraightLinePath(PathIntersection.foundPath.getType());
+        }
+
+        const points = PathIntersection.foundPath.getPoints();
+        for (let i = 0; i <= PathIntersection.foundIndex; i++) {
+            path1.addPoint(points[i]);
+        }
+        path1.addPoint(PathIntersection.intersection);
+        path1.setFittedSegment();
+        document.addPatternPath(path1);
+
+        path2.addPoint(PathIntersection.intersection);
+        for (let i = PathIntersection.foundIndex + 1; i < PathIntersection.foundPath.getPoints().length; i++) {
+            path2.addPoint(points[i]);
+        }
+        path2.setFittedSegment();
+        document.addPatternPath(path2);
+        // TODO add a replace path function because otherwise, when user clicks delete it removes the wrong path.
+        // TODO split curves mathematically because they don't come out right.
+        // TODO sometimes a line still gets through, investigate bug.
+    };
 
     static findIntersection = (point: Point, curPath: PatternPath, allPaths: PatternPath[]): Point | null => {
         const numPointsInCurrPath = curPath.getPoints().length;
@@ -59,20 +94,27 @@ export class PathIntersection {
             }
 
             const firstPtInCompareSegment = comparePts[0];
-            const lastPtInCompoareSegment = comparePts[comparePts.length - 1];
+            const lastPtInCompareSegment = comparePts[comparePts.length - 1];
             // If the point is within a radius of an endpoint, we should snap to that endpoint.
-            if (!point.isWithinRadius(firstPtInCompareSegment, 10) 
-                && !point.isWithinRadius(lastPtInCompoareSegment, 10)) {
-               
-                for (let j = 1; j < comparePts.length; j++ ) {
-                    const thatL = new Line(comparePts[j], comparePts[j - 1]);
-                    const intersectionPoint = PathIntersection._findPotentialIntersectionPoint(thisL, thatL);
-                    if (intersectionPoint) {
-                        return intersectionPoint;
-                    }
+            if (point.isWithinRadius(firstPtInCompareSegment, 10)) {
+                PathIntersection.intersection = null;
+                return firstPtInCompareSegment;
+            }
+
+            if (point.isWithinRadius(lastPtInCompareSegment, 10)) {
+                PathIntersection.intersection = null;
+                return lastPtInCompareSegment;
+            }
+        
+            for (let j = 1; j < comparePts.length; j++ ) {
+                const thatL = new Line(comparePts[j], comparePts[j - 1]);
+                const intersectionPoint = PathIntersection._findPotentialIntersectionPoint(thisL, thatL);
+                if (intersectionPoint) {
+                    PathIntersection.intersection = intersectionPoint;
+                    PathIntersection.foundPath = allPaths[i];
+                    PathIntersection.foundIndex = j;
+                    return intersectionPoint;
                 }
-            } else {
-                // TODO if with in radius of endpoints, snap.
             }
         }
 

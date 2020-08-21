@@ -2,8 +2,8 @@ import { Point } from './Point';
 import { Vector } from './Vector';
 
 export abstract class Segment {
-    private start: Point;
-    private end: Point;
+    protected start: Point;
+    protected end: Point;
 
     constructor(start: Point, end: Point) {
         if (start.equals(end)) {

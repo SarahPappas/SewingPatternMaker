@@ -89,8 +89,8 @@ export class PathIntersection {
             if (compareSegment instanceof Curve) {
                 comparePts = compareSegment.computePointsOnCurve(100);
             } else{
-                comparePts.push(compareSegment.start);
-                comparePts.push(compareSegment.end);
+                comparePts.push(compareSegment.getStart());
+                comparePts.push(compareSegment.getEnd());
             }
 
             const firstPtInCompareSegment = comparePts[0];
@@ -143,14 +143,14 @@ export class PathIntersection {
         line segment.*/
     private static _findPotentialIntersectionPoint = (thisL: Line, thatL: Line): Point | null => { 
         // Line AB represented as a1x + b1y = c1 
-        const a1 = thisL.end.y - thisL.start.y; 
-        const b1 = thisL.start.x - thisL.end.x; 
-        const c1 = a1*(thisL.start.x) + b1*(thisL.start.y); 
+        const a1 = thisL.getEnd().y - thisL.getStart().y; 
+        const b1 = thisL.getStart().x - thisL.getEnd().x; 
+        const c1 = a1*(thisL.getStart().x) + b1*(thisL.getStart().y); 
       
         // Line CD represented as a2x + b2y = c2 
-        const a2 = thatL.end.y - thatL.start.y; 
-        const b2 = thatL.start.x - thatL.end.x; 
-        const c2 = a2*(thatL.start.x)+ b2*(thatL.start.y); 
+        const a2 = thatL.getEnd().y - thatL.getStart().y; 
+        const b2 = thatL.getStart().x - thatL.getEnd().x; 
+        const c2 = a2*(thatL.getStart().x)+ b2*(thatL.getStart().y); 
       
         const determinant = a1*b2 - a2*b1; 
       
@@ -176,8 +176,8 @@ export class PathIntersection {
     };
 
     private static _isPointOnLine = (point: Point, line: Line, threshold: number): boolean => {
-        const startToPoint = Vector.vectorBetweenPoints(line.start, point);
-        const startToEnd = Vector.vectorBetweenPoints(line.start, line.end);
+        const startToPoint = Vector.vectorBetweenPoints(line.getStart(), point);
+        const startToEnd = Vector.vectorBetweenPoints(line.getStart(), line.getEnd());
 
         const cross = Vector.crossProduct(startToPoint, startToEnd);
         
@@ -185,19 +185,19 @@ export class PathIntersection {
             return false;
         }
         
-        const dxl = line.end.x - line.start.x;
-        const dyl = line.end.y - line.start.y;
+        const dxl = line.getEnd().x - line.getStart().x;
+        const dyl = line.getEnd().y - line.getStart().y;
 
         // Now we know that the point does lie on the line, it is time to check whether it lies between the original points. 
         // This can be easily done by comparing the x coordinates, if the line is "more horizontal than vertical", or y coordinates otherwise.
         if (Math.abs(dxl) >= Math.abs(dyl)) {
-            return line.start.x <= line.end.x ? 
-                line.start.x <= point.x && point.x <= line.end.x :
-                line.end.x <= point.x && point.x <= line.start.x;
+            return line.getStart().x <= line.getEnd().x ? 
+                line.getStart().x <= point.x && point.x <= line.getEnd().x :
+                line.getEnd().x <= point.x && point.x <= line.getStart().x;
         } else {
-            return line.start.y <= line.end.y ? 
-                line.start.y <= point.y && point.y <= line.end.y :
-                line.end.y <= point.y && point.y <= line.start.y;
+            return line.getStart().y <= line.getEnd().y ? 
+                line.getStart().y <= point.y && point.y <= line.getEnd().y :
+                line.getEnd().y <= point.y && point.y <= line.getStart().y;
         }
     };
 }

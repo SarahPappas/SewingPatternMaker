@@ -15,11 +15,11 @@ export abstract class Segment {
 
     getStart = (): Point => {
         return this.start;
-    }
+    };
 
     getEnd = (): Point => {
         return this.end;
-    }
+    };
 
     abstract getLength(): number;
     

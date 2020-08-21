@@ -133,7 +133,7 @@ export abstract class PatternPath implements IPatternPath {
             throw new Error();
         }
         return this._fittedSegment;
-    }
+    };
 
     abstract setFittedSegment(): void;
     protected abstract _updatePath2D(): void;

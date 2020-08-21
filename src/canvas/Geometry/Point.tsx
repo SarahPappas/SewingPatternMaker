@@ -60,5 +60,5 @@ export class Point implements IPoint {
 
     toString = (): string => {
         return "[" + this.x + ", " + this.y + "]";
-    }
+    };
 }

@@ -57,7 +57,7 @@ export abstract class Curve extends Segment {
         } else { // t === 1
             return Vector.vectorBetweenPoints(this.control, this.end);
         }
-    }
+    };
 
     protected lerp = (start: number, end: number, t: number): number => {
         return start + t * (end - start);

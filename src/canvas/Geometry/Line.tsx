@@ -1,6 +1,5 @@
-import { Segment } from "./Segment";
-import { Vector } from "./Vector";
-import { Point } from "./Point";
+import { Segment } from './Segment';
+import { Vector } from './Vector';
 
 export class Line extends Segment {
     getLength = (): number => {
@@ -12,14 +11,9 @@ export class Line extends Segment {
             throw new Error();
         }
         return Vector.vectorBetweenPoints(this.start, this.end);
-    }
+    };
 
     protected _drawTo = (path: Path2D): void => {
         path.lineTo(this.end.x, this.end.y);
-    };
-
-    translate = (displacement: Vector): void => {
-        this.start = Point.translate(this.start, displacement);
-        this.end = Point.translate(this.end, displacement);
     };
 }

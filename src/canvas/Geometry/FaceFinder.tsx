@@ -1,6 +1,6 @@
-import { Point } from "canvas/Geometry/Point";
-import { Vector } from "canvas/Geometry/Vector";
-import { Segment } from "canvas/Geometry/Segment";
+import { Point } from 'canvas/Geometry/Point';
+import { Vector } from 'canvas/Geometry/Vector';
+import { Segment } from 'canvas/Geometry/Segment';
 
 interface Edge {
     origin: Point;
@@ -60,7 +60,8 @@ export class FaceFinder {
                     throw new Error();
                 }
 
-                // Find the index of the edge that is the reverse of current in leavingEdges
+                // Find the index of the edge that follows the same path as 
+                // current but in the reverse direction in leavingEdges
                 const currentIndex = current.index;
                 const indexOfReverse = leavingEdges.findIndex((edge: Edge) => 
                     edge.index === currentIndex
@@ -78,7 +79,9 @@ export class FaceFinder {
                 current = next;
             } while (current.index !== startingEdge.index);
 
-            if (faceHasSmallestIndexFirst && Math.abs(totalAngle + 2 * Math.PI) < 1e-10) {
+            // In order to allow small rounding errors, we test for a small difference instead of equality.
+            const epsilon = 1e-10;
+            if (faceHasSmallestIndexFirst && Math.abs(totalAngle - (-2 * Math.PI)) < epsilon) {
                 faces.push(faceEdgesIndices);
             }
         });
@@ -130,6 +133,14 @@ export class FaceFinder {
         return edges;
     };
 
+    /**
+     * Returns a map between each vertex in vertices and an array of all the edges in the 
+     * input edges array that have that particular vertex as an origin 
+     * (they are "leaving" the vertex). 
+     * 
+     * @param vertices A set of Points.
+     * @param edges An array of Edges.
+     */
     private static _createLeavingEdgesMap = (vertices: Set<Point>, edges: Edge[]): Map<Point, Edge[]> => {
         const leavingEdgesMap = new Map();
         vertices.forEach(vertex => {

@@ -1,4 +1,4 @@
-import { Point } from "./Point";
+import { Point } from './Point';
 
 export class Vector {
     x: number;
@@ -39,7 +39,7 @@ export class Vector {
     // that is at angle PI with this vector and of same length.
     opposite = (): Vector => {
         return new Vector(-1 * this.x, -1 * this.y);
-    }
+    };
 
     // Constructs and returns the vector going from p1 to p2.
     static vectorBetweenPoints = (startingPoint: Point, endPoint: Point): Vector => {
@@ -57,7 +57,7 @@ export class Vector {
             result = result + 2 * Math.PI;
         }
         return result;
-    }
+    };
 
     // Returns a vector that is perpendicular to the inputted vector.
     static findPerpVector = (vector: Vector): Vector => {

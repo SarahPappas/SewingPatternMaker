@@ -1,5 +1,5 @@
-import { Point } from "./Point";
-import { Vector } from "./Vector";
+import { Point } from './Point';
+import { Vector } from './Vector';
 
 export abstract class Segment {
     protected start: Point;
@@ -15,11 +15,11 @@ export abstract class Segment {
 
     getStart = (): Point => {
         return this.start;
-    }
+    };
 
     getEnd = (): Point => {
         return this.end;
-    }
+    };
 
     abstract getLength(): number;
     
@@ -31,6 +31,4 @@ export abstract class Segment {
     };
 
     protected abstract _drawTo(path: Path2D): void;
-
-    abstract translate(displacement: Vector): void;
 }

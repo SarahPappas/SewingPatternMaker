@@ -1,7 +1,6 @@
 import { Point } from '../Geometry/Point';
 import { PatternPathType } from '../Enums';
 import { Segment } from 'canvas/Geometry/Segment';
-import { Vector } from 'canvas/Geometry/Vector';
 
 export abstract class PatternPath implements IPatternPath {
     protected _points: Point[];
@@ -134,16 +133,6 @@ export abstract class PatternPath implements IPatternPath {
             throw new Error();
         }
         return this._fittedSegment;
-    };
-
-    translate = (displacement: Vector): void => {
-        if (!this._fittedSegment) {
-            throw new Error();
-        }
-        console.log("before translate: " + this._fittedSegment.getStart());
-        this._fittedSegment.translate(displacement);
-        console.log("after translate: " + this._fittedSegment.getStart());
-
     };
 
     abstract setFittedSegment(): void;

@@ -1,25 +1,21 @@
 import { PatternPath } from './PatternPaths/PatternPath';
 import { Point } from './Geometry/Point';
 import { FaceFinder } from './Geometry/FaceFinder';
-import { Vector } from './Geometry/Vector';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
     private _sizeRatio: null | number; // in pixels per inch
-    private _spreadPatternPaths: null | PatternPath[];
+    private _patternPieces: PatternPath[][]; // an array of patternpath arrays, 
+                                             // each representing one piece of the pattern
 
     constructor () {
         this._patternPaths = new Array<PatternPath>();
         this._sizeRatio = null;
-        this._spreadPatternPaths = null;
+        this._patternPieces = [];
     }
 
     getPatternPaths = (): PatternPath[] => {
-        if (!this._spreadPatternPaths) {
-            return [...this._patternPaths];
-        } else {
-            return this._spreadPatternPaths;
-        }
+        return [...this._patternPaths];
     };
 
     addPatternPath = (patternPath: PatternPath): boolean => {
@@ -102,32 +98,14 @@ export class Document implements IDocument {
     findPatternPieces = (): void => {
         const segments = this._patternPaths.map(path => path.getSegment());
         const faces = FaceFinder.FindFaces(segments);
-        const patternPieces = faces.map(face => face.map(i => this._patternPaths[i]));
+        this._patternPieces = faces.map(face => face.map(i => this._patternPaths[i]));
         
         // Logging the pattern pieces for debugging
-        patternPieces.forEach(patternPiece => {
+        this._patternPieces.forEach(patternPiece => {
             console.log("pattern piece: ");
             patternPiece.forEach(patternPath => {
                 console.log("patternPath: type " + patternPath.getType().toString() + ", length " + patternPath.getLengthInPixels());
             });
         });
-
-        this.spreadPatternPieces(patternPieces);
-    };
-
-    /**
-     * 
-     */
-    spreadPatternPieces = (patternPieces: PatternPath[][]): void => {
-        let result: PatternPath[] = [];
-
-        for (let i = 0; i < patternPieces.length; i++) {
-            patternPieces[i].forEach(path => {
-                path.translate(new Vector(50*i, 0));
-            });
-            result = result.concat(patternPieces[i]);
-        }
-
-        this._spreadPatternPaths = result;
     };
 }

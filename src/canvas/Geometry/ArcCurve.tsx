@@ -1,6 +1,6 @@
-import { Curve } from "./Curve";
-import { Point } from "./Point";
-import { Vector } from "./Vector";
+import { Curve } from './Curve';
+import { Point } from './Point';
+import { Vector } from './Vector';
 
 export class ArcCurve extends Curve {
     private radius: number;

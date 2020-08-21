@@ -1,4 +1,4 @@
-import { Vector } from "./Vector";
+import { Vector } from './Vector';
 
 export class Point implements IPoint {
     x: number;
@@ -64,5 +64,5 @@ export class Point implements IPoint {
 
     toString = (): string => {
         return "[" + this.x + ", " + this.y + "]";
-    }
+    };
 }

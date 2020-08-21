@@ -1,6 +1,6 @@
-import { Curve } from "./Curve";
-import { BezierCurve } from "./BezierCurve";
-import { Point } from "./Point";
+import { Curve } from './Curve';
+import { BezierCurve } from './BezierCurve';
+import { Point } from './Point';
 
 export class BestCurveSelector {
     private _bestCurve: Curve;

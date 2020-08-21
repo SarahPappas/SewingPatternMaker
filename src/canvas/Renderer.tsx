@@ -122,6 +122,14 @@ export class Renderer implements IRenderer {
         this._canvas.onmouseout = null;
     };
 
+    finalReviewInit = (): void => {
+        this._pathSelection.clear();
+        
+        this._canvas.onmousedown = null;
+        this._canvas.onmousemove = null;
+
+    }
+
     private _endTracing = (position: Point): void => {
         if (this._currPath) {
             this._currPath.addPoint(position); 

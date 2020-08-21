@@ -47,8 +47,15 @@ export abstract class Curve extends Segment {
         //       the curve instead. This would allow us to bound our error on the total length. 
     };
 
+    /**
+     * Returns a vector that is tangent to the curve at the position indicated by
+     * the parameter t.
+     * 
+     * @param t Describes the position on the curve where we want the tangent vector.
+     *          t should be equal to 0 or 1, 0 for the start of the curve, 1 for the end
+     */
     getTangent = (t: number): Vector => {
-        // TODO: for seam allowances, implement this for values of t between 0 and 1
+        // TODO: for seam allowances, implement this for all values of t between 0 and 1
         if (!(t === 0 || t === 1)) {
             throw new Error();
         }

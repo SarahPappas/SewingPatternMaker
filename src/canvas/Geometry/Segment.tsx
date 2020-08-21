@@ -1,8 +1,9 @@
-import { Point } from "./Point";
+import { Point } from './Point';
+import { Vector } from './Vector';
 
 export abstract class Segment {
-    start: Point;
-    end: Point;
+    private start: Point;
+    private end: Point;
 
     constructor(start: Point, end: Point) {
         if (start.equals(end)) {
@@ -12,8 +13,18 @@ export abstract class Segment {
         this.end = end;
     }
 
+    getStart = (): Point => {
+        return this.start;
+    };
+
+    getEnd = (): Point => {
+        return this.end;
+    };
+
     abstract getLength(): number;
     
+    abstract getTangent(t: number): Vector;
+
     draw = (path: Path2D): void => {
         path.moveTo(this.start.x, this.start.y);
         this._drawTo(path);

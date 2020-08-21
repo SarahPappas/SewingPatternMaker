@@ -1,4 +1,4 @@
-import { Vector } from "./Vector";
+import { Vector } from './Vector';
 
 export class Point implements IPoint {
     x: number;
@@ -56,5 +56,9 @@ export class Point implements IPoint {
         normalVector.normalize();
         return new Point(middle.x + t * normalVector.x, 
                          middle.y + t * normalVector.y);
+    };
+
+    toString = (): string => {
+        return "[" + this.x + ", " + this.y + "]";
     };
 }

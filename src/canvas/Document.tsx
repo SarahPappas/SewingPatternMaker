@@ -1,13 +1,17 @@
 import { PatternPath } from './PatternPaths/PatternPath';
 import { Point } from './Geometry/Point';
+import { FaceFinder } from './Geometry/FaceFinder';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
     private _sizeRatio: null | number; // in pixels per inch
+    private _patternPieces: PatternPath[][]; // an array of patternpath arrays, 
+                                             // each representing one piece of the pattern
 
     constructor () {
         this._patternPaths = new Array<PatternPath>();
         this._sizeRatio = null;
+        this._patternPieces = [];
     }
 
     getPatternPaths = (): PatternPath[] => {
@@ -83,7 +87,6 @@ export class Document implements IDocument {
  
     // Sets the pixels per inch ratio according to the input measurement.
     setSizeRatio = (inputMeasurementInInches: number, selectedPath: PatternPath): void => {
-        console.log('selected path length: ' + selectedPath.getLengthInPixels());
         this._sizeRatio = selectedPath.getLengthInPixels() / inputMeasurementInInches;
     };
 
@@ -93,6 +96,21 @@ export class Document implements IDocument {
             return -1;
         } 
         return this._sizeRatio;        
+    };
+    
+    // Precondition: arePatternPiecesEnclosed returned true 
+    findPatternPieces = (): void => {
+        const segments = this._patternPaths.map(path => path.getSegment());
+        const faces = FaceFinder.FindFaces(segments);
+        this._patternPieces = faces.map(face => face.map(i => this._patternPaths[i]));
+        
+        // Logging the pattern pieces for debugging
+        this._patternPieces.forEach(patternPiece => {
+            console.log("pattern piece: ");
+            patternPiece.forEach(patternPath => {
+                console.log("patternPath: type " + patternPath.getType().toString() + ", length " + patternPath.getLengthInPixels());
+            });
+        });
     };
 
     private _removeSpecificPatternPath = (path: PatternPath): boolean => {

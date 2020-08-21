@@ -1,5 +1,5 @@
-import { Point } from "./Point";
-import { Curve } from "./Curve";
+import { Point } from './Point';
+import { Curve } from './Curve';
 
 export class BezierCurve extends Curve {
     // Returns a point on the Bezier curve between its start point and

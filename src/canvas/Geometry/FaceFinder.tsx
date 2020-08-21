@@ -130,6 +130,14 @@ export class FaceFinder {
         return edges;
     };
 
+    /**
+     * Returns a map between each vertex in vertices and an array of all the edges in the 
+     * input edges array that have that particular vertex as an origin 
+     * (they are "leaving" the vertex). 
+     * 
+     * @param vertices A set of Points.
+     * @param edges An array of Edges.
+     */
     private static _createLeavingEdgesMap = (vertices: Set<Point>, edges: Edge[]): Map<Point, Edge[]> => {
         const leavingEdgesMap = new Map();
         vertices.forEach(vertex => {

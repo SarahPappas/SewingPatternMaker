@@ -1,6 +1,6 @@
-import { Point } from "canvas/Geometry/Point";
-import { Vector } from "canvas/Geometry/Vector";
-import { Segment } from "canvas/Geometry/Segment";
+import { Point } from 'canvas/Geometry/Point';
+import { Vector } from 'canvas/Geometry/Vector';
+import { Segment } from 'canvas/Geometry/Segment';
 
 interface Edge {
     origin: Point;
@@ -79,7 +79,9 @@ export class FaceFinder {
                 current = next;
             } while (current.index !== startingEdge.index);
 
-            if (faceHasSmallestIndexFirst && Math.abs(totalAngle + 2 * Math.PI) < 1e-10) {
+            // In order to allow small rounding errors, we test for a small difference instead of equality.
+            const epsilon = 1e-10;
+            if (faceHasSmallestIndexFirst && Math.abs(totalAngle - (-2 * Math.PI)) < epsilon) {
                 faces.push(faceEdgesIndices);
             }
         });

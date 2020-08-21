@@ -128,6 +128,13 @@ export abstract class PatternPath implements IPatternPath {
         return this._fittedSegment.getLength();
     };
 
+    getSegment = (): Segment => {
+        if (!this._fittedSegment) {
+            throw new Error();
+        }
+        return this._fittedSegment;
+    };
+
     abstract setFittedSegment(): void;
     protected abstract _updatePath2D(): void;
 }

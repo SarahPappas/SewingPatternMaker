@@ -60,7 +60,8 @@ export class FaceFinder {
                     throw new Error();
                 }
 
-                // Find the index of the edge that is the reverse of current in leavingEdges
+                // Find the index of the edge that follows the same path as 
+                // current but in the reverse direction in leavingEdges
                 const currentIndex = current.index;
                 const indexOfReverse = leavingEdges.findIndex((edge: Edge) => 
                     edge.index === currentIndex

@@ -5,7 +5,8 @@ import { FaceFinder } from './Geometry/FaceFinder';
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
     private _sizeRatio: null | number; // in pixels per inch
-    private _patternPieces: PatternPath[][];
+    private _patternPieces: PatternPath[][]; // an array of patternpath arrays, 
+                                             // each representing one piece of the pattern
 
     constructor () {
         this._patternPaths = new Array<PatternPath>();

@@ -1,5 +1,5 @@
-import { Point } from "./Point";
-import { Vector } from "./Vector";
+import { Point } from './Point';
+import { Vector } from './Vector';
 
 export abstract class Segment {
     protected start: Point;

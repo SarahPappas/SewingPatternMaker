@@ -1,5 +1,5 @@
-import { Segment } from "./Segment";
-import { Vector } from "./Vector";
+import { Segment } from './Segment';
+import { Vector } from './Vector';
 
 export class Line extends Segment {
     getLength = (): number => {

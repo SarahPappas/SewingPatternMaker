@@ -95,6 +95,7 @@ export class PathIntersection {
 
             const firstPtInCompareSegment = comparePts[0];
             const lastPtInCompareSegment = comparePts[comparePts.length - 1];
+            
             // If the point is within a radius of an endpoint, we should snap to that endpoint.
             if (point.isWithinRadius(firstPtInCompareSegment, 10)) {
                 PathIntersection.intersection = null;
@@ -138,7 +139,8 @@ export class PathIntersection {
         return true; 
     }
 
-    // Finds intersection on line, not necessarily on the segment of the line.
+    /* Finds intersection on line, then checks to see if that intersection point is within the 
+        line segment.*/
     private static _findPotentialIntersectionPoint = (thisL: Line, thatL: Line): Point | null => { 
         // Line AB represented as a1x + b1y = c1 
         const a1 = thisL.end.y - thisL.start.y; 
@@ -173,8 +175,6 @@ export class PathIntersection {
         return null;
     };
 
-    // TODO: Fix bug for curves where intersectin is never found to be on the line. 
-    // Possible fixes: larger sample spacing for curvers. Try using points from fitted curves instead.
     private static _isPointOnLine = (point: Point, line: Line, threshold: number): boolean => {
         const startToPoint = Vector.vectorBetweenPoints(line.start, point);
         const startToEnd = Vector.vectorBetweenPoints(line.start, line.end);
@@ -188,7 +188,7 @@ export class PathIntersection {
         const dxl = line.end.x - line.start.x;
         const dyl = line.end.y - line.start.y;
 
-        // Now, as you know that the point does lie on the line, it is time to check whether it lies between the original points. 
+        // Now we know that the point does lie on the line, it is time to check whether it lies between the original points. 
         // This can be easily done by comparing the x coordinates, if the line is "more horizontal than vertical", or y coordinates otherwise.
         if (Math.abs(dxl) >= Math.abs(dyl)) {
             return line.start.x <= line.end.x ? 

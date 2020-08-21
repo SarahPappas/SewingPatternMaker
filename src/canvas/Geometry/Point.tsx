@@ -58,6 +58,10 @@ export class Point implements IPoint {
                          middle.y + t * normalVector.y);
     };
 
+    static translate = (p: Point, displacement: Vector): Point => {
+        return new Point(p.x + displacement.x, p.y + displacement.y);
+    };
+
     toString = (): string => {
         return "[" + this.x + ", " + this.y + "]";
     }

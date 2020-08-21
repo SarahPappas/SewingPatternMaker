@@ -124,10 +124,9 @@ export class Renderer implements IRenderer {
 
     finalReviewInit = (): void => {
         this._pathSelection.clear();
-        
+
         this._canvas.onmousedown = null;
         this._canvas.onmousemove = null;
-
     }
 
     private _endTracing = (position: Point): void => {

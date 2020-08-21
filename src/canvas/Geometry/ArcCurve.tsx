@@ -105,4 +105,11 @@ export class ArcCurve extends Curve {
     getLength = (): number => {
         return Math.abs(this.startAngle - this.endAngle) * this.radius;
     };
+
+    translate = (displacement: Vector): void => {
+        this.start = Point.translate(this.start, displacement);
+        this.control = Point.translate(this.control, displacement);
+        this.end = Point.translate(this.end, displacement);
+        this.center = Point.translate(this.center, displacement);
+    };
 }

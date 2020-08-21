@@ -31,4 +31,6 @@ export abstract class Segment {
     };
 
     protected abstract _drawTo(path: Path2D): void;
+
+    abstract translate(displacement: Vector): void;
 }

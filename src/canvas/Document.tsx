@@ -1,6 +1,7 @@
 import { PatternPath } from './PatternPaths/PatternPath';
 import { Point } from './Geometry/Point';
 import { FaceFinder } from './Geometry/FaceFinder';
+import { runInThisContext } from 'vm';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
@@ -29,16 +30,20 @@ export class Document implements IDocument {
     };
 
     // Removes the most recently added Pattern Path.
-    removePatternPath = (patternPath?: PatternPath): boolean => {
-        if (patternPath) {
-            return this._removeSpecificPatternPath(patternPath);
-        }
-
+    removePatternPath = (): boolean => {
         if (!this._patternPaths.length) {
             throw new Error("Tried to remove path from document, but there are no paths to remove");
         }
         return Boolean(this._patternPaths.pop());
     };
+
+    replacePatternPath = (pathToReplace: PatternPath, pathsToInsert: PatternPath[]): void => {
+        const index = this._removeSpecificPatternPath(pathToReplace);
+
+        pathsToInsert.forEach(path => {
+            this._patternPaths.splice(index, 0, path);
+        });
+    }
 
     arePatternPiecesEnclosed = (): boolean => {
         const endpoints: {point: Point; matched: boolean}[] = [];
@@ -113,14 +118,14 @@ export class Document implements IDocument {
         });
     };
 
-    private _removeSpecificPatternPath = (path: PatternPath): boolean => {
+    private _removeSpecificPatternPath = (path: PatternPath): number => {
         const find = (p: PatternPath) => p === path;
         const pathIndex = this._patternPaths.findIndex(find);
         if (pathIndex >= 0) {
             this._patternPaths.splice(pathIndex, 1);
-            return true;
+            return pathIndex;
         }
 
-        return false;
+        return -1;
     };
 }

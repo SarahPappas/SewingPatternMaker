@@ -41,18 +41,18 @@ export class ArcCurve extends Curve {
 
         const points = this.computePoints();
 
-        let index = -1;
-        points.forEach((pt, i) => { 
-            if (pt.isWithinRadius(point, 10)) {
-                index = i;
-                return true;
-            }
-        });
+        // let index = -1;
+        // points.forEach((pt, i) => { 
+        //     if (pt.isWithinRadius(point, 10)) {
+        //         index = i;
+        //         return true;
+        //     }
+        // });
 
-        const originToSplitPointV = Vector.vectorBetweenPoints(this.center, point);
-        const tangetToArcAtPointV = Vector.findPerpVector(originToSplitPointV);
-        const tempV = Vector.findPerpVector(tangetToArcAtPointV);
-        const lineOnTangentToArcAtPoint = new Line(point, new Point(tempV.x, tempV.y));
+        const originToSplitPoint = Vector.vectorBetweenPoints(this.center, point);
+        const tangetToArcAtPoint = Vector.findPerpVector(originToSplitPoint);
+        const pointOnTangentToArcAtPoint = Point.translate(point, tangetToArcAtPoint);
+        const lineOnTangentToArcAtPoint = new Line(point, pointOnTangentToArcAtPoint);
         const lineFromStartToOldControlPoint = new Line(this.start, this.control);
 
         const control1 = PathIntersection.findPotentialIntersectionPoint(lineOnTangentToArcAtPoint, lineFromStartToOldControlPoint);
@@ -64,7 +64,7 @@ export class ArcCurve extends Curve {
         const lineFromEndToOldControlPoint = new Line(this.end, this.control);
         const control2 = PathIntersection.findPotentialIntersectionPoint(lineOnTangentToArcAtPoint, lineFromStartToOldControlPoint);
         if (!control2) {
-            throw new Error('Cannont find control point from first Arc in Arc split');
+            throw new Error('Cannont find control point from second Arc in Arc split');
         }
         curves.push(new ArcCurve(point, this.end, control2));
 

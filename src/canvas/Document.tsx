@@ -1,7 +1,6 @@
 import { PatternPath } from './PatternPaths/PatternPath';
 import { Point } from './Geometry/Point';
 import { FaceFinder } from './Geometry/FaceFinder';
-import { runInThisContext } from 'vm';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];

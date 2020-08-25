@@ -4,52 +4,33 @@ import { Point } from './Geometry/Point';
 import { Vector } from './Geometry/Vector';
 import { BoundingBox } from './Geometry/BoundingBox';
 import { Curve } from './Geometry/Curve';
-import { Document } from './Document';
 import { FreeLinePath } from './PatternPaths/FreeLinePath';
 import { StraightLinePath } from './PatternPaths/StraightLinePath';
 
-
 export class PathIntersection {
-    private static intersection: Point | null;
-    private static foundIndex: number;
-    private static foundPath: PatternPath;
 
-    static splitAtIntersect = (document: Document) => {
-        if (!PathIntersection.intersection) {
-            return;
+    static splitAtIntersection = (interesection: Point, path: PatternPath) => {
+        const originalSegment = path.getSegment();
+        const splitSegments = originalSegment.split(interesection);
+        if (splitSegments.length !== 2) {
+            throw new Error("Split did not return correct number of segments");
         }
-
-        document.removePatternPath(PathIntersection.foundPath);
-        let path1: PatternPath;
-        let path2: PatternPath;
-        if (PathIntersection.foundPath instanceof FreeLinePath) {
-            path1 = new FreeLinePath(PathIntersection.foundPath.getType());
-            path2 = new FreeLinePath(PathIntersection.foundPath.getType());
+        const paths = [];
+        if (path instanceof StraightLinePath) {
+            paths.push(new StraightLinePath(path.getType(), splitSegments[0]));
+            paths.push(new StraightLinePath(path.getType(), splitSegments[1]));
         } else {
-            path1 = new StraightLinePath(PathIntersection.foundPath.getType());
-            path2 = new StraightLinePath(PathIntersection.foundPath.getType());
+            paths.push(new FreeLinePath(path.getType(), splitSegments[0]));
+            paths.push(new FreeLinePath(path.getType(), splitSegments[1]));
         }
 
-        const points = PathIntersection.foundPath.getPoints();
-        for (let i = 0; i <= PathIntersection.foundIndex; i++) {
-            path1.addPoint(points[i]);
-        }
-        path1.addPoint(PathIntersection.intersection);
-        path1.setFittedSegment();
-        document.addPatternPath(path1);
-
-        path2.addPoint(PathIntersection.intersection);
-        for (let i = PathIntersection.foundIndex + 1; i < PathIntersection.foundPath.getPoints().length; i++) {
-            path2.addPoint(points[i]);
-        }
-        path2.setFittedSegment();
-        document.addPatternPath(path2);
+        return paths;
         // TODO add a replace path function because otherwise, when user clicks delete it removes the wrong path.
         // TODO split curves mathematically because they don't come out right.
         // TODO sometimes a line still gets through, investigate bug.
     };
 
-    static findIntersection = (point: Point, curPath: PatternPath, allPaths: PatternPath[]): Point | null => {
+    static findIntersection = (point: Point, curPath: PatternPath, allPaths: PatternPath[]): {point: Point; pathCrossed: PatternPath} | null => {
         const numPointsInCurrPath = curPath.getPoints().length;
         if (!curPath || !numPointsInCurrPath) {
             return null;
@@ -87,7 +68,7 @@ export class PathIntersection {
             // Get points to compare, depending on the Segment type.
             let comparePts: Point [] = [];
             if (compareSegment instanceof Curve) {
-                comparePts = compareSegment.computePointsOnCurve(100);
+                comparePts = compareSegment.computePoints();
             } else{
                 comparePts.push(compareSegment.getStart());
                 comparePts.push(compareSegment.getEnd());
@@ -98,23 +79,18 @@ export class PathIntersection {
             
             // If the point is within a radius of an endpoint, we should snap to that endpoint.
             if (point.isWithinRadius(firstPtInCompareSegment, 10)) {
-                PathIntersection.intersection = null;
-                return firstPtInCompareSegment;
+                return {point: firstPtInCompareSegment, pathCrossed: allPaths[i]};
             }
 
             if (point.isWithinRadius(lastPtInCompareSegment, 10)) {
-                PathIntersection.intersection = null;
-                return lastPtInCompareSegment;
+                return {point: lastPtInCompareSegment, pathCrossed: allPaths[i]};
             }
         
             for (let j = 1; j < comparePts.length; j++ ) {
                 const thatL = new Line(comparePts[j], comparePts[j - 1]);
                 const intersectionPoint = PathIntersection._findPotentialIntersectionPoint(thisL, thatL);
                 if (intersectionPoint) {
-                    PathIntersection.intersection = intersectionPoint;
-                    PathIntersection.foundPath = allPaths[i];
-                    PathIntersection.foundIndex = j;
-                    return intersectionPoint;
+                    return {point: intersectionPoint, pathCrossed: allPaths[i]};
                 }
             }
         }

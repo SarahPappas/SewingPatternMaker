@@ -1,12 +1,14 @@
 import { Curve } from './Curve';
 import { Point } from './Point';
 import { Vector } from './Vector';
+import { BestCurveSelector } from './BestCurveSelector';
+import { CurveFitter } from './CurveFitter';
 
 export class ArcCurve extends Curve {
     private radius: number;
     private center: Point;
-    private startAngle: number;
-    private endAngle: number;
+    private startAngle: number; // Angle from positive x axis to start 
+    private endAngle: number;// Angle from positive x axis to end
 
     // Precondition: control is equidistant from start and end
     // Precondition: control != middlePoint between start and end
@@ -30,6 +32,27 @@ export class ArcCurve extends Curve {
                 this.endAngle += 2 * Math.PI;
             }
         }
+    }
+
+    split = (point: Point): ArcCurve[] => {
+        const curves:  ArcCurve[] = [];
+
+        const originalPoints = this.computePoints();
+        // const index = originalPoints.findIndex(pt => pt.equals(point));
+        // TODO find index a different way. check within radius for point.
+        // console.log("arc slice index", index);
+        // const pointsOnCurve1 = originalPoints.slice(0, index);
+        // const pointsOnCurve2 = originalPoints.slice(index, originalPoints.length - 1);
+
+        let curveSelector = new BestCurveSelector(originalPoints, originalPoints.length);
+        CurveFitter.guessAndCheckControlPointsForBestArcCurve(this.start, point, curveSelector);
+        curves.push(curveSelector.getBestCurve() as ArcCurve);
+
+        curveSelector = new BestCurveSelector(originalPoints, originalPoints.length);
+        CurveFitter.guessAndCheckControlPointsForBestArcCurve(point, this.end, curveSelector);
+        curves.push(curveSelector.getBestCurve() as ArcCurve);
+
+        return curves;
     }
 
     private _computeCenter = (): Point => {

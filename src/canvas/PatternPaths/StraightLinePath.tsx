@@ -3,7 +3,7 @@ import { Line } from 'canvas/Geometry/Line';
 import { Point } from 'canvas/Geometry/Point';
 
 export class StraightLinePath extends PatternPath {
-    setFittedSegment = (): void => {
+    protected _setFittedSegment = (): void => {
         this._fittedSegment = new Line(this._points[0], this._points[this._points.length - 1]);
     }
 

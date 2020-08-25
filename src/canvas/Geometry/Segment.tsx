@@ -30,5 +30,9 @@ export abstract class Segment {
         this._drawTo(path);
     };
 
+    abstract computePoints(numOfPoints?: number): Point[];
+
+    abstract split(point: Point): Segment[];
+
     protected abstract _drawTo(path: Path2D): void;
 }

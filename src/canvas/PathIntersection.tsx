@@ -88,7 +88,7 @@ export class PathIntersection {
         
             for (let j = 1; j < comparePts.length; j++ ) {
                 const thatL = new Line(comparePts[j], comparePts[j - 1]);
-                const intersectionPoint = PathIntersection._findPotentialIntersectionPoint(thisL, thatL);
+                const intersectionPoint = PathIntersection.findPotentialIntersectionPoint(thisL, thatL);
                 if (intersectionPoint) {
                     return {point: intersectionPoint, pathCrossed: allPaths[i]};
                 }
@@ -117,7 +117,7 @@ export class PathIntersection {
 
     /* Finds intersection on line, then checks to see if that intersection point is within the 
         line segment.*/
-    private static _findPotentialIntersectionPoint = (thisL: Line, thatL: Line): Point | null => { 
+    static findPotentialIntersectionPoint = (thisL: Line, thatL: Line): Point | null => { 
         // Line AB represented as a1x + b1y = c1 
         const a1 = thisL.getEnd().y - thisL.getStart().y; 
         const b1 = thisL.getStart().x - thisL.getEnd().x; 

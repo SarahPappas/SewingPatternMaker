@@ -3,6 +3,8 @@ import { Point } from './Point';
 import { Vector } from './Vector';
 import { BestCurveSelector } from './BestCurveSelector';
 import { CurveFitter } from './CurveFitter';
+import { Line } from './Line';
+import { PathIntersection } from 'canvas/PathIntersection';
 
 export class ArcCurve extends Curve {
     private radius: number;
@@ -37,22 +39,62 @@ export class ArcCurve extends Curve {
     split = (point: Point): ArcCurve[] => {
         const curves:  ArcCurve[] = [];
 
-        const originalPoints = this.computePoints();
+        const points = this.computePoints();
+
+        let index = -1;
+        points.forEach((pt, i) => { 
+            if (pt.isWithinRadius(point, 10)) {
+                index = i;
+                return true;
+            }
+        });
+
+        const originToSplitPointV = Vector.vectorBetweenPoints(this.center, point);
+        const tangetToArcAtPointV = Vector.findPerpVector(originToSplitPointV);
+        const tempV = Vector.findPerpVector(tangetToArcAtPointV);
+        const lineOnTangentToArcAtPoint = new Line(point, new Point(tempV.x, tempV.y));
+        const lineFromStartToOldControlPoint = new Line(this.start, this.control);
+
+        const control1 = PathIntersection.findPotentialIntersectionPoint(lineOnTangentToArcAtPoint, lineFromStartToOldControlPoint);
+        if (!control1) {
+            throw new Error('Cannont find control point from first Arc in Arc split');
+        }
+        curves.push(new ArcCurve(this.start, point, control1));
+
+        const lineFromEndToOldControlPoint = new Line(this.end, this.control);
+        const control2 = PathIntersection.findPotentialIntersectionPoint(lineOnTangentToArcAtPoint, lineFromStartToOldControlPoint);
+        if (!control2) {
+            throw new Error('Cannont find control point from first Arc in Arc split');
+        }
+        curves.push(new ArcCurve(point, this.end, control2));
+
+        return curves;
+
+
+
+
+        // control 1
+        //intersection between line from start to old control
+        // and tangent the circle at point X
+
+
+
+
         // const index = originalPoints.findIndex(pt => pt.equals(point));
         // TODO find index a different way. check within radius for point.
         // console.log("arc slice index", index);
         // const pointsOnCurve1 = originalPoints.slice(0, index);
         // const pointsOnCurve2 = originalPoints.slice(index, originalPoints.length - 1);
 
-        let curveSelector = new BestCurveSelector(originalPoints, originalPoints.length);
-        CurveFitter.guessAndCheckControlPointsForBestArcCurve(this.start, point, curveSelector);
-        curves.push(curveSelector.getBestCurve() as ArcCurve);
+        // let curveSelector = new BestCurveSelector(originalPoints, originalPoints.length);
+        // CurveFitter.guessAndCheckControlPointsForBestArcCurve(this.start, point, curveSelector);
+        // curves.push(curveSelector.getBestCurve() as ArcCurve);
 
-        curveSelector = new BestCurveSelector(originalPoints, originalPoints.length);
-        CurveFitter.guessAndCheckControlPointsForBestArcCurve(point, this.end, curveSelector);
-        curves.push(curveSelector.getBestCurve() as ArcCurve);
+        // curveSelector = new BestCurveSelector(originalPoints, originalPoints.length);
+        // CurveFitter.guessAndCheckControlPointsForBestArcCurve(point, this.end, curveSelector);
+        // curves.push(curveSelector.getBestCurve() as ArcCurve);
 
-        return curves;
+        // return curves;
     }
 
     private _computeCenter = (): Point => {

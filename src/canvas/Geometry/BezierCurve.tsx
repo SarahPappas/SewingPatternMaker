@@ -5,7 +5,6 @@ export class BezierCurve extends Curve {
     // Precondition: split is a point on the curve.
     split = (point: Point): BezierCurve[] => {
         const curves:  BezierCurve[] = [];
-        // throw new Error("Method not implemented.");
 
         const NUMPOINTS = 100;
         const points = this.computePoints();

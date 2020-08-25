@@ -8,14 +8,18 @@ export class BezierCurve extends Curve {
         // throw new Error("Method not implemented.");
 
         const NUMPOINTS = 100;
-        const points = this.computePoints(NUMPOINTS);
+        const points = this.computePoints();
         const startPoint = points[0];
         const endPoint = points[points.length - 1];
 
-        const index = points.findIndex(pt => pt.equals(point));
-        if (!index) {
-            throw new Error("Split point is not found in Curve points.");
-        }
+        let index = -1;
+        points.forEach((pt, i) => { 
+            if (pt.isWithinRadius(point, 10)) {
+                index = i;
+                return true;
+            }
+        });
+        console.log("BezierCurveIndex split index", index);
 
         const t: number = index / NUMPOINTS;
         let controlPointX = (1 - t) * startPoint.x + t * this.control.x;
@@ -27,37 +31,6 @@ export class BezierCurve extends Curve {
         curves.push(new BezierCurve(point, endPoint, new Point(controlPointX, controlPointY)));
 
         return curves;
-
-
-        // let left = [];
-        // let right = [];
-        
-        // const splitCurve = (points: Point [], t: number): void => {
-        //     if(points.length === 1) {
-        //         left.push(points[0]);
-        //         right.push(points[0]);
-        //     } else {
-        //         const newpoints: Point[] = [];
-        //         for (let i=0; i<newpoints.length; i++) {
-        //             if (i===0) {
-        //                 left.push(points[i]);
-        //             }
-                    
-        //             if(i==newpoints.length-1) {
-        //                 right.push(points[i+1]);
-        //             }
-        //             newpoints[i] = (1-t) * points[i] + t * points[i+1]
-        //         }
- 
-        //         splitCurve(newpoints, t)
-        //     }
-        // }; 
-        // splitCurve(points, NUMPOINTS);
-
-        
-
-
-
     };
 
     // Returns a point on the Bezier curve between its start point and

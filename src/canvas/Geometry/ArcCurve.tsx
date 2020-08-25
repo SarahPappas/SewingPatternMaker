@@ -1,8 +1,6 @@
 import { Curve } from './Curve';
 import { Point } from './Point';
 import { Vector } from './Vector';
-import { BestCurveSelector } from './BestCurveSelector';
-import { CurveFitter } from './CurveFitter';
 import { Line } from './Line';
 import { PathIntersection } from 'canvas/PathIntersection';
 
@@ -36,65 +34,32 @@ export class ArcCurve extends Curve {
         }
     }
 
+    /* 
+    * Splits an arc into two arcs.
+    * Precondition: point given must be a point on the arc.
+    */
     split = (point: Point): ArcCurve[] => {
         const curves:  ArcCurve[] = [];
-
-        const points = this.computePoints();
-
-        // let index = -1;
-        // points.forEach((pt, i) => { 
-        //     if (pt.isWithinRadius(point, 10)) {
-        //         index = i;
-        //         return true;
-        //     }
-        // });
-
         const originToSplitPoint = Vector.vectorBetweenPoints(this.center, point);
         const tangetToArcAtPoint = Vector.findPerpVector(originToSplitPoint);
         const pointOnTangentToArcAtPoint = Point.translate(point, tangetToArcAtPoint);
         const lineOnTangentToArcAtPoint = new Line(point, pointOnTangentToArcAtPoint);
         const lineFromStartToOldControlPoint = new Line(this.start, this.control);
 
-        const control1 = PathIntersection.findPotentialIntersectionPoint(lineOnTangentToArcAtPoint, lineFromStartToOldControlPoint);
+        const control1 = PathIntersection.findPotentialIntersectionPointOfTwoLines(lineOnTangentToArcAtPoint, lineFromStartToOldControlPoint);
         if (!control1) {
             throw new Error('Cannont find control point from first Arc in Arc split');
         }
         curves.push(new ArcCurve(this.start, point, control1));
 
         const lineFromEndToOldControlPoint = new Line(this.end, this.control);
-        const control2 = PathIntersection.findPotentialIntersectionPoint(lineOnTangentToArcAtPoint, lineFromEndToOldControlPoint);
+        const control2 = PathIntersection.findPotentialIntersectionPointOfTwoLines(lineOnTangentToArcAtPoint, lineFromEndToOldControlPoint);
         if (!control2) {
             throw new Error('Cannont find control point from second Arc in Arc split');
         }
         curves.push(new ArcCurve(point, this.end, control2));
 
         return curves;
-
-
-
-
-        // control 1
-        //intersection between line from start to old control
-        // and tangent the circle at point X
-
-
-
-
-        // const index = originalPoints.findIndex(pt => pt.equals(point));
-        // TODO find index a different way. check within radius for point.
-        // console.log("arc slice index", index);
-        // const pointsOnCurve1 = originalPoints.slice(0, index);
-        // const pointsOnCurve2 = originalPoints.slice(index, originalPoints.length - 1);
-
-        // let curveSelector = new BestCurveSelector(originalPoints, originalPoints.length);
-        // CurveFitter.guessAndCheckControlPointsForBestArcCurve(this.start, point, curveSelector);
-        // curves.push(curveSelector.getBestCurve() as ArcCurve);
-
-        // curveSelector = new BestCurveSelector(originalPoints, originalPoints.length);
-        // CurveFitter.guessAndCheckControlPointsForBestArcCurve(point, this.end, curveSelector);
-        // curves.push(curveSelector.getBestCurve() as ArcCurve);
-
-        // return curves;
     }
 
     private _computeCenter = (): Point => {

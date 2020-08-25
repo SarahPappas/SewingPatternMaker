@@ -51,7 +51,7 @@ export class CurveFitter {
         }
     };
 
-    static guessAndCheckControlPointsForBestArcCurve = (startPoint: Point, endPoint: Point, curveSelector: BestCurveSelector): void => {      
+    private static guessAndCheckControlPointsForBestArcCurve = (startPoint: Point, endPoint: Point, curveSelector: BestCurveSelector): void => {      
         // Test arc curves with control points along the midline between start and end.
         for (let i = -500; i <= 500; i += 10) {
             // If i = 0, getPointOnMidline will return the middle point between start and end

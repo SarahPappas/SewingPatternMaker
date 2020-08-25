@@ -8,7 +8,6 @@ import { FreeLinePath } from './PatternPaths/FreeLinePath';
 import { StraightLinePath } from './PatternPaths/StraightLinePath';
 
 export class PathIntersection {
-
     static splitAtIntersection = (interesection: Point, path: PatternPath) => {
         const originalSegment = path.getSegment();
         const splitSegments = originalSegment.split(interesection);
@@ -25,11 +24,9 @@ export class PathIntersection {
         }
 
         return paths;
-        // TODO add a replace path function because otherwise, when user clicks delete it removes the wrong path.
-        // TODO split curves mathematically because they don't come out right.
-        // TODO sometimes a line still gets through, investigate bug.
     };
 
+    /* Finds the intersection of a line segement between point and the last point on currPath and any other patterPath. */
     static findIntersection = (point: Point, curPath: PatternPath, allPaths: PatternPath[]): {point: Point; pathCrossed: PatternPath} | null => {
         const numPointsInCurrPath = curPath.getPoints().length;
         if (!curPath || !numPointsInCurrPath) {
@@ -66,6 +63,7 @@ export class PathIntersection {
             }
 
             // Get points to compare, depending on the Segment type.
+            // TODO REMOVE compupte points, we can jut use patternpath points because they should be updated with segemnt points.
             let comparePts: Point [] = [];
             if (compareSegment instanceof Curve) {
                 comparePts = compareSegment.computePoints();
@@ -88,7 +86,7 @@ export class PathIntersection {
         
             for (let j = 1; j < comparePts.length; j++ ) {
                 const thatL = new Line(comparePts[j], comparePts[j - 1]);
-                const intersectionPoint = PathIntersection.findPotentialIntersectionPoint(thisL, thatL);
+                const intersectionPoint = PathIntersection.findIntersectionPointOfTwoLineSegments(thisL, thatL);
                 if (intersectionPoint) {
                     return {point: intersectionPoint, pathCrossed: allPaths[i]};
                 }
@@ -98,6 +96,7 @@ export class PathIntersection {
         return null;
     };
 
+    /* Checks if bounding boxes of two pattern paths overlap. */
     static doBoundingBoxesOverlap = (thisP: PatternPath, thatP: PatternPath): boolean => {
         const thisBB = new BoundingBox(thisP.getPoints());
         const thatBB = new BoundingBox(thatP.getPoints());
@@ -115,9 +114,8 @@ export class PathIntersection {
         return true; 
     }
 
-    /* Finds intersection on line, then checks to see if that intersection point is within the 
-        line segment.*/
-    static findPotentialIntersectionPoint = (thisL: Line, thatL: Line): Point | null => { 
+    /* Finds an intersection point of two lines */ 
+    static findPotentialIntersectionPointOfTwoLines = (thisL: Line, thatL: Line): Point | null => { 
         // Line AB represented as a1x + b1y = c1 
         const a1 = thisL.getEnd().y - thisL.getStart().y; 
         const b1 = thisL.getStart().x - thisL.getEnd().x; 
@@ -138,20 +136,28 @@ export class PathIntersection {
 
         const x = (b2*c1 - b1*c2)/determinant; 
         const y = (a1*c2 - a2*c1)/determinant; 
-        const possibleIntersection = new Point(x, y);
+        return new Point(x, y);
+    };
 
-        // Threshold for checking if a point is on a line. 
+    /* Finds intersection on a line segment by frist finding the intersection of the two lines,
+       then checking to see if that intersection point is within the line segment.*/
+    private static findIntersectionPointOfTwoLineSegments = (thisL: Line, thatL: Line): Point | null => {
+        const potentialIntersectionPoint = PathIntersection.findPotentialIntersectionPointOfTwoLines(thisL, thatL);
+
+               // Threshold for checking if a point is on a line. 
         // Range from 0 to 1, with 0 being the tightest and 1 being the loosest.
         const THRESHOLD = .1;
-        if (PathIntersection._isPointOnLine(possibleIntersection, thisL, THRESHOLD)
-            && PathIntersection._isPointOnLine(possibleIntersection, thatL, THRESHOLD)) {
-            return possibleIntersection;
+        if (potentialIntersectionPoint &&
+            PathIntersection._isPointOnLineSegment(potentialIntersectionPoint, thisL, THRESHOLD)
+            && PathIntersection._isPointOnLineSegment(potentialIntersectionPoint, thatL, THRESHOLD)) {
+            return potentialIntersectionPoint;
         }
 
         return null;
-    };
+    }
 
-    private static _isPointOnLine = (point: Point, line: Line, threshold: number): boolean => {
+    /* Checks if a point is on a line segement. */
+    private static _isPointOnLineSegment = (point: Point, line: Line, threshold: number): boolean => {
         const startToPoint = Vector.vectorBetweenPoints(line.getStart(), point);
         const startToEnd = Vector.vectorBetweenPoints(line.getStart(), line.getEnd());
 

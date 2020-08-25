@@ -10,13 +10,15 @@ export abstract class PatternPath implements IPatternPath {
     protected _lastIndexAddedToPath2D: number;
     protected _fittedSegment: Segment | null;
 
-    constructor (pathType: PatternPathType) {
+    constructor (pathType: PatternPathType, fittedSegment?: Segment) {
         this._type = pathType;
-        this._points = new Array<Point>();
+        this._points = fittedSegment ? fittedSegment.computePoints() : new Array<Point>();
         this._path2D = new Path2D();
-        this._isPath2DValid = false;
+        this._isPath2DValid = Boolean(fittedSegment);
         this._lastIndexAddedToPath2D = -1;
-        this._fittedSegment = null;
+        this._fittedSegment = fittedSegment || null;
+
+        this._fittedSegment?.draw(this._path2D);
     }
 
     getPoints = (): Point[] => {
@@ -139,7 +141,12 @@ export abstract class PatternPath implements IPatternPath {
         return this._fittedSegment;
     };
 
-    abstract setFittedSegment(): void;
+    setFittedSegment= (): void => {
+        this._setFittedSegment();
+        this._points = this._fittedSegment ? this._fittedSegment.computePoints() : new Array<Point>();
+    }
+
+    protected abstract _setFittedSegment(): void;
     protected abstract _updatePath2D(): void;
     protected abstract _addPoint(point: Point): void;
 }

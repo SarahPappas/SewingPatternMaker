@@ -62,7 +62,7 @@ export class ArcCurve extends Curve {
         curves.push(new ArcCurve(this.start, point, control1));
 
         const lineFromEndToOldControlPoint = new Line(this.end, this.control);
-        const control2 = PathIntersection.findPotentialIntersectionPoint(lineOnTangentToArcAtPoint, lineFromStartToOldControlPoint);
+        const control2 = PathIntersection.findPotentialIntersectionPoint(lineOnTangentToArcAtPoint, lineFromEndToOldControlPoint);
         if (!control2) {
             throw new Error('Cannont find control point from second Arc in Arc split');
         }

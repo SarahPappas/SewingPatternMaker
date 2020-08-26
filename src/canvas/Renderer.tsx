@@ -80,6 +80,7 @@ export class Renderer implements IRenderer {
                 intersection = PathIntersection.findIntersectionOfPatternPathsByLineSeg(this._currPath, paths);
                 if (intersection) {
                     this._isTracing = false;
+                    this._currPath.addPoint(intersection.point);
                     this._currPath.snapEndpoints(this._document.getPatternPaths());
                     this._currPath.setFittedSegment();
                     const splitPaths = PathIntersection.splitAtIntersection(intersection.point, intersection.pathCrossed);
@@ -218,7 +219,7 @@ export class Renderer implements IRenderer {
             this._currPath.addPoint(position);
             this._currPath.snapEndpoints(this._document.getPatternPaths());
             this._currPath.setFittedSegment();
-
+            console.log("paths", this._document.getPatternPaths());
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }
         this._resetTracing();

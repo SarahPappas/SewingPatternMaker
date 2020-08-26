@@ -1,6 +1,6 @@
 import { PatternPath } from "./PatternPath";
 import { CurveFitter } from '../Geometry/CurveFitter';
-import { Point } from "../Geometry/Point";
+import { Point } from '../Geometry/Point';
 
 export class FreeLinePath extends PatternPath {    
     protected _setFittedSegment = (): void => {

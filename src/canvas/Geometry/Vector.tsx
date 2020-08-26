@@ -64,7 +64,7 @@ export class Vector {
         return new Vector(-1 * vector.y, vector.x);
     };
 
-    // Returns the value of the dot product between the two inputted vectors.
+    // Returns the value of the cross product between the two inputted vectors.
     static normOfCrossProduct = (v1: Vector, v2: Vector): number => {
         return Math.abs(v1.x * v2.y - v1.y * v2.x); 
     };

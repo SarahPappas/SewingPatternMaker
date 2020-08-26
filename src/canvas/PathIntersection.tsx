@@ -1,7 +1,6 @@
 import { Line } from 'canvas/Geometry/Line';
 import { PatternPath } from 'canvas/PatternPaths/PatternPath';
 import { Point } from './Geometry/Point';
-import { Vector } from './Geometry/Vector';
 import { BoundingBox } from './Geometry/BoundingBox';
 import { FreeLinePath } from './PatternPaths/FreeLinePath';
 import { StraightLinePath } from './PatternPaths/StraightLinePath';
@@ -109,8 +108,8 @@ export class PathIntersection {
         // Range from 0 to 1, with 0 being the tightest and 1 being the loosest.
         const THRESHOLD = .1;
         if (potentialIntersectionPoint &&
-            PathIntersection._isPointOnLineSegment(potentialIntersectionPoint, thisL, THRESHOLD)
-            && PathIntersection._isPointOnLineSegment(potentialIntersectionPoint, thatL, THRESHOLD)) {
+            thisL.isPointOnLineSegment(potentialIntersectionPoint, THRESHOLD) &&
+            thatL.isPointOnLineSegment(potentialIntersectionPoint, THRESHOLD)) {
             return potentialIntersectionPoint;
         }
 
@@ -118,29 +117,29 @@ export class PathIntersection {
     };
 
     /* Checks if a point is on a line segement. */
-    private static _isPointOnLineSegment = (point: Point, line: Line, threshold: number): boolean => {
-        const startToPoint = Vector.vectorBetweenPoints(line.getStart(), point);
-        const startToEnd = Vector.vectorBetweenPoints(line.getStart(), line.getEnd());
+    // private static _isPointOnLineSegment = (point: Point, line: Line, threshold: number): boolean => {
+    //     const startToPoint = Vector.vectorBetweenPoints(line.getStart(), point);
+    //     const startToEnd = Vector.vectorBetweenPoints(line.getStart(), line.getEnd());
 
-        const cross = Vector.crossProduct(startToPoint, startToEnd);
+    //     const cross = Vector.crossProduct(startToPoint, startToEnd);
         
-        if(cross > threshold) {
-            return false;
-        }
+    //     if(cross > threshold) {
+    //         return false;
+    //     }
         
-        const dxl = line.getEnd().x - line.getStart().x;
-        const dyl = line.getEnd().y - line.getStart().y;
+    //     const dxl = line.getEnd().x - line.getStart().x;
+    //     const dyl = line.getEnd().y - line.getStart().y;
 
-        // Now we know that the point does lie on the line, it is time to check whether it lies between the original points. 
-        // This can be easily done by comparing the x coordinates, if the line is "more horizontal than vertical", or y coordinates otherwise.
-        if (Math.abs(dxl) >= Math.abs(dyl)) {
-            return line.getStart().x <= line.getEnd().x ? 
-                line.getStart().x <= point.x && point.x <= line.getEnd().x :
-                line.getEnd().x <= point.x && point.x <= line.getStart().x;
-        } else {
-            return line.getStart().y <= line.getEnd().y ? 
-                line.getStart().y <= point.y && point.y <= line.getEnd().y :
-                line.getEnd().y <= point.y && point.y <= line.getStart().y;
-        }
-    };
+    //     // Now we know that the point does lie on the line, it is time to check whether it lies between the original points. 
+    //     // This can be easily done by comparing the x coordinates, if the line is "more horizontal than vertical", or y coordinates otherwise.
+    //     if (Math.abs(dxl) >= Math.abs(dyl)) {
+    //         return line.getStart().x <= line.getEnd().x ? 
+    //             line.getStart().x <= point.x && point.x <= line.getEnd().x :
+    //             line.getEnd().x <= point.x && point.x <= line.getStart().x;
+    //     } else {
+    //         return line.getStart().y <= line.getEnd().y ? 
+    //             line.getStart().y <= point.y && point.y <= line.getEnd().y :
+    //             line.getEnd().y <= point.y && point.y <= line.getStart().y;
+    //     }
+    // };
 }

@@ -30,7 +30,34 @@ export class Line extends Segment {
         return points;
     }
 
+    isPointOnLineSegment = (point: Point, threshold: number): boolean => {
+        const startToPoint = Vector.vectorBetweenPoints(this.getStart(), point);
+        const startToEnd = Vector.vectorBetweenPoints(this.getStart(), this.getEnd());
+
+        const cross = Vector.crossProduct(startToPoint, startToEnd);
+        
+        if(cross > threshold) {
+            return false;
+        }
+        
+        const dxl = this.getEnd().x - this.getStart().x;
+        const dyl = this.getEnd().y - this.getStart().y;
+
+        // Now we know that the point does lie on the line, it is time to check whether it lies between the original points. 
+        // This can be easily done by comparing the x coordinates, if the line is "more horizontal than vertical", or y coordinates otherwise.
+        if (Math.abs(dxl) >= Math.abs(dyl)) {
+            return this.getStart().x <= this.getEnd().x ? 
+                this.getStart().x <= point.x && point.x <= this.getEnd().x :
+                this.getEnd().x <= point.x && point.x <= this.getStart().x;
+        } else {
+            return this.getStart().y <= this.getEnd().y ? 
+                this.getStart().y <= point.y && point.y <= this.getEnd().y :
+                this.getEnd().y <= point.y && point.y <= this.getStart().y;
+        }
+    };
+
     protected _drawTo = (path: Path2D): void => {
         path.lineTo(this.end.x, this.end.y);
     };
+
 }

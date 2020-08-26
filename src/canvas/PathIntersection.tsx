@@ -53,7 +53,7 @@ export class PathIntersection {
             }
 
             // Check if paths' bounding boxes overlap, if not paths cannot overlap, so return null.
-            if (!PathIntersection.doBoundingBoxesOverlap(curPath, allPaths[i])) {
+            if (!BoundingBox.checkIfBoundingBoxesOverlap(curPath.getPoints(), allPaths[i].getPoints())) {
                 return null;
             }
             
@@ -95,24 +95,6 @@ export class PathIntersection {
 
         return null;
     };
-
-    /* Checks if bounding boxes of two pattern paths overlap. */
-    static doBoundingBoxesOverlap = (thisP: PatternPath, thatP: PatternPath): boolean => {
-        const thisBB = new BoundingBox(thisP.getPoints());
-        const thatBB = new BoundingBox(thatP.getPoints());
-
-        // If one rectangle to the left of the other rectangle, return false.
-        if (thisBB.minX >= thatBB.maxX || thatBB.minX >= thisBB.maxX) {
-            return false;
-        }
-
-        // If one rectangle is above the other rectangle, return false.
-        if (thisBB.minY >= thatBB.maxY || thatBB.minY >= thisBB.maxY) {
-            return false; 
-        }
-
-        return true; 
-    }
 
     /* Finds an intersection point of two lines */ 
     static findPotentialIntersectionPointOfTwoLines = (thisL: Line, thatL: Line): Point | null => { 

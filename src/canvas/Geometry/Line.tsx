@@ -35,7 +35,7 @@ export class Line extends Segment {
         const startToPoint = Vector.vectorBetweenPoints(this.getStart(), point);
         const startToEnd = Vector.vectorBetweenPoints(this.getStart(), this.getEnd());
 
-        const cross = Vector.crossProduct(startToPoint, startToEnd);
+        const cross = Vector.normOfCrossProduct(startToPoint, startToEnd);
         
         if(cross > threshold) {
             return false;

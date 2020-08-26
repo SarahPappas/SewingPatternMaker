@@ -65,7 +65,7 @@ export class Vector {
     };
 
     // Returns the value of the dot product between the two inputted vectors.
-    static crossProduct = (v1: Vector, v2: Vector): number => {
+    static normOfCrossProduct = (v1: Vector, v2: Vector): number => {
         return v1.x * v2.y - v1.y * v2.x; 
     };
 }

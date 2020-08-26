@@ -30,6 +30,7 @@ export class Line extends Segment {
         return points;
     }
 
+    /* Checks if a point is on a line segement. */
     isPointOnLineSegment = (point: Point, threshold: number): boolean => {
         const startToPoint = Vector.vectorBetweenPoints(this.getStart(), point);
         const startToEnd = Vector.vectorBetweenPoints(this.getStart(), this.getEnd());

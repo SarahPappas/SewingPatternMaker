@@ -115,31 +115,4 @@ export class PathIntersection {
 
         return null;
     };
-
-    /* Checks if a point is on a line segement. */
-    // private static _isPointOnLineSegment = (point: Point, line: Line, threshold: number): boolean => {
-    //     const startToPoint = Vector.vectorBetweenPoints(line.getStart(), point);
-    //     const startToEnd = Vector.vectorBetweenPoints(line.getStart(), line.getEnd());
-
-    //     const cross = Vector.crossProduct(startToPoint, startToEnd);
-        
-    //     if(cross > threshold) {
-    //         return false;
-    //     }
-        
-    //     const dxl = line.getEnd().x - line.getStart().x;
-    //     const dyl = line.getEnd().y - line.getStart().y;
-
-    //     // Now we know that the point does lie on the line, it is time to check whether it lies between the original points. 
-    //     // This can be easily done by comparing the x coordinates, if the line is "more horizontal than vertical", or y coordinates otherwise.
-    //     if (Math.abs(dxl) >= Math.abs(dyl)) {
-    //         return line.getStart().x <= line.getEnd().x ? 
-    //             line.getStart().x <= point.x && point.x <= line.getEnd().x :
-    //             line.getEnd().x <= point.x && point.x <= line.getStart().x;
-    //     } else {
-    //         return line.getStart().y <= line.getEnd().y ? 
-    //             line.getStart().y <= point.y && point.y <= line.getEnd().y :
-    //             line.getEnd().y <= point.y && point.y <= line.getStart().y;
-    //     }
-    // };
 }

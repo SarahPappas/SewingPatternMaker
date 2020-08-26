@@ -25,56 +25,6 @@ export class PathIntersection {
         return paths;
     };
 
-    /* Finds the intersection of a line segement between point and the last point on currPath and any other patterPath. */
-    static findIntersection = (point: Point, curPath: PatternPath, allPaths: PatternPath[]): IIntersection | null => {
-        const numPointsInCurrPath = curPath.getPoints().length;
-        if (!curPath || !numPointsInCurrPath) {
-            return null;
-        }
-        
-        // The line segment where we are are searching for interesection should be a line between the current point and last point added.
-        let prevPtIndex = numPointsInCurrPath - 1;
-        // Keep this, because sometimes onMouseMove has already added this point
-        while(prevPtIndex >= 0 && curPath.getPoints()[prevPtIndex].equals(point)) {
-            prevPtIndex--;
-        }
-
-        if (prevPtIndex < 0) {
-            return null;
-        }
-
-        const thisLine = new Line(curPath.getPoints()[prevPtIndex], point);
-        
-        for (let i = 0; i < allPaths.length; i++) {
-            // If the current path is the path this iteration, do not look for interstection.
-            if (allPaths[i] === curPath) {
-                return null;
-            }
-
-            // Check if paths' bounding boxes overlap, if not paths cannot overlap, so return null.
-            if (!BoundingBox.checkIfBoundingBoxesOverlap(curPath.getPoints(), allPaths[i].getPoints())) {
-                return null;
-            }
-
-            const thatPoints = allPaths[i].getPoints();
-            const thatFirstPoint = thatPoints[0];
-            const thatLasPoint = thatPoints[thatPoints.length - 1];
-            
-            // If the point is within a radius of an endpoint, we should snap to that endpoint.
-            if (point.isWithinRadius(thatFirstPoint, 10)) {
-                return {point: thatLasPoint, pathCrossed: allPaths[i]};
-            }
-
-            if (point.isWithinRadius(thatFirstPoint, 10)) {
-                return {point: thatLasPoint, pathCrossed: allPaths[i]};
-            }
-
-            return PathIntersection.findIntersectionOfLineSegmentAndPath(thisLine, allPaths[i]);
-        }
-
-        return null;
-    };
-
     /* Finds an intersection point of two lines */ 
     static findPotentialIntersectionPointOfTwoLines = (thisL: Line, thatL: Line): Point | null => { 
         // Line AB represented as a1x + b1y = c1 
@@ -100,24 +50,64 @@ export class PathIntersection {
         return new Point(x, y);
     };
 
-    private static findIntersectionOfLineSegmentAndPath = (lineSegment: Line, path: PatternPath): IIntersection | null => {
+    /* Checks for an intersection between one patternPath and an array of pattern paths */
+    static findIntersectionOfPatternPathsByLineSeg = (thisPath: PatternPath, paths: PatternPath[]): IIntersection | null => {
+        if (!thisPath || !paths) {
+            return null;
+        }
+
+        const pointsOnThisPath = thisPath.getPoints();
+        if (pointsOnThisPath.length < 2) {
+            return null;
+        }
+
+        const lastPointOnThisPath = pointsOnThisPath[pointsOnThisPath.length - 1];
+        const prevPointOnThisPath = pointsOnThisPath[pointsOnThisPath.length - 2];
+        const thisLineSeg = new Line(prevPointOnThisPath, lastPointOnThisPath);
+        console.log("this path", thisPath);
+        console.log("paths", paths);
+        for (let i = 0; i < paths.length; i++) {
+            const thatPath = paths[i];
+            if (thisPath === thatPath) {
+                continue;
+            }
+
+            const pointsOnThatPath = thatPath.getPoints();
+            // Check if paths' bounding boxes overlap, if not paths cannot overlap, so return null.
+            if (!BoundingBox.checkIfBoundingBoxesOverlap(pointsOnThisPath, pointsOnThatPath)) {
+                return null;
+            }
+
+            const intersection = PathIntersection._findIntersectionOfLineSegmentAndPath(thisLineSeg, thatPath);
+            if (intersection) {
+                return intersection;
+            }
+        }
+
+        return null;
+    };
+
+    /* Finds the intersection between a lineSegment and a path by taking each pair of consecutive points
+       and creating a line segment to check for an intersection on. */
+    private static _findIntersectionOfLineSegmentAndPath = (thisLineSeg: Line, path: PatternPath): IIntersection | null => {
         const points = path.getPoints();
         for (let i = 1; i < points.length; i++ ) {
-            const thatLine = new Line(points[i], points[i - 1]);
-            const intersectionPoint = PathIntersection.findIntersectionPointOfTwoLineSegments(lineSegment, thatLine);
+            const thatLineSeg = new Line(points[i], points[i - 1]);
+            const intersectionPoint = PathIntersection._findIntersectionPointOfTwoLineSegments(thisLineSeg, thatLineSeg);
             if (intersectionPoint) {
                 return {point: intersectionPoint, pathCrossed: path};
             }
         }
+
         return null;
     };
 
     /* Finds intersection on a line segment by frist finding the intersection of the two lines,
        then checking to see if that intersection point is within the line segment.*/
-    private static findIntersectionPointOfTwoLineSegments = (thisL: Line, thatL: Line): Point | null => {
+    private static _findIntersectionPointOfTwoLineSegments = (thisL: Line, thatL: Line): Point | null => {
         const potentialIntersectionPoint = PathIntersection.findPotentialIntersectionPointOfTwoLines(thisL, thatL);
 
-               // Threshold for checking if a point is on a line. 
+        // Threshold for checking if a point is on a line. 
         // Range from 0 to 1, with 0 being the tightest and 1 being the loosest.
         const THRESHOLD = .1;
         if (potentialIntersectionPoint &&

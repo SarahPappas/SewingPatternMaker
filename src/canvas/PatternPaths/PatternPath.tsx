@@ -91,9 +91,10 @@ export abstract class PatternPath implements IPatternPath {
         let updatedFirstPoint = false;
         let updatedLastPoint = false;
 
-        paths.forEach(path => {
+        for (let i = 0; i < paths.length; i++) {
+            const path = paths[i];
             if (path === this) {
-                return;
+                continue;
             }
             const points = path.getPoints();
 
@@ -120,7 +121,7 @@ export abstract class PatternPath implements IPatternPath {
                 updatedLastPoint = true;
             }
 
-        });
+        }
 
         if (updatedFirstPoint || updatedLastPoint) {
             this._updatePath2D();

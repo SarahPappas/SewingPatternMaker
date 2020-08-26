@@ -64,15 +64,28 @@ export class Renderer implements IRenderer {
         this._canvas.onmousemove = (e) => {
             if (this._isTracing && this._currPath) {
                 const position = new Point(e.offsetX, e.offsetY);
-                const intersection = PathIntersection.findIntersection(position, this._currPath, this._document.getPatternPaths());
+                this._currPath.addPoint(position);
+                const paths = this._document.getPatternPaths();
+                if (paths.length < 2) {
+                    return;
+                }
+
+                let intersection = this._checkEndpointIntersections(position);
                 if (intersection) {
                     this._isTracing = false;
+                    this._endTracing(position);
+                    return;
+                }
+
+                intersection = PathIntersection.findIntersectionOfPatternPathsByLineSeg(this._currPath, paths);
+                if (intersection) {
+                    this._isTracing = false;
+                    this._currPath.snapEndpoints(this._document.getPatternPaths());
                     this._currPath.setFittedSegment();
                     const splitPaths = PathIntersection.splitAtIntersection(intersection.point, intersection.pathCrossed);
                     this._document.replacePatternPath(intersection.pathCrossed, splitPaths);
-                    this._endTracing(intersection.point);
-                } else {
-                    this._currPath.addPoint(position);
+                    this._canvas.dispatchEvent(new Event('endTracing'));
+                    this._resetTracing();
                 }
             }
         };
@@ -135,6 +148,29 @@ export class Renderer implements IRenderer {
 
         this._canvas.onmouseup = null;
         this._canvas.onmouseout = null;
+    };
+
+    private _checkEndpointIntersections = (point: Point): IIntersection | null => {
+        const allPaths = this._document.getPatternPaths();
+        for (let i = 0; i < allPaths.length; i++) {
+            const thatPath = allPaths[i];
+            if (this._currPath === thatPath) {
+                continue;
+            }
+
+            const thatPathPoints = thatPath.getPoints();
+            const thatFirstPoint = thatPathPoints[0];
+            const thatLastPoint = thatPathPoints[thatPathPoints.length - 1];
+            if (point.isWithinRadius(thatFirstPoint, 10)) {
+                return {point: thatFirstPoint, pathCrossed: thatPath};
+            }
+
+            if (point.isWithinRadius(thatLastPoint, 10)) {
+                return {point: thatLastPoint, pathCrossed: thatPath};
+            }
+        }
+
+        return null;
     };
 
     private _draw = (): void => {

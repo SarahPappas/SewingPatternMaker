@@ -64,8 +64,6 @@ export class PathIntersection {
         const lastPointOnThisPath = pointsOnThisPath[pointsOnThisPath.length - 1];
         const prevPointOnThisPath = pointsOnThisPath[pointsOnThisPath.length - 2];
         const thisLineSeg = new Line(prevPointOnThisPath, lastPointOnThisPath);
-        console.log("this path", thisPath);
-        console.log("paths", paths);
         for (let i = 0; i < paths.length; i++) {
             const thatPath = paths[i];
             if (thisPath === thatPath) {
@@ -75,7 +73,7 @@ export class PathIntersection {
             const pointsOnThatPath = thatPath.getPoints();
             // Check if paths' bounding boxes overlap, if not paths cannot overlap, so return null.
             if (!BoundingBox.checkIfBoundingBoxesOverlap(pointsOnThisPath, pointsOnThatPath)) {
-                return null;
+                continue;
             }
 
             const intersection = PathIntersection._findIntersectionOfLineSegmentAndPath(thisLineSeg, thatPath);

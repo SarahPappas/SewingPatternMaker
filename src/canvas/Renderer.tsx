@@ -151,6 +151,10 @@ export class Renderer implements IRenderer {
     };
 
     private _checkEndpointIntersections = (point: Point): IIntersection | null => {
+        if (!this._currPath) {
+            return null;
+        }
+
         const allPaths = this._document.getPatternPaths();
         for (let i = 0; i < allPaths.length; i++) {
             const thatPath = allPaths[i];
@@ -161,12 +165,16 @@ export class Renderer implements IRenderer {
             const thatPathPoints = thatPath.getPoints();
             const thatFirstPoint = thatPathPoints[0];
             const thatLastPoint = thatPathPoints[thatPathPoints.length - 1];
-            if (point.isWithinRadius(thatFirstPoint, 10)) {
-                return {point: thatFirstPoint, pathCrossed: thatPath};
+            const thisPathPoints = this._currPath.getPoints();
+            const thisFirstPoint = thisPathPoints[0];
+            if (point.isWithinRadius(thatFirstPoint, 10) &&
+                !thisFirstPoint.isWithinRadius(thatFirstPoint, 10)) {
+                    return {point: thatFirstPoint, pathCrossed: thatPath};
             }
 
-            if (point.isWithinRadius(thatLastPoint, 10)) {
-                return {point: thatLastPoint, pathCrossed: thatPath};
+            if (point.isWithinRadius(thatLastPoint, 10) &&
+                !thisFirstPoint.isWithinRadius(thatLastPoint, 10)) {
+                    return {point: thatLastPoint, pathCrossed: thatPath};
             }
         }
 

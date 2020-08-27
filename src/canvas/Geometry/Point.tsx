@@ -40,6 +40,10 @@ export class Point implements IPoint {
         return minDistance;
     };
 
+    multiplyByScalar = (scalar: number): Point => {
+        return new Point(this.x * scalar, this.y * scalar);
+    };
+
     static computeMiddlePoint = (p1: Point, p2: Point): Point => {
         const middleX = (p1.x + p2.x) / 2;
         const middleY = (p1.y + p2.y) / 2;
@@ -60,6 +64,10 @@ export class Point implements IPoint {
 
     static translate = (p: Point, displacement: Vector): Point => {
         return new Point(p.x + displacement.x, p.y + displacement.y);
+    };
+
+    static AddPoints = (p1: Point, p2: Point) => {
+        return new Point(p1.x + p2.x, p1.y + p2.y);
     };
 
     toString = (): string => {

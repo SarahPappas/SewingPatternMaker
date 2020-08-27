@@ -34,5 +34,7 @@ export abstract class Segment {
 
     abstract split(point: Point): Segment[];
 
+    abstract isPointNearSegment (point: Point, threshold: number): Point | null;
+
     protected abstract _drawTo(path: Path2D): void;
 }

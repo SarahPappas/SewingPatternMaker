@@ -67,6 +67,22 @@ export abstract class Curve extends Segment {
         }
     };
 
+    /* 
+     * Checks if a point is near the curve by computing a number of points on taht curve 
+     * and then checking if the given point is within a radius at the given threshold of 
+     * each computed point.
+    */
+    isPointNearSegment = (point: Point, threshold: number): Point | null => {
+        const points = this.computePoints();
+        for (let i = 0; i < points.length; i++) {
+            if (point.isWithinRadius(points[i], threshold)) {
+                return points[i];
+            }
+        }
+
+        return null;
+    };
+
     protected lerp = (start: number, end: number, t: number): number => {
         return start + t * (end - start);
     };

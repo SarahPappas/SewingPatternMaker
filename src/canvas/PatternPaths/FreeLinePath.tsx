@@ -1,4 +1,4 @@
-import { PatternPath } from "./PatternPath";
+import { PatternPath } from './PatternPath';
 import { CurveFitter } from '../Geometry/CurveFitter';
 import { Point } from '../Geometry/Point';
 

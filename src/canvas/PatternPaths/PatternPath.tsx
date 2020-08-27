@@ -83,6 +83,14 @@ export abstract class PatternPath implements IPatternPath {
         return true;
     };
 
+    snapStartToPoint = (point: Point): void => {
+        this._points[0] = point;
+    };
+
+    snapEndToPoint = (point: Point): void => {
+        this._points[this._points.length -1] = point;
+    };
+
     snapEndpoints = (paths: PatternPath[]): void => {
         const myFirstPoint = this._points[0];
         const myLastPoint = this._points[this._points.length - 1];
@@ -102,22 +110,22 @@ export abstract class PatternPath implements IPatternPath {
             const otherLastPoint = points[points.length - 1];
 
             if(!updatedFirstPoint && myFirstPoint.isWithinRadius(otherFirstPoint, radius)) {
-                this._points[0] = otherFirstPoint;
+                this.snapStartToPoint(otherFirstPoint);
                 updatedFirstPoint = true;
             }
 
             if(!updatedFirstPoint && myFirstPoint.isWithinRadius(otherLastPoint, radius)) {
-                this._points[0] = otherLastPoint;
+                this.snapStartToPoint(otherLastPoint);
                 updatedFirstPoint = true;
             }
 
             if(!updatedLastPoint && myLastPoint.isWithinRadius(otherFirstPoint, radius)) {
-                this._points[this._points.length] = otherFirstPoint;
+                this.snapEndToPoint(otherFirstPoint);
                 updatedLastPoint = true;
             }
 
             if(!updatedLastPoint && myLastPoint.isWithinRadius(otherLastPoint, radius)) {
-                this._points[this._points.length] = otherLastPoint;
+                this.snapEndToPoint(otherLastPoint);
                 updatedLastPoint = true;
             }
 

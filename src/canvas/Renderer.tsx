@@ -70,15 +70,16 @@ export class Renderer implements IRenderer {
                     return;
                 }
 
+                const firstPoint = this._currPath.getPoints()[0];
                 let intersection = this._checkEndpointIntersections(position);
-                if (intersection) {
+                if (intersection && !intersection.point.isWithinRadius(firstPoint, 10)) {
                     this._isTracing = false;
                     this._endTracing(position);
                     return;
                 }
 
                 intersection = PathIntersection.findIntersectionOfPatternPathsByLineSeg(this._currPath, paths);
-                if (intersection) {
+                if (intersection && !intersection.point.isWithinRadius(firstPoint, 10)) {
                     this._isTracing = false;
                     this._endTracing(intersection.point, this._handleIntersection.bind(null, intersection));
                 }
@@ -160,20 +161,28 @@ export class Renderer implements IRenderer {
             const thatPathPoints = thatPath.getPoints();
             const thatFirstPoint = thatPathPoints[0];
             const thatLastPoint = thatPathPoints[thatPathPoints.length - 1];
-            const thisPathPoints = this._currPath.getPoints();
-            const thisFirstPoint = thisPathPoints[0];
-            if (point.isWithinRadius(thatFirstPoint, 10) &&
-                !thisFirstPoint.isWithinRadius(thatFirstPoint, 10)) {
-                    return {point: thatFirstPoint, pathCrossed: thatPath};
+            if (point.isWithinRadius(thatFirstPoint, 10)) {
+                return {point: thatFirstPoint, pathCrossed: thatPath};
             }
 
-            if (point.isWithinRadius(thatLastPoint, 10) &&
-                !thisFirstPoint.isWithinRadius(thatLastPoint, 10)) {
-                    return {point: thatLastPoint, pathCrossed: thatPath};
+            if (point.isWithinRadius(thatLastPoint, 10)) {
+                return {point: thatLastPoint, pathCrossed: thatPath};
             }
         }
 
         return null;
+    };
+
+    private _checkPathStartIntersectionAndSplit = (path: PatternPath, paths: PatternPath[]): void => {
+        if (this._checkEndpointIntersections(path.getPoints()[path.getPoints().length - 1])) {
+            return;
+        }
+
+        const intersection = PathIntersection.findPathStartIntersectAlongPatternPath(path, paths);
+        if (intersection) {
+            path.snapStartToPoint(intersection.point);
+            this._handleIntersection(intersection);
+        }
     };
 
     private _draw = (): void => {
@@ -216,6 +225,7 @@ export class Renderer implements IRenderer {
             if (callback) {
                 callback();
             }
+            this._checkPathStartIntersectionAndSplit(this._currPath, this._document.getPatternPaths());
             console.log("paths", this._document.getPatternPaths());
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }

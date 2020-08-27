@@ -80,13 +80,7 @@ export class Renderer implements IRenderer {
                 intersection = PathIntersection.findIntersectionOfPatternPathsByLineSeg(this._currPath, paths);
                 if (intersection) {
                     this._isTracing = false;
-                    this._currPath.addPoint(intersection.point);
-                    this._currPath.snapEndpoints(this._document.getPatternPaths());
-                    this._currPath.setFittedSegment();
-                    const splitPaths = PathIntersection.splitAtIntersection(intersection.point, intersection.pathCrossed);
-                    this._document.replacePatternPath(intersection.pathCrossed, splitPaths);
-                    this._canvas.dispatchEvent(new Event('endTracing'));
-                    this._resetTracing();
+                    this._endTracing(intersection.point, this._handleIntersection.bind(null, intersection));
                 }
             }
         };
@@ -214,15 +208,23 @@ export class Renderer implements IRenderer {
         });
     };
 
-    private _endTracing = (position: Point): void => {
+    private _endTracing = (position: Point, callback?: Function): void => {
         if (this._currPath) {
             this._currPath.addPoint(position);
             this._currPath.snapEndpoints(this._document.getPatternPaths());
             this._currPath.setFittedSegment();
+            if (callback) {
+                callback();
+            }
             console.log("paths", this._document.getPatternPaths());
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }
         this._resetTracing();
+    };
+
+    private _handleIntersection = (intersection: IIntersection): void => {
+        const splitPaths = PathIntersection.splitAtIntersection(intersection.point, intersection.pathCrossed);
+        this._document.replacePatternPath(intersection.pathCrossed, splitPaths);
     };
 
     private _resetTracing = (): void => {

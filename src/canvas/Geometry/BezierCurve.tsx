@@ -31,9 +31,10 @@ export class BezierCurve extends Curve {
     };
 
     private _findT = (point: Point): number => {
+        const EPSILON = 1e-3;
         const solx = this._solveQuadratic(this.start.x - 2 * this.control.x + this.end.x, 2 * (this.control.x - this.start.x), this.start.x - point.x);
         const soly = this._solveQuadratic(this.start.y - 2 * this.control.y + this.end.y, 2 * (this.control.y - this.start.y), this.start.y - point.y);
-        const solInCommon = solx.filter(sx => soly.some(sy => Math.abs(sx - sy) < 1e-3));
+        const solInCommon = solx.filter(sx => soly.some(sy => Math.abs(sx - sy) < EPSILON));
         
         if (solInCommon.length !== 1) {
             throw new Error("could not find t");

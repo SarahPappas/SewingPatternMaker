@@ -28,5 +28,5 @@ export class PathSelection {
     clear = (): void => {
         this._selectedPath = null;
         this._highlightedPath = null;
-    }
+    };
 }

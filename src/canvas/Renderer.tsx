@@ -146,6 +146,13 @@ export class Renderer implements IRenderer {
         this._canvas.onmouseout = null;
     };
 
+    finalReviewInit = (): void => {
+        this._pathSelection.clear();
+
+        this._canvas.onmousedown = null;
+        this._canvas.onmousemove = null;
+    };
+
     private _checkEndpointIntersections = (point: Point): IIntersection | null => {
         if (!this._currPath) {
             return null;

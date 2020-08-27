@@ -84,6 +84,7 @@ export class PathIntersection {
         return null;
     };
 
+    /* Finds if the start point of a path intersects with any other path, and if so, returns that intersection point.*/
     static findPathStartIntersectAlongPatternPath = (path: PatternPath, paths: PatternPath[]): IIntersection | null => {
         for (let i = 0; i < paths.length; i++) {
             const thatPath = paths[i];
@@ -120,7 +121,10 @@ export class PathIntersection {
     };
 
     /* Finds intersection on a line segment by frist finding the intersection of the two lines,
-       then checking to see if that intersection point is within the line segment.*/
+     * then checking to see if that intersection point is within the line segment.
+     * TODO: Implement optimzation to make intersectin check quicker. We discussed possibly using this algorithm:
+     * https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
+    */
     private static _findIntersectionPointOfTwoLineSegments = (thisL: Line, thatL: Line): Point | null => {
         const potentialIntersectionPoint = PathIntersection.findPotentialIntersectionPointOfTwoLines(thisL, thatL);
 

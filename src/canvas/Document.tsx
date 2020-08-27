@@ -61,10 +61,10 @@ export class Document implements IDocument {
             }
 
             // Check if end point matches any other endpoint.
-            for (let j = 0; j < endpoints.length && !endpoints[i].matched; j++) {
+            for (let j = i + 1; j < endpoints.length; j++) {
                 const o = endpoints[j];
 
-                if (o === endpoints[i]) {
+                if (o === endpoints[i] || o.matched) {
                     continue;
                 }
 

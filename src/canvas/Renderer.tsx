@@ -181,10 +181,6 @@ export class Renderer implements IRenderer {
     };
 
     private _checkPathStartIntersectionAndSplit = (path: PatternPath, paths: PatternPath[]): void => {
-        if (this._checkEndpointIntersections(path.getPoints()[path.getPoints().length - 1])) {
-            return;
-        }
-
         const intersection = PathIntersection.findPathStartIntersectAlongPatternPath(path, paths);
         if (intersection) {
             path.snapStartToPoint(intersection.point);

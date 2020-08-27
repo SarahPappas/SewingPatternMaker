@@ -84,6 +84,26 @@ export class PathIntersection {
         return null;
     };
 
+    static findPathStartIntersectAlongPatternPath = (path: PatternPath, paths: PatternPath[]): IIntersection | null => {
+        for (let i = 0; i < paths.length; i++) {
+            const thatPath = paths[i];
+            if (path === thatPath) {
+                continue;
+            }
+
+            const thatPathPoints = thatPath.getPoints();
+            const intersectionPoint = thatPath.getFittedSegment()?.isPointNearSegment(path.getPoints()[0], 10);
+            if (intersectionPoint?.equals(thatPathPoints[0]) || intersectionPoint?.equals(thatPathPoints[thatPathPoints.length - 1])) {
+                continue;
+            }
+
+            if (intersectionPoint) {
+                return {point: intersectionPoint, pathCrossed: thatPath};
+            }
+        }
+        return null;
+    };
+
     /* Finds the intersection between a lineSegment and a path by taking each pair of consecutive points
        and creating a line segment to check for an intersection on. */
     private static _findIntersectionOfLineSegmentAndPath = (thisLineSeg: Line, path: PatternPath): IIntersection | null => {

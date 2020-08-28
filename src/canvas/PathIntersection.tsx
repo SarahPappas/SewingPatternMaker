@@ -6,7 +6,7 @@ import { FreeLinePath } from './PatternPaths/FreeLinePath';
 import { StraightLinePath } from './PatternPaths/StraightLinePath';
 
 export class PathIntersection {
-    static splitAtIntersection = (interesection: Point, path: PatternPath) => {
+    static splitAtIntersection = (interesection: Point, path: PatternPath): PatternPath[] => {
         const originalSegment = path.getSegment();
         const splitSegments = originalSegment.split(interesection);
         if (splitSegments.length !== 2) {

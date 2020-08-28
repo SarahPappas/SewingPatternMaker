@@ -62,19 +62,19 @@ export class BoundingBox {
 
     /* Checks if bounding boxes of two pattern paths overlap. */
     static checkIfBoundingBoxesOverlap = (thisPts: Point[], thatPts: Point[]): boolean => {
-        const thisBB = new BoundingBox(thisPts);
-        const thatBB = new BoundingBox(thatPts);
+        const a = new BoundingBox(thisPts);
+        const b = new BoundingBox(thatPts);
 
         // If one rectangle to the left of the other rectangle, return false.
-        if (thisBB.minX >= thatBB.maxX || thatBB.minX >= thisBB.maxX) {
+        if (a.minX > b.maxX || b.minX > a.maxX) {
             return false;
         }
 
         // If one rectangle is above the other rectangle, return false.
-        if (thisBB.minY >= thatBB.maxY || thatBB.minY >= thisBB.maxY) {
+        if (a.minY > b.maxY || b.minY > a.maxY) {
             return false; 
         }
 
         return true; 
-    }
+    };
 }

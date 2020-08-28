@@ -60,7 +60,7 @@ export class ArcCurve extends Curve {
         curves.push(new ArcCurve(point, this.end, control2));
 
         return curves;
-    }
+    };
 
     private _computeCenter = (): Point => {
         let centerX;

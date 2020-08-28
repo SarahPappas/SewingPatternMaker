@@ -28,7 +28,7 @@ export class Line extends Segment {
         points.push(this.getStart());
         points.push(this.getEnd());
         return points;
-    }
+    };
 
     /* Checks if a point is on a line segement. */
     isPointOnLineSegment = (point: Point, threshold: number): boolean => {

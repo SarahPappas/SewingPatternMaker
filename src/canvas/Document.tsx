@@ -42,7 +42,7 @@ export class Document implements IDocument {
         pathsToInsert.forEach(path => {
             this._patternPaths.splice(index, 0, path);
         });
-    }
+    };
 
     arePatternPiecesEnclosed = (): boolean => {
         const endpoints: {point: Point; matched: boolean}[] = [];
@@ -64,7 +64,7 @@ export class Document implements IDocument {
             for (let j = i + 1; j < endpoints.length; j++) {
                 const o = endpoints[j];
 
-                if (o === endpoints[i] || o.matched) {
+                if (o.matched) {
                     continue;
                 }
 

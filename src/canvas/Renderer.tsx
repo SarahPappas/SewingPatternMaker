@@ -224,11 +224,11 @@ export class Renderer implements IRenderer {
         if (this._currPath) {
             this._currPath.addPoint(position);
             this._currPath.snapEndpoints(this._document.getPatternPaths());
+            this._checkPathStartIntersectionAndSplit(this._currPath, this._document.getPatternPaths());
             this._currPath.setFittedSegment();
             if (callback) {
                 callback();
             }
-            this._checkPathStartIntersectionAndSplit(this._currPath, this._document.getPatternPaths());
             console.log("paths", this._document.getPatternPaths());
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }

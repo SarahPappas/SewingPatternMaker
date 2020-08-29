@@ -150,11 +150,22 @@ export abstract class PatternPath implements IPatternPath {
         return this._fittedSegment;
     };
 
-    setFittedSegment= (): void => {
+    setFittedSegment = (): void => {
         this._setFittedSegment();
         this._points = this._fittedSegment ? this._fittedSegment.computePoints() : new Array<Point>();
-    }
+    };
 
+    splitAtIntersection = (interesection: Point): PatternPath[] => {
+        const originalSegment = this.getSegment();
+        const splitSegments = originalSegment.split(interesection);
+        if (splitSegments.length !== 2) {
+            throw new Error("Split did not return correct number of segments");
+        }
+
+        return this._createPathFromSegment(splitSegments);
+    };
+
+    protected abstract _createPathFromSegment(segments: Segment[]): PatternPath[];
     protected abstract _setFittedSegment(): void;
     protected abstract _updatePath2D(): void;
     protected abstract _addPoint(point: Point): void;

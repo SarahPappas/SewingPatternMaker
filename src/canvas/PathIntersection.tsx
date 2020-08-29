@@ -2,28 +2,8 @@ import { Line } from 'canvas/Geometry/Line';
 import { PatternPath } from 'canvas/PatternPaths/PatternPath';
 import { Point } from './Geometry/Point';
 import { BoundingBox } from './Geometry/BoundingBox';
-import { FreeLinePath } from './PatternPaths/FreeLinePath';
-import { StraightLinePath } from './PatternPaths/StraightLinePath';
 
 export class PathIntersection {
-    static splitAtIntersection = (interesection: Point, path: PatternPath): PatternPath[] => {
-        const originalSegment = path.getSegment();
-        const splitSegments = originalSegment.split(interesection);
-        if (splitSegments.length !== 2) {
-            throw new Error("Split did not return correct number of segments");
-        }
-        const paths = [];
-        if (path instanceof StraightLinePath) {
-            paths.push(new StraightLinePath(path.getType(), splitSegments[0]));
-            paths.push(new StraightLinePath(path.getType(), splitSegments[1]));
-        } else {
-            paths.push(new FreeLinePath(path.getType(), splitSegments[0]));
-            paths.push(new FreeLinePath(path.getType(), splitSegments[1]));
-        }
-
-        return paths;
-    };
-
     /* Finds an intersection point of two lines */ 
     static findPotentialIntersectionPointOfTwoLines = (thisL: Line, thatL: Line): Point | null => { 
         // Line AB represented as a1x + b1y = c1 
@@ -36,13 +16,20 @@ export class PathIntersection {
         const b2 = thatL.getStart().x - thatL.getEnd().x; 
         const c2 = a2*(thatL.getStart().x)+ b2*(thatL.getStart().y); 
       
-        const determinant = a1*b2 - a2*b1; 
+        const determinant = a1*b2 - a2*b1; // TODO, denominator of t and u
       
         if (determinant === 0) 
         { 
             // The lines are parallel, so return null.
             return null; 
         }
+
+        // TODO find the numerator of t and u
+        // Check if t and u are between 0 and 1, and they must both be between 0 and 1 for the point to be on the line
+        // compute point of intersection px and py  (you can make sure they are the same to check.).
+        // The remove unsued code in _findIntersectionPointOfTwoLineSegments
+        // Will return no intersection of the lines are on top each other. comment about what do we do in the scenario, ideally we throw this line away.
+        // https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection second one on page.
 
         const x = (b2*c1 - b1*c2)/determinant; 
         const y = (a1*c2 - a2*c1)/determinant; 

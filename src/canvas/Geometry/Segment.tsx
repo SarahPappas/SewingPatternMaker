@@ -34,6 +34,8 @@ export abstract class Segment {
 
     abstract split(point: Point): Segment[];
 
+    /* Returns null if the point is not within the threshold of the segment.
+     *  Otherwise, it returns the point on the semgent closest to the point provided. */
     abstract isPointNearSegment (point: Point, threshold: number): Point | null;
 
     protected abstract _drawTo(path: Path2D): void;

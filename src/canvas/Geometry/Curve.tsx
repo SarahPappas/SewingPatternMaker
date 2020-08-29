@@ -68,9 +68,10 @@ export abstract class Curve extends Segment {
     };
 
     /* 
-     * Checks if a point is near the curve by computing a number of points on taht curve 
-     * and then checking if the given point is within a radius at the given threshold of 
-     * each computed point.
+     * Returns null if a points is not near the segement, otherwise it returns the closest
+     * point on the segement. Checks if a point is near the curve by computing a number of 
+     * points on that curve and then checking if the given point is within a radius at the 
+     * given threshold of each computed point.
     */
     isPointNearSegment = (point: Point, threshold: number): Point | null => {
         const points = this.computePoints();

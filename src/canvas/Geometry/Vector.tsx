@@ -29,6 +29,17 @@ export class Vector {
         this.y /= value;
     };
 
+    /**
+     * Multiplies the vector by the input scalar
+     * 
+     * @param value 
+     */
+    multiplyByScalar = (value: number): Vector => {
+        this.x *= value;
+        this.y *= value;
+        return this;
+    };
+
     // Returns the value between -PI and PI that represents the angle between 
     // this vector and the positive x axis.
     getAngle = (): number => {

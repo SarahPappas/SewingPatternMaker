@@ -57,7 +57,8 @@ export class Line extends Segment {
         }
     };
 
-    /* Checks if point is near a line segment. If the point is on an endpoint it returns null */
+    /* Returns null if the point is not within the threshold of the segment.
+        *  Otherwise, it returns the point on the semgent closest to the point provided. */
     isPointNearSegment = (point: Point, threshold: number): Point | null => {
         if (this.start.equals(point)) {
             return point;
@@ -67,19 +68,11 @@ export class Line extends Segment {
             return point;
         }
 
+        const startToPoint = Vector.vectorBetweenPoints(this.start, point);
+        const startToEnd = Vector.vectorBetweenPoints(this.start, this.end);
+        const angle =  Vector.changeInAngle(startToPoint, startToEnd);
 
-        const startToPoint = new Line(this.start, point);
-        const startToEnd = new Line(this.start, this.end);
-        let angle = Line.findAngleBetweenLineSegments(startToPoint, startToEnd);
-        /* 
-         * Depending on which point is the start point and which is the end point, our angle could 
-         * be the larger or smaller angle. We always want to use the smaller angle.
-        */
-        if (angle > 90) {
-            angle = 180 - angle;
-        }
-
-        const h = startToPoint.getLength();
+        const h = startToPoint.norm();
         const a = h * Math.cos(angle);
         const d = this.getLength();
         const t = a / d;
@@ -89,10 +82,9 @@ export class Line extends Segment {
             return null;
         }
 
-        // The intersection point = startPoint * (1 - t) + endpoint * t
         // Compare the distance between the point given to the closest point on the line and the threshold.
-        const iPoint = Point.AddPoints(this.start.multiplyByScalar(1 - t), this.end.multiplyByScalar(t));
-        const pointToLine = new Line(point, iPoint).getLength();
+        const iPoint = Point.translate(this.start, startToEnd.multiplyByScalar(t));
+        const pointToLine = point.distanceTo(iPoint);
         if (pointToLine > threshold) {
             return null;
         }
@@ -103,11 +95,4 @@ export class Line extends Segment {
     protected _drawTo = (path: Path2D): void => {
         path.lineTo(this.end.x, this.end.y);
     };
-
-    static findAngleBetweenLineSegments = (a: Line, b: Line): number => {
-        const va = Vector.vectorBetweenPoints(a.start, a.end);
-        const vb = Vector.vectorBetweenPoints(b.start, b.end);
-        return Vector.changeInAngle(va, vb);
-    }
-
 }

@@ -236,7 +236,7 @@ export class Renderer implements IRenderer {
     };
 
     private _handleIntersection = (intersection: IIntersection): void => {
-        const splitPaths = intersection.pathCrossed.splitAtIntersection(intersection.point);
+        const splitPaths = intersection.pathCrossed.splitAtPoint(intersection.point);
         this._document.replacePatternPath(intersection.pathCrossed, splitPaths);
     };
 

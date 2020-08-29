@@ -155,7 +155,7 @@ export abstract class PatternPath implements IPatternPath {
         this._points = this._fittedSegment ? this._fittedSegment.computePoints() : new Array<Point>();
     };
 
-    splitAtIntersection = (interesection: Point): PatternPath[] => {
+    splitAtPoint = (interesection: Point): PatternPath[] => {
         const originalSegment = this.getSegment();
         const splitSegments = originalSegment.split(interesection);
         if (splitSegments.length !== 2) {

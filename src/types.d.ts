@@ -48,5 +48,5 @@ type IRenderer = {
 
 type IIntersection = {
     point: Point; 
-    pathCrossed: PatternPath
+    pathCrossed: PatternPath;
 };

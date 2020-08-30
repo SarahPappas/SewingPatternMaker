@@ -12,7 +12,19 @@ export abstract class PatternPath implements IPatternPath {
 
     constructor (pathType: PatternPathType, fittedSegment?: Segment) {
         this._type = pathType;
-        this._points = fittedSegment ? fittedSegment.computePoints() : new Array<Point>();
+        this._points = new Array<Point>();
+        
+        if (fittedSegment) {
+            const points = fittedSegment.computePoints();
+            if (!points[0].equals(fittedSegment.getStart())) {
+                points.unshift(fittedSegment.getStart());
+            }
+            if (!points[points.length - 1].equals(fittedSegment.getEnd())) {
+                points.push(fittedSegment.getEnd());
+            }
+            this._points = points;
+        }
+
         this._path2D = new Path2D();
         this._isPath2DValid = Boolean(fittedSegment);
         this._lastIndexAddedToPath2D = -1;

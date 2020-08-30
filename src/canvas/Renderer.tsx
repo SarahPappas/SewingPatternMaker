@@ -59,6 +59,8 @@ export class Renderer implements IRenderer {
 
             this._document.addPatternPath(this._currPath);
             this._currPath.addPoint(new Point(e.offsetX, e.offsetY));
+
+            this._checkPathStartIntersectionAndSplit(this._currPath, this._document.getPatternPaths());
         };
 
         this._canvas.onmousemove = (e) => {
@@ -71,14 +73,7 @@ export class Renderer implements IRenderer {
                 }
 
                 const firstPoint = this._currPath.getPoints()[0];
-                let intersection = this._checkEndpointIntersections(position);
-                if (intersection && !intersection.point.isWithinRadius(firstPoint, 10)) {
-                    this._isTracing = false;
-                    this._endTracing(position);
-                    return;
-                }
-
-                intersection = PathIntersection.findIntersectionOfPatternPathsByLineSeg(this._currPath, paths);
+                const intersection = PathIntersection.findIntersectionOfPatternPathsByLineSeg(this._currPath, paths);
                 if (intersection && !intersection.point.isWithinRadius(firstPoint, 10)) {
                     this._isTracing = false;
                     this._endTracing(intersection.point, this._handleIntersection.bind(null, intersection));
@@ -153,36 +148,32 @@ export class Renderer implements IRenderer {
         this._canvas.onmousemove = null;
     };
 
-    private _checkEndpointIntersections = (point: Point): IIntersection | null => {
-        if (!this._currPath) {
-            return null;
-        }
-
-        const allPaths = this._document.getPatternPaths();
-        for (let i = 0; i < allPaths.length; i++) {
-            const thatPath = allPaths[i];
-            if (this._currPath === thatPath) {
-                continue;
-            }
-
-            const thatPathPoints = thatPath.getPoints();
-            const thatFirstPoint = thatPathPoints[0];
-            const thatLastPoint = thatPathPoints[thatPathPoints.length - 1];
-            if (point.isWithinRadius(thatFirstPoint, 10)) {
-                return {point: thatFirstPoint, pathCrossed: thatPath};
-            }
-
-            if (point.isWithinRadius(thatLastPoint, 10)) {
-                return {point: thatLastPoint, pathCrossed: thatPath};
-            }
-        }
-
-        return null;
-    };
-
+    /* Checks if the path starts by intersecting another path. If it does, and that intersection is 
+     * near the start of the intersected path, then the path start is snapped to the start of the 
+     * intersected path. If that intersection is near the end of the intersecte path, then the path start
+     * is snapped to the end of the intersected path. If the path starts near a point along the 
+     * intersected path, then the path start is snapped to that point along the intersected path. 
+     * If the intersected path is crossed at a point along the path and not an endpoint, the
+     * intersected path is bisected at the intersection point and the original path is replaced with
+     * the two new paths in the document. */
     private _checkPathStartIntersectionAndSplit = (path: PatternPath, paths: PatternPath[]): void => {
         const intersection = PathIntersection.findPathStartIntersectAlongPatternPath(path, paths);
         if (intersection) {
+            path.snapStartToPoint(intersection.point);
+
+            const pathCrossedPoints = intersection.pathCrossed.getPoints();
+            const pathCrossedStartPoint = pathCrossedPoints[0];
+            if (intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
+                path.snapStartToPoint(pathCrossedStartPoint);
+                return;
+            }
+
+            const pathCrossedEndPoint = pathCrossedPoints[pathCrossedPoints.length - 1];
+            if (intersection.point.isWithinRadius(pathCrossedEndPoint, 10)) {
+                path.snapStartToPoint(pathCrossedEndPoint);
+                return;
+            }
+
             path.snapStartToPoint(intersection.point);
             this._handleIntersection(intersection);
         }
@@ -224,7 +215,6 @@ export class Renderer implements IRenderer {
         if (this._currPath) {
             this._currPath.addPoint(position);
             this._currPath.snapEndpoints(this._document.getPatternPaths());
-            this._checkPathStartIntersectionAndSplit(this._currPath, this._document.getPatternPaths());
             this._currPath.setFittedSegment();
             if (callback) {
                 callback();

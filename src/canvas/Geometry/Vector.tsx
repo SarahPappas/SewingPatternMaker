@@ -29,6 +29,17 @@ export class Vector {
         this.y /= value;
     };
 
+    /**
+     * Multiplies the vector by the input scalar
+     * 
+     * @param value 
+     */
+    multiplyByScalar = (value: number): Vector => {
+        this.x *= value;
+        this.y *= value;
+        return this;
+    };
+
     // Returns the value between -PI and PI that represents the angle between 
     // this vector and the positive x axis.
     getAngle = (): number => {
@@ -62,5 +73,10 @@ export class Vector {
     // Returns a vector that is perpendicular to the inputted vector.
     static findPerpVector = (vector: Vector): Vector => {
         return new Vector(-1 * vector.y, vector.x);
+    };
+
+    // Returns the value of the cross product between the two inputted vectors.
+    static normOfCrossProduct = (v1: Vector, v2: Vector): number => {
+        return Math.abs(v1.x * v2.y - v1.y * v2.x); 
     };
 }

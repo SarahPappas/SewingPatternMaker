@@ -5,8 +5,8 @@ export class BoundingBox {
     minY = 0;
     height = 0;
     width = 0;
-    private maxX = 0;
-    private maxY = 0;
+    maxX = 0;
+    maxY = 0;
 
     constructor (points: Point[])  { // eslint-disable-line no-dupe-class-members
         if (!points.length) {
@@ -58,5 +58,23 @@ export class BoundingBox {
 
     private calcWidth = (): void => {
         this.width = this.maxX - this.minX;
+    };
+
+    /* Checks if bounding boxes of two pattern paths overlap. */
+    static checkIfBoundingBoxesOverlap = (thisPts: Point[], thatPts: Point[]): boolean => {
+        const a = new BoundingBox(thisPts);
+        const b = new BoundingBox(thatPts);
+
+        // If one rectangle to the left of the other rectangle, return false.
+        if (a.minX > b.maxX || b.minX > a.maxX) {
+            return false;
+        }
+
+        // If one rectangle is above the other rectangle, return false.
+        if (a.minY > b.maxY || b.minY > a.maxY) {
+            return false; 
+        }
+
+        return true; 
     };
 }

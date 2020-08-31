@@ -45,3 +45,13 @@ type IPoint = {
 type IRenderer = {
     init: () => HTMLCanvasElement;
 };
+
+type IIntersection = {
+    point: Point; 
+    pathCrossed: PatternPath;
+};
+
+type IPatternPathTrash = {
+    path: PatternPath; 
+    replacement: PatternPath[];
+};

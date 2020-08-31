@@ -10,13 +10,27 @@ export abstract class PatternPath implements IPatternPath {
     protected _lastIndexAddedToPath2D: number;
     protected _fittedSegment: Segment | null;
 
-    constructor (pathType: PatternPathType) {
+    constructor (pathType: PatternPathType, fittedSegment?: Segment) {
         this._type = pathType;
         this._points = new Array<Point>();
+        
+        if (fittedSegment) {
+            const points = fittedSegment.computePoints();
+            if (!points[0].equals(fittedSegment.getStart())) {
+                points.unshift(fittedSegment.getStart());
+            }
+            if (!points[points.length - 1].equals(fittedSegment.getEnd())) {
+                points.push(fittedSegment.getEnd());
+            }
+            this._points = points;
+        }
+
         this._path2D = new Path2D();
-        this._isPath2DValid = false;
+        this._isPath2DValid = Boolean(fittedSegment);
         this._lastIndexAddedToPath2D = -1;
-        this._fittedSegment = null;
+        this._fittedSegment = fittedSegment || null;
+
+        this._fittedSegment?.draw(this._path2D);
     }
 
     getPoints = (): Point[] => {
@@ -57,6 +71,10 @@ export abstract class PatternPath implements IPatternPath {
         return this._path2D;
     };
 
+    getFittedSegment = (): Segment | null => {
+        return this._fittedSegment;
+    };
+
     addPoint = (point: Point): boolean => {
         // If the points array is empty, we can just add the point.
         if (!this._points.length) {
@@ -72,9 +90,17 @@ export abstract class PatternPath implements IPatternPath {
         }
     
         // If not, then we can add the point.
-        this._points.push(point);
+        this._addPoint(point);
         this._isPath2DValid = false;
         return true;
+    };
+
+    snapStartToPoint = (point: Point): void => {
+        this._points[0] = point;
+    };
+
+    snapEndToPoint = (point: Point): void => {
+        this._points[this._points.length -1] = point;
     };
 
     snapEndpoints = (paths: PatternPath[]): void => {
@@ -85,9 +111,10 @@ export abstract class PatternPath implements IPatternPath {
         let updatedFirstPoint = false;
         let updatedLastPoint = false;
 
-        paths.forEach(path => {
+        for (let i = 0; i < paths.length; i++) {
+            const path = paths[i];
             if (path === this) {
-                return;
+                continue;
             }
             const points = path.getPoints();
 
@@ -95,26 +122,26 @@ export abstract class PatternPath implements IPatternPath {
             const otherLastPoint = points[points.length - 1];
 
             if(!updatedFirstPoint && myFirstPoint.isWithinRadius(otherFirstPoint, radius)) {
-                this._points[0] = otherFirstPoint;
+                this.snapStartToPoint(otherFirstPoint);
                 updatedFirstPoint = true;
             }
 
             if(!updatedFirstPoint && myFirstPoint.isWithinRadius(otherLastPoint, radius)) {
-                this._points[0] = otherLastPoint;
+                this.snapStartToPoint(otherLastPoint);
                 updatedFirstPoint = true;
             }
 
             if(!updatedLastPoint && myLastPoint.isWithinRadius(otherFirstPoint, radius)) {
-                this._points[this._points.length] = otherFirstPoint;
+                this.snapEndToPoint(otherFirstPoint);
                 updatedLastPoint = true;
             }
 
             if(!updatedLastPoint && myLastPoint.isWithinRadius(otherLastPoint, radius)) {
-                this._points[this._points.length] = otherLastPoint;
+                this.snapEndToPoint(otherLastPoint);
                 updatedLastPoint = true;
             }
 
-        });
+        }
 
         if (updatedFirstPoint || updatedLastPoint) {
             this._updatePath2D();
@@ -135,6 +162,23 @@ export abstract class PatternPath implements IPatternPath {
         return this._fittedSegment;
     };
 
-    abstract setFittedSegment(): void;
+    setFittedSegment = (): void => {
+        this._setFittedSegment();
+        this._points = this._fittedSegment ? this._fittedSegment.computePoints() : new Array<Point>();
+    };
+
+    splitAtPoint = (interesection: Point): PatternPath[] => {
+        const originalSegment = this.getSegment();
+        const splitSegments = originalSegment.split(interesection);
+        if (splitSegments.length !== 2) {
+            throw new Error("Split did not return correct number of segments");
+        }
+
+        return this._createPathsFromSegments(splitSegments);
+    };
+
+    protected abstract _createPathsFromSegments(segments: Segment[]): PatternPath[];
+    protected abstract _setFittedSegment(): void;
     protected abstract _updatePath2D(): void;
+    protected abstract _addPoint(point: Point): void;
 }

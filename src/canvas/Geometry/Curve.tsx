@@ -12,7 +12,8 @@ export abstract class Curve extends Segment {
 
     protected abstract computePoint(t: number): Point;
 
-    computePointsOnCurve = (numPoints: number): Point[] => {
+    computePoints = (numPoints?: number): Point[] => {
+        numPoints = numPoints || 100;
         const resultingPoints = new Array<Point>();
         for (let i = 0; i < numPoints; i++) {
             const t = i / (numPoints - 1);
@@ -36,7 +37,7 @@ export abstract class Curve extends Segment {
         // would yield roughly 1 point every pixel.
         const PRECISION = 0.2;
         const NUMPOINTS = upperBound * PRECISION;
-        const pointsOnCurve = this.computePointsOnCurve(NUMPOINTS);
+        const pointsOnCurve = this.computePoints(NUMPOINTS);
         for (let i = 0; i < NUMPOINTS - 1; i++) {
             length += pointsOnCurve[i+1].distanceTo(pointsOnCurve[i]);
         }
@@ -64,6 +65,23 @@ export abstract class Curve extends Segment {
         } else { // t === 1
             return Vector.vectorBetweenPoints(this.control, this.end);
         }
+    };
+
+    /* 
+     * Returns null if a points is not near the segement, otherwise it returns the closest
+     * point on the segement. Checks if a point is near the curve by computing a number of 
+     * points on that curve and then checking if the given point is within a radius at the 
+     * given threshold of each computed point.
+    */
+    isPointNearSegment = (point: Point, threshold: number): Point | null => {
+        const points = this.computePoints();
+        for (let i = 0; i < points.length; i++) {
+            if (point.isWithinRadius(points[i], threshold)) {
+                return points[i];
+            }
+        }
+
+        return null;
     };
 
     protected lerp = (start: number, end: number, t: number): number => {

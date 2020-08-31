@@ -76,5 +76,4 @@ test("find opposite should return a vector that is opposite direction and of equ
 
     expect(Vector.changeInAngle(Vector.findOpposite(v1), v1)).toEqual(Math.PI);
     expect(Vector.findOpposite(v1).norm()).toEqual(v1.norm());
-    
 });

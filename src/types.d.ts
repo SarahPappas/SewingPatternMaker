@@ -50,3 +50,8 @@ type IIntersection = {
     point: Point; 
     pathCrossed: PatternPath;
 };
+
+type IPatternPathTrash = {
+    path: PatternPath; 
+    replacement: PatternPath[];
+};

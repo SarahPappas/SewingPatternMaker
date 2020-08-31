@@ -30,8 +30,15 @@ export class Line extends Segment {
         return points;
     };
 
-    /* Returns null if the point is not within the threshold of the segment.
-        *  Otherwise, it returns the point on the semgent closest to the point provided. */
+    /**
+     * Returns null if the projection of the point on the line supporting the 
+     * segment is not on the segment itself or if the distance between the point
+     * and the segment is not within the threshold.
+     * Otherwise, it returns the point on the segment closest to the point provided.
+     * 
+     * @param point 
+     * @param threshold 
+     */
     isPointNearSegment = (point: Point, threshold: number): Point | null => {
         if (this.start.equals(point)) {
             return point;
@@ -69,13 +76,26 @@ export class Line extends Segment {
         path.lineTo(this.end.x, this.end.y);
     };
 
-    /* 
-     * Finds an intersection point of two lines 
+    /**
+     * Finds an intersection point of two lines. If withinSegment in false, it 
+     * will return the intersection point between the lines that support 
+     * the two inputted lines regardless of where that point is, and return null
+     * if the lines are parallel.
+     * If withinSegment is true, it will only return the point of intersection
+     * if that point belongs to both of the inputted segments, and null
+     * otherwise or if the lines are parallel.
+     * 
      * Uses an algorithm described in https://en.wikipedia.org/wiki/Line–line_intersection 
      * TODO: If a line is ontop of another line, we will not return an intersection. We need to decide how to handle this case.
      * Ideally, a path directly ontop of another path should be ignored.
      * TODO: Implement optimization to make intersection check quicker. We discussed possibly using this algorithm:
      * https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
+     * 
+     * @param thisL the first line segment
+     * @param thatL the second line segment
+     * @param withinSegment indicates whether the intersection has to be found 
+     *                      within the inputted segments
+     * @param threshold ??
      */ 
     static findIntersectionPointOfTwoLines = (thisL: Line, thatL: Line, withinSegment: boolean, threshold?: number): Point | null => { 
         threshold = threshold || 0;

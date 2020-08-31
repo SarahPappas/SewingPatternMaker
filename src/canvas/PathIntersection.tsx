@@ -56,13 +56,7 @@ export class PathIntersection {
             if (path === thatPath) {
                 continue;
             }
-
-            const thatPathPoints = thatPath.getPoints();
             const intersectionPoint = thatPath.getFittedSegment()?.isPointNearSegment(path.getPoints()[0], 10);
-            if (intersectionPoint?.equals(thatPathPoints[0]) || intersectionPoint?.equals(thatPathPoints[thatPathPoints.length - 1])) {
-                continue;
-            }
-
             if (intersectionPoint) {
                 return {point: intersectionPoint, pathCrossed: thatPath};
             }

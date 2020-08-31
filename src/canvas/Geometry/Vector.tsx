@@ -29,8 +29,8 @@ export class Vector {
         this.y /= value;
     };
 
-    // Returns the value between -PI and PI that represents the angle between 
-    // this vector and the positive x axis.
+    // Returns the value in ]-PI, PI] that represents the angle between 
+    // this vector and the positive x axis. Returns 0 if this is the zero vector.
     getAngle = (): number => {
         return Math.atan2(this.y, this.x);
     };
@@ -47,19 +47,25 @@ export class Vector {
     };
 
     // Computes and returns the change in the directional angle from vector v1 to vector v2. 
-    // The change in angle is in [-PI, PI]. The sign of the change indicates the direction
+    // The change in angle is in ]-PI, PI]. The sign of the change indicates the direction
     // of the turn when going from v1 to v2. 
     static changeInAngle = (v1: Vector, v2: Vector): number => {
         let result = v2.getAngle() - v1.getAngle();
         if (result > Math.PI) {
             result = result - 2 * Math.PI;
-        } else if (result < (-1 * Math.PI)) {
+        } else if (result <= (-1 * Math.PI)) {
             result = result + 2 * Math.PI;
         }
         return result;
     };
 
-    // Returns a vector that is perpendicular to the inputted vector.
+    /**
+     * Returns a vector that is perpendicular to the inputted vector.
+     * The angle of the resulting vector is equal to PI / 2 + the angle of the
+     * input vector.
+     * 
+     * @param vector The inputted vector
+     */
     static findPerpVector = (vector: Vector): Vector => {
         return new Vector(-1 * vector.y, vector.x);
     };

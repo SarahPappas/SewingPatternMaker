@@ -18,7 +18,8 @@ export class FaceFinder {
      *               exactly 2 segments meeting at each vertex.
      * Returns an array of arrays of indices, each inner array representing one face. 
      * Each inner array contains the indices of the segments forming the
-     * face in the inputted segments array.
+     * face in the inputted segments array. The inner array's order indicates
+     * how to go around the face in the negative direction.
      */
     static FindFaces = (segments: Segment[]): number[][] => {
         const vertices = FaceFinder._findVertices(segments);

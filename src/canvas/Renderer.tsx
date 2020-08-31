@@ -46,6 +46,9 @@ export class Renderer implements IRenderer {
                 throw new Error("Path type not set");
             }
 
+            // Empty the pattern paths trash from the previous tracing session
+            this._document.emptyPatternPathsTrash();
+
             this._isTracing = true;
             
             switch(this._toolType) {
@@ -72,10 +75,16 @@ export class Renderer implements IRenderer {
                     return;
                 }
 
-                const firstPoint = this._currPath.getPoints()[0];
                 const intersection = PathIntersection.findIntersectionOfPatternPathsByLineSeg(this._currPath, paths);
-                if (intersection && !intersection.point.isWithinRadius(firstPoint, 10)) {
+                if (intersection) {
                     this._isTracing = false;
+
+                    const pathCrossedEndpoint = intersection.pathCrossed.getPoints()[intersection.pathCrossed.getPoints().length - 1];
+                    if (intersection.point.isWithinRadius(pathCrossedEndpoint, 10)) {
+                        this._endTracing(intersection.point);
+                        return;
+                    }
+
                     this._endTracing(intersection.point, this._handleIntersection.bind(null, intersection));
                 }
             }
@@ -109,7 +118,10 @@ export class Renderer implements IRenderer {
         }) as EventListener);
 
         this._canvas.addEventListener('removePath', ((e) => {
+            const pathsRemovedThisTracingSession = this._document.getPatternPathsTrash();
             this._document.removePatternPath();
+            this._undoPathReplacementsInTracingSession(pathsRemovedThisTracingSession);
+            console.log("paths", this._document.getPatternPaths());
         }) as EventListener);
 
         return this._canvas;
@@ -159,8 +171,6 @@ export class Renderer implements IRenderer {
     private _checkPathStartIntersectionAndSplit = (path: PatternPath, paths: PatternPath[]): void => {
         const intersection = PathIntersection.findPathStartIntersectAlongPatternPath(path, paths);
         if (intersection) {
-            path.snapStartToPoint(intersection.point);
-
             const pathCrossedPoints = intersection.pathCrossed.getPoints();
             const pathCrossedStartPoint = pathCrossedPoints[0];
             if (intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
@@ -219,6 +229,7 @@ export class Renderer implements IRenderer {
             if (callback) {
                 callback();
             }
+
             console.log("paths", this._document.getPatternPaths());
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }
@@ -248,6 +259,16 @@ export class Renderer implements IRenderer {
         this._draw();
     
         requestAnimationFrame(this._tick);
+    };
+
+    private _undoPathReplacementsInTracingSession = (pathsRemovedThisTracingSession: IPatternPathTrash[]): void => {
+        pathsRemovedThisTracingSession.forEach(pathRemoved => {
+            const replacements = pathRemoved.replacement;
+            replacements.forEach(replacement => {
+                this._document.removeSpecificPatternPath(replacement);
+            });
+            this._document.addPatternPath(pathRemoved.path);
+        });
     };
 
     // private _update = (): void => {

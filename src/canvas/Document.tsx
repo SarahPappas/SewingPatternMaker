@@ -33,7 +33,7 @@ export class Document implements IDocument {
     emptyPatternPathsTrash = (): void => {
         this._patternPathsTrash = [];
     };
-    
+
     getPatternPathsTrash = (): IPatternPathTrash[] => {
         return [...this._patternPathsTrash];
     };
@@ -50,6 +50,19 @@ export class Document implements IDocument {
         }
 
         return Boolean(removedPath);
+    };
+
+    // Removes a specific Pattern Path and adds it to the patterPathTrash.
+    removeSpecificPatternPath = (path: PatternPath): number => {
+        const find = (p: PatternPath) => p === path;
+        const pathIndex = this._patternPaths.findIndex(find);
+        if (pathIndex >= 0) {
+            this._patternPathsTrash.push({path: this._patternPaths[pathIndex], replacement: []});
+            this._patternPaths.splice(pathIndex, 1);
+            return pathIndex;
+        }
+
+        return -1;
     };
 
     replacePatternPath = (pathToReplace: PatternPath, pathsToInsert: PatternPath[]): void => {
@@ -134,18 +147,5 @@ export class Document implements IDocument {
                 console.log("patternPath: type " + patternPath.getType().toString() + ", length " + patternPath.getLengthInPixels());
             });
         });
-    };
-
-    // Removes a specific Pattern Path and adds it to the patterPathTrash.
-    removeSpecificPatternPath = (path: PatternPath): number => {
-        const find = (p: PatternPath) => p === path;
-        const pathIndex = this._patternPaths.findIndex(find);
-        if (pathIndex >= 0) {
-            this._patternPathsTrash.push({path: this._patternPaths[pathIndex], replacement: []});
-            this._patternPaths.splice(pathIndex, 1);
-            return pathIndex;
-        }
-
-        return -1;
     };
 }

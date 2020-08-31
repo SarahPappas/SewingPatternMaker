@@ -29,7 +29,18 @@ export class PathIntersection {
                 continue;
             }
 
+            /* 
+             * If the intersection we find is with the first point of that path and the first point in this path, 
+             * keep looking for intersections. 
+             */
             const intersection = PathIntersection._findIntersectionOfLineSegmentAndPath(thisLineSeg, thatPath);
+            if (intersection && 
+                intersection.point.isWithinRadius(pointsOnThatPath[0], 10) && 
+                intersection.point.isWithinRadius(pointsOnThisPath[0], 10)
+            ) {
+                continue;
+            }
+
             if (intersection) {
                 return intersection;
             }
@@ -68,7 +79,7 @@ export class PathIntersection {
         for (let i = 1; i < points.length; i++ ) {
             const thatLineSeg = new Line(points[i], points[i - 1]);
             const intersectionPoint = Line.findIntersectionPointOfTwoLines(thisLineSeg, thatLineSeg, true, THRESHOLD);
-            if (intersectionPoint) {
+            if (intersectionPoint ) {
                 return {point: intersectionPoint, pathCrossed: path};
             }
         }

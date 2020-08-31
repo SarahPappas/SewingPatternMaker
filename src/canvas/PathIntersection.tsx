@@ -30,14 +30,11 @@ export class PathIntersection {
             }
 
             /* 
-             * If the intersection we find is with the first point of that path and the first point in this path, 
+             * If the intersection we find is within a 10 pt raidus of the first point of this path, 
              * keep looking for intersections. 
              */
             const intersection = PathIntersection._findIntersectionOfLineSegmentAndPath(thisLineSeg, thatPath);
-            if (intersection && 
-                intersection.point.isWithinRadius(pointsOnThatPath[0], 10) && 
-                intersection.point.isWithinRadius(pointsOnThisPath[0], 10)
-            ) {
+            if (intersection && intersection.point.isWithinRadius(pointsOnThisPath[0], 10)) {
                 continue;
             }
 

@@ -1,12 +1,13 @@
 import { Curve } from './Curve';
 import { Point } from './Point';
 import { Vector } from './Vector';
+import { Line } from './Line';
 
 export class ArcCurve extends Curve {
     private radius: number;
     private center: Point;
-    private startAngle: number;
-    private endAngle: number;
+    private startAngle: number; // Angle from positive x axis to start 
+    private endAngle: number;// Angle from positive x axis to end
 
     // Precondition: control is equidistant from start and end
     // Precondition: control != middlePoint between start and end
@@ -31,6 +32,34 @@ export class ArcCurve extends Curve {
             }
         }
     }
+
+    /* 
+    * Splits an arc into two arcs.
+    * Precondition: point given must be a point on the arc.
+    */
+    split = (point: Point): ArcCurve[] => {
+        const curves:  ArcCurve[] = [];
+        const originToSplitPoint = Vector.vectorBetweenPoints(this.center, point);
+        const tangetToArcAtPoint = Vector.findPerpVector(originToSplitPoint);
+        const pointOnTangentToArcAtPoint = Point.translate(point, tangetToArcAtPoint);
+        const lineOnTangentToArcAtPoint = new Line(point, pointOnTangentToArcAtPoint);
+        const lineFromStartToOldControlPoint = new Line(this.start, this.control);
+
+        const control1 = Line.findIntersectionPointOfTwoLines(lineOnTangentToArcAtPoint, lineFromStartToOldControlPoint, false);
+        if (!control1) {
+            throw new Error('Cannont find control point from first Arc in Arc split');
+        }
+        curves.push(new ArcCurve(this.start, point, control1));
+
+        const lineFromEndToOldControlPoint = new Line(this.end, this.control);
+        const control2 = Line.findIntersectionPointOfTwoLines(lineOnTangentToArcAtPoint, lineFromEndToOldControlPoint, false);
+        if (!control2) {
+            throw new Error('Cannont find control point from second Arc in Arc split');
+        }
+        curves.push(new ArcCurve(point, this.end, control2));
+
+        return curves;
+    };
 
     private _computeCenter = (): Point => {
         let centerX;

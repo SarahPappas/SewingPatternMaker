@@ -36,6 +36,14 @@ export class Document implements IDocument {
         return Boolean(this._patternPaths.pop());
     };
 
+    replacePatternPath = (pathToReplace: PatternPath, pathsToInsert: PatternPath[]): void => {
+        const index = this._removeSpecificPatternPath(pathToReplace);
+
+        pathsToInsert.forEach(path => {
+            this._patternPaths.splice(index, 0, path);
+        });
+    };
+
     arePatternPiecesEnclosed = (): boolean => {
         const endpoints: {point: Point; matched: boolean}[] = [];
 
@@ -53,10 +61,10 @@ export class Document implements IDocument {
             }
 
             // Check if end point matches any other endpoint.
-            for (let j = 0; j < endpoints.length && !endpoints[i].matched; j++) {
+            for (let j = i + 1; j < endpoints.length; j++) {
                 const o = endpoints[j];
 
-                if (o === endpoints[i]) {
+                if (o.matched) {
                     continue;
                 }
 
@@ -80,7 +88,7 @@ export class Document implements IDocument {
     isEmpty = (): boolean => {
         return !this._patternPaths.length;
     };
-
+ 
     // Sets the pixels per inch ratio according to the input measurement.
     setSizeRatio = (inputMeasurementInInches: number, selectedPath: PatternPath): void => {
         this._sizeRatio = selectedPath.getLengthInPixels() / inputMeasurementInInches;
@@ -107,5 +115,16 @@ export class Document implements IDocument {
                 console.log("patternPath: type " + patternPath.getType().toString() + ", length " + patternPath.getLengthInPixels());
             });
         });
+    };
+
+    private _removeSpecificPatternPath = (path: PatternPath): number => {
+        const find = (p: PatternPath) => p === path;
+        const pathIndex = this._patternPaths.findIndex(find);
+        if (pathIndex >= 0) {
+            this._patternPaths.splice(pathIndex, 1);
+            return pathIndex;
+        }
+
+        return -1;
     };
 }

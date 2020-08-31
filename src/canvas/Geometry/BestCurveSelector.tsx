@@ -16,7 +16,7 @@ export class BestCurveSelector {
     }
 
     considerPotentialCurve = (potentialCurve: Curve): void => {
-        const potentialCurvePoints = potentialCurve.computePointsOnCurve(this._numPointsOnPotentialCurve);
+        const potentialCurvePoints = potentialCurve.computePoints(this._numPointsOnPotentialCurve);
         
         let curveDelta = 0;
         for (let i = 0; i < this._numPointsOnPotentialCurve; i++) {

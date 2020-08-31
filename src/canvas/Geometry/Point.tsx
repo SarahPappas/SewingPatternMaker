@@ -1,4 +1,5 @@
-import { Vector } from './Vector';
+import { Vector } from
+ './Vector';
 
 export class Point implements IPoint {
     x: number;
@@ -10,7 +11,8 @@ export class Point implements IPoint {
     }
 
     equals = (other: Point): boolean => {
-        return this.x === other.x && this.y === other.y;
+        const EPSILON = 1e-10;
+        return Math.abs(this.x  - other.x) <= EPSILON && Math.abs(this.y - other.y) <= EPSILON;
     };
 
     isWithinRadius = (other: Point, radius: number): boolean => {
@@ -56,6 +58,10 @@ export class Point implements IPoint {
         normalVector.normalize();
         return new Point(middle.x + t * normalVector.x, 
                          middle.y + t * normalVector.y);
+    };
+
+    static translate = (p: Point, displacement: Vector): Point => {
+        return new Point(p.x + displacement.x, p.y + displacement.y);
     };
 
     toString = (): string => {

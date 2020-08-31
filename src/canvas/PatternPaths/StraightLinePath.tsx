@@ -1,10 +1,26 @@
-import { PatternPath } from "./PatternPath";
-import { Line } from "canvas/Geometry/Line";
+import { PatternPath } from './PatternPath';
+import { Line } from 'canvas/Geometry/Line';
+import { Point } from 'canvas/Geometry/Point';
+import { Segment } from 'canvas/Geometry/Segment';
 
 export class StraightLinePath extends PatternPath {
-    setFittedSegment = (): void => {
+    protected _createPathFromSegment = (segments: Segment[]): PatternPath[] => {
+        const paths: StraightLinePath[] = [];
+        segments.forEach(segment => {
+            paths.push(new StraightLinePath(this._type, segment));
+        });
+
+        return paths;
+    };
+
+    protected _setFittedSegment = (): void => {
         this._fittedSegment = new Line(this._points[0], this._points[this._points.length - 1]);
-    }
+    };
+
+    protected _addPoint = (point: Point): void => {
+        this._points[1] = point;
+    };
+
 
     protected _updatePath2D = (): void => {
         const firstPoint = this._points[0];

@@ -1,41 +1,8 @@
 import { Line } from 'canvas/Geometry/Line';
 import { PatternPath } from 'canvas/PatternPaths/PatternPath';
-import { Point } from './Geometry/Point';
 import { BoundingBox } from './Geometry/BoundingBox';
 
 export class PathIntersection {
-    /* Finds an intersection point of two lines */ 
-    static findPotentialIntersectionPointOfTwoLines = (thisL: Line, thatL: Line): Point | null => { 
-        // Line AB represented as a1x + b1y = c1 
-        const a1 = thisL.getEnd().y - thisL.getStart().y; 
-        const b1 = thisL.getStart().x - thisL.getEnd().x; 
-        const c1 = a1*(thisL.getStart().x) + b1*(thisL.getStart().y); 
-      
-        // Line CD represented as a2x + b2y = c2 
-        const a2 = thatL.getEnd().y - thatL.getStart().y; 
-        const b2 = thatL.getStart().x - thatL.getEnd().x; 
-        const c2 = a2*(thatL.getStart().x)+ b2*(thatL.getStart().y); 
-      
-        const determinant = a1*b2 - a2*b1; // TODO, denominator of t and u
-      
-        if (determinant === 0) 
-        { 
-            // The lines are parallel, so return null.
-            return null; 
-        }
-
-        // TODO find the numerator of t and u
-        // Check if t and u are between 0 and 1, and they must both be between 0 and 1 for the point to be on the line
-        // compute point of intersection px and py  (you can make sure they are the same to check.).
-        // The remove unsued code in _findIntersectionPointOfTwoLineSegments
-        // Will return no intersection of the lines are on top each other. comment about what do we do in the scenario, ideally we throw this line away.
-        // https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection second one on page.
-
-        const x = (b2*c1 - b1*c2)/determinant; 
-        const y = (a1*c2 - a2*c1)/determinant; 
-        return new Point(x, y);
-    };
-
     /* Checks for an intersection between one patternPath and an array of pattern paths */
     static findIntersectionOfPatternPathsByLineSeg = (thisPath: PatternPath, paths: PatternPath[]): IIntersection | null => {
         if (!thisPath || !paths) {
@@ -95,33 +62,15 @@ export class PathIntersection {
     /* Finds the intersection between a lineSegment and a path by taking each pair of consecutive points
        and creating a line segment to check for an intersection on. */
     private static _findIntersectionOfLineSegmentAndPath = (thisLineSeg: Line, path: PatternPath): IIntersection | null => {
+        // Threshold for checking if a point is on a line. Range from 0 to 1, with 0 being the tightest and 1 being the loosest.
+        const THRESHOLD = .1;
         const points = path.getPoints();
         for (let i = 1; i < points.length; i++ ) {
             const thatLineSeg = new Line(points[i], points[i - 1]);
-            const intersectionPoint = PathIntersection._findIntersectionPointOfTwoLineSegments(thisLineSeg, thatLineSeg);
+            const intersectionPoint = Line.findIntersectionPointOfTwoLines(thisLineSeg, thatLineSeg, true, THRESHOLD);
             if (intersectionPoint) {
                 return {point: intersectionPoint, pathCrossed: path};
             }
-        }
-
-        return null;
-    };
-
-    /* Finds intersection on a line segment by frist finding the intersection of the two lines,
-     * then checking to see if that intersection point is within the line segment.
-     * TODO: Implement optimzation to make intersectin check quicker. We discussed possibly using this algorithm:
-     * https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
-    */
-    private static _findIntersectionPointOfTwoLineSegments = (thisL: Line, thatL: Line): Point | null => {
-        const potentialIntersectionPoint = PathIntersection.findPotentialIntersectionPointOfTwoLines(thisL, thatL);
-
-        // Threshold for checking if a point is on a line. 
-        // Range from 0 to 1, with 0 being the tightest and 1 being the loosest.
-        const THRESHOLD = .1;
-        if (potentialIntersectionPoint &&
-            thisL.isPointOnLineSegment(potentialIntersectionPoint, THRESHOLD) &&
-            thatL.isPointOnLineSegment(potentialIntersectionPoint, THRESHOLD)) {
-            return potentialIntersectionPoint;
         }
 
         return null;

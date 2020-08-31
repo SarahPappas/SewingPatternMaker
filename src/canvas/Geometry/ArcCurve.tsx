@@ -2,7 +2,6 @@ import { Curve } from './Curve';
 import { Point } from './Point';
 import { Vector } from './Vector';
 import { Line } from './Line';
-import { PathIntersection } from 'canvas/PathIntersection';
 
 export class ArcCurve extends Curve {
     private radius: number;
@@ -46,14 +45,14 @@ export class ArcCurve extends Curve {
         const lineOnTangentToArcAtPoint = new Line(point, pointOnTangentToArcAtPoint);
         const lineFromStartToOldControlPoint = new Line(this.start, this.control);
 
-        const control1 = PathIntersection.findPotentialIntersectionPointOfTwoLines(lineOnTangentToArcAtPoint, lineFromStartToOldControlPoint);
+        const control1 = Line.findIntersectionPointOfTwoLines(lineOnTangentToArcAtPoint, lineFromStartToOldControlPoint, false);
         if (!control1) {
             throw new Error('Cannont find control point from first Arc in Arc split');
         }
         curves.push(new ArcCurve(this.start, point, control1));
 
         const lineFromEndToOldControlPoint = new Line(this.end, this.control);
-        const control2 = PathIntersection.findPotentialIntersectionPointOfTwoLines(lineOnTangentToArcAtPoint, lineFromEndToOldControlPoint);
+        const control2 = Line.findIntersectionPointOfTwoLines(lineOnTangentToArcAtPoint, lineFromEndToOldControlPoint, false);
         if (!control2) {
             throw new Error('Cannont find control point from second Arc in Arc split');
         }

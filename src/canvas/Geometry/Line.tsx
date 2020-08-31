@@ -30,33 +30,6 @@ export class Line extends Segment {
         return points;
     };
 
-    /* Checks if a point is on a line segement. */
-    isPointOnLineSegment = (point: Point, threshold: number): boolean => {
-        const startToPoint = Vector.vectorBetweenPoints(this.getStart(), point);
-        const startToEnd = Vector.vectorBetweenPoints(this.getStart(), this.getEnd());
-
-        const cross = Vector.normOfCrossProduct(startToPoint, startToEnd);
-        
-        if(cross > threshold) {
-            return false;
-        }
-        
-        const dxl = this.getEnd().x - this.getStart().x;
-        const dyl = this.getEnd().y - this.getStart().y;
-
-        // Now we know that the point does lie on the line, it is time to check whether it lies between the original points. 
-        // This can be easily done by comparing the x coordinates, if the line is "more horizontal than vertical", or y coordinates otherwise.
-        if (Math.abs(dxl) >= Math.abs(dyl)) {
-            return this.getStart().x <= this.getEnd().x ? 
-                this.getStart().x <= point.x && point.x <= this.getEnd().x :
-                this.getEnd().x <= point.x && point.x <= this.getStart().x;
-        } else {
-            return this.getStart().y <= this.getEnd().y ? 
-                this.getStart().y <= point.y && point.y <= this.getEnd().y :
-                this.getEnd().y <= point.y && point.y <= this.getStart().y;
-        }
-    };
-
     /* Returns null if the point is not within the threshold of the segment.
         *  Otherwise, it returns the point on the semgent closest to the point provided. */
     isPointNearSegment = (point: Point, threshold: number): Point | null => {
@@ -94,5 +67,52 @@ export class Line extends Segment {
 
     protected _drawTo = (path: Path2D): void => {
         path.lineTo(this.end.x, this.end.y);
+    };
+
+    /* 
+     * Finds an intersection point of two lines 
+     * Uses an algorithm described in https://en.wikipedia.org/wiki/Line–line_intersection 
+     * TODO: If a line is ontop of another line, we will not return an intersection. We need to decide how to handle this case.
+     * Ideally, a path directly ontop of another path should be ignored.
+     * TODO: Implement optimization to make intersection check quicker. We discussed possibly using this algorithm:
+     * https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
+     */ 
+    static findIntersectionPointOfTwoLines = (thisL: Line, thatL: Line, withinSegment: boolean, threshold?: number): Point | null => { 
+        threshold = threshold || 0;
+
+        const x1 = thisL.getStart().x;
+        const x2 = thisL.getEnd().x;
+        const x3 = thatL.getStart().x;
+        const x4 = thatL.getEnd().x;
+
+        const y1 = thisL.getStart().y;
+        const y2 = thisL.getEnd().y;
+        const y3 = thatL.getStart().y;
+        const y4 = thatL.getEnd().y;
+
+        const determinant = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4); 
+      
+        if (determinant === 0) 
+        { 
+            // The lines are parallel, so return null.
+            return null; 
+        }
+
+        const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / determinant;
+
+        if (withinSegment && (t < -1 * threshold || t > 1 + threshold)) {
+            return null;
+        }
+
+        const u =  -1 * ((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / determinant;
+
+        if (withinSegment && (u < -1 * threshold || u > 1 + threshold)) {
+            return null;
+        }
+
+        const xIntersectionPoint = x1 + t * (x2 - x1);
+        const yIntersectionPoint = y1 + t * (y2 - y1);
+        
+        return new Point(xIntersectionPoint, yIntersectionPoint);
     };
 }

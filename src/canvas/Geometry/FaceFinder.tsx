@@ -126,8 +126,8 @@ export class FaceFinder {
             edges.push({
                 origin: segment.getEnd(), 
                 destination: segment.getStart(), 
-                tangentAtOrigin: segment.getTangent(1).opposite(), 
-                tangentAtDestination: segment.getTangent(0).opposite(), 
+                tangentAtOrigin: Vector.findOpposite(segment.getTangent(1)), 
+                tangentAtDestination: Vector.findOpposite(segment.getTangent(0)), 
                 index: i
             });
         }

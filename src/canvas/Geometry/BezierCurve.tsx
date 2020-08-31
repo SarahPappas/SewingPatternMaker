@@ -19,6 +19,13 @@ export class BezierCurve extends Curve {
     }; 
 
     private _solveQuadratic = (a: number, b: number, c: number): number[] => {
+        //TODO; what if a and b = 0?:
+        
+        
+        if (a === 0) {
+            // bx + c = 0 is linear
+            return [-1 * c / b];
+        }
         const result: number[] = [];
         const d = b * b - 4 * a * c; // d is the discriminant
         if (d === 0) {

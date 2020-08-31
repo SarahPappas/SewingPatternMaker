@@ -3,7 +3,10 @@ import { PatternPath } from 'canvas/PatternPaths/PatternPath';
 import { BoundingBox } from './Geometry/BoundingBox';
 
 export class PathIntersection {
-    /* Checks for an intersection between one patternPath and an array of pattern paths */
+    /* 
+     * Checks for an intersection between the last segment of one pattern path and line segments formed from the 
+     * array of inputted pattern paths.
+     * */
     static findIntersectionOfPatternPathsByLineSeg = (thisPath: PatternPath, paths: PatternPath[]): IIntersection | null => {
         if (!thisPath || !paths) {
             return null;

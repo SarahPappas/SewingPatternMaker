@@ -34,6 +34,10 @@ export class BezierCurve extends Curve {
         const EPSILON = 1e-3;
         const solx = this._solveQuadratic(this.start.x - 2 * this.control.x + this.end.x, 2 * (this.control.x - this.start.x), this.start.x - point.x);
         const soly = this._solveQuadratic(this.start.y - 2 * this.control.y + this.end.y, 2 * (this.control.y - this.start.y), this.start.y - point.y);
+        console.log("a, b, c = " + (this.start.x - 2 * this.control.x + this.end.x) + ", " + 2 * (this.control.x - this.start.x) + ", " + (this.start.x - point.x));
+        console.log("a, b, c = " + (this.start.y - 2 * this.control.y + this.end.y) + ", " + 2 * (this.control.y - this.start.y) + ", " + (this.start.y - point.y));
+        console.log("solx: " + solx);
+        console.log("soly: " + soly);
         const solInCommon = solx.filter(sx => soly.some(sy => Math.abs(sx - sy) < EPSILON));
         
         if (solInCommon.length !== 1) {

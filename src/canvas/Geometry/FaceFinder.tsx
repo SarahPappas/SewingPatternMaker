@@ -34,7 +34,7 @@ export class FaceFinder {
         /**
          * Starting from each edge, find the face to its left by cycling 
          * back to the same edge, always choosing the path that curves 
-         * the most counterclockwise at intersections.
+         * the most in the positive rotation direction at intersections.
          */
         edges.forEach(startingEdge => {
             const faceEdgesIndices: number[] = [];
@@ -48,9 +48,9 @@ export class FaceFinder {
             const indexOfFirst = current.index;
             let faceHasSmallestIndexFirst = true;
             // Only keep the face if the total angle while going around is 
-            // -2PI. This means we have found an interior face, not the face
+            // 2PI. This means we have found an interior face, not the face
             // that is the exterior of the graph (which will have a 
-            // totalAngle of +2PI).
+            // totalAngle of -2PI).
             let totalAngle = 0;
             do {
                 faceEdgesIndices.push(current.index);
@@ -68,8 +68,9 @@ export class FaceFinder {
                     edge.index === currentIndex
                 );
 
-                // Choose the leaving edge next to the reverse in the list
-                next = leavingEdges[(indexOfReverse + 1) % leavingEdges.length];
+                // Choose the leaving edge next to the reverse in the list, 
+                // going around in the negative direction
+                next = leavingEdges[(indexOfReverse - 1 + leavingEdges.length) % leavingEdges.length];
                 if (next.index < indexOfFirst) {
                     faceHasSmallestIndexFirst = false;
                     break;
@@ -82,7 +83,7 @@ export class FaceFinder {
 
             // In order to allow small rounding errors, we test for a small difference instead of equality.
             const epsilon = 1e-10;
-            if (faceHasSmallestIndexFirst && Math.abs(totalAngle - (-2 * Math.PI)) < epsilon) {
+            if (faceHasSmallestIndexFirst && Math.abs(totalAngle - (2 * Math.PI)) < epsilon) {
                 faces.push(faceEdgesIndices);
             }
         });

@@ -4,7 +4,7 @@ import { Point } from '../Geometry/Point';
 import { Segment } from '../Geometry/Segment';
 
 export class FreeLinePath extends PatternPath { 
-    protected _createPathFromSegment = (segments: Segment[]): PatternPath[] => {
+    protected _createPathsFromSegments = (segments: Segment[]): PatternPath[] => {
         const paths: FreeLinePath[] = [];
         segments.forEach(segment => {
             paths.push(new FreeLinePath(this._type, segment));

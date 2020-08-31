@@ -174,10 +174,10 @@ export abstract class PatternPath implements IPatternPath {
             throw new Error("Split did not return correct number of segments");
         }
 
-        return this._createPathFromSegment(splitSegments);
+        return this._createPathsFromSegments(splitSegments);
     };
 
-    protected abstract _createPathFromSegment(segments: Segment[]): PatternPath[];
+    protected abstract _createPathsFromSegments(segments: Segment[]): PatternPath[];
     protected abstract _setFittedSegment(): void;
     protected abstract _updatePath2D(): void;
     protected abstract _addPoint(point: Point): void;

@@ -4,12 +4,14 @@ import { FaceFinder } from './Geometry/FaceFinder';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
+    private _patternPathsTrash: IPatternPathTrash[];
     private _sizeRatio: null | number; // in pixels per inch
     private _patternPieces: PatternPath[][]; // an array of patternpath arrays, 
                                              // each representing one piece of the pattern
 
     constructor () {
         this._patternPaths = new Array<PatternPath>();
+        this._patternPathsTrash =[];
         this._sizeRatio = null;
         this._patternPieces = [];
     }
@@ -28,20 +30,50 @@ export class Document implements IDocument {
         return false;  
     };
 
-    // Removes the most recently added Pattern Path.
+    emptyPatternPathsTrash = (): void => {
+        this._patternPathsTrash = [];
+    };
+
+    getPatternPathsTrash = (): IPatternPathTrash[] => {
+        return [...this._patternPathsTrash];
+    };
+
+    // Removes the most recently added Pattern Path and adds it to the patterPathTrash.
     removePatternPath = (): boolean => {
         if (!this._patternPaths.length) {
             throw new Error("Tried to remove path from document, but there are no paths to remove");
         }
-        return Boolean(this._patternPaths.pop());
+
+        const removedPath = this._patternPaths.pop();
+        if (removedPath) {
+            this._patternPathsTrash.push({path: removedPath, replacement: []});
+        }
+
+        return Boolean(removedPath);
+    };
+
+    // Removes a specific Pattern Path and adds it to the patterPathTrash.
+    removeSpecificPatternPath = (path: PatternPath): number => {
+        const find = (p: PatternPath) => p === path;
+        const pathIndex = this._patternPaths.findIndex(find);
+        if (pathIndex >= 0) {
+            this._patternPathsTrash.push({path: this._patternPaths[pathIndex], replacement: []});
+            this._patternPaths.splice(pathIndex, 1);
+            return pathIndex;
+        }
+
+        return -1;
     };
 
     replacePatternPath = (pathToReplace: PatternPath, pathsToInsert: PatternPath[]): void => {
-        const index = this._removeSpecificPatternPath(pathToReplace);
+        const find = (p: PatternPath) => p === pathToReplace;
+        const pathIndex = this._patternPaths.findIndex(find);
+        if (pathIndex >= 0) {
+            const trash = {path: this._patternPaths[pathIndex], replacement: pathsToInsert};
+            this._patternPathsTrash.push(trash);
 
-        pathsToInsert.forEach(path => {
-            this._patternPaths.splice(index, 0, path);
-        });
+            this._patternPaths.splice(pathIndex, 1, ...pathsToInsert);
+        }
     };
 
     arePatternPiecesEnclosed = (): boolean => {
@@ -115,16 +147,5 @@ export class Document implements IDocument {
                 console.log("patternPath: type " + patternPath.getType().toString() + ", length " + patternPath.getLengthInPixels());
             });
         });
-    };
-
-    private _removeSpecificPatternPath = (path: PatternPath): number => {
-        const find = (p: PatternPath) => p === path;
-        const pathIndex = this._patternPaths.findIndex(find);
-        if (pathIndex >= 0) {
-            this._patternPaths.splice(pathIndex, 1);
-            return pathIndex;
-        }
-
-        return -1;
     };
 }

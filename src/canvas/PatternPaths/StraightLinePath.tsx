@@ -4,7 +4,7 @@ import { Point } from 'canvas/Geometry/Point';
 import { Segment } from 'canvas/Geometry/Segment';
 
 export class StraightLinePath extends PatternPath {
-    protected _createPathFromSegment = (segments: Segment[]): PatternPath[] => {
+    protected _createPathsFromSegments = (segments: Segment[]): PatternPath[] => {
         const paths: StraightLinePath[] = [];
         segments.forEach(segment => {
             paths.push(new StraightLinePath(this._type, segment));

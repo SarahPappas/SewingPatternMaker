@@ -51,10 +51,10 @@ export class PatternPath implements IPatternPath {
             throw new Error("Split did not return correct number of segments");
         }
 
-        return this._createPathsFromSegments(splitSegments);
+        return this._createPatternPathsFromSegments(splitSegments);
     };
 
-    protected _createPathsFromSegments = (segments: Segment[]): PatternPath[] => {
+    protected _createPatternPathsFromSegments = (segments: Segment[]): PatternPath[] => {
         const paths: PatternPath[] = [];
         segments.forEach(segment => {
             paths.push(new PatternPath(this._type, segment));

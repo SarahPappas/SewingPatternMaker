@@ -3,10 +3,10 @@ import { PatternPath } from 'canvas/PatternPaths/PatternPath';
 import { BoundingBox } from './Geometry/BoundingBox';
 
 export class PathIntersection {
-    /* 
-     * Checks for an intersection between the last segment of one pattern path and line segments formed from the 
-     * array of inputted pattern paths.
-     * */
+    /**
+     * Checks for an intersection between the line segment formed by the last two points 
+     * of one pattern path and line segments formed from the array of inputted pattern paths.
+     */
     static findIntersectionOfPatternPathsByLineSeg = (thisPath: PatternPath, paths: PatternPath[]): IIntersection | null => {
         if (!thisPath || !paths) {
             return null;
@@ -68,7 +68,7 @@ export class PathIntersection {
        and creating a line segment to check for an intersection on. */
     private static _findIntersectionOfLineSegmentAndPath = (thisLineSeg: Line, path: PatternPath): IIntersection | null => {
         // Threshold for checking if a point is on a line. Range from 0 to 1, with 0 being the tightest and 1 being the loosest.
-        const THRESHOLD = .1;
+        const THRESHOLD = .01;
         const points = path.getPoints();
         for (let i = 1; i < points.length; i++ ) {
             const thatLineSeg = new Line(points[i], points[i - 1]);

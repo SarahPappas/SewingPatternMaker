@@ -48,12 +48,12 @@ export class PathIntersection {
         return null;
     };
 
-    /* Finds if the start point of a path intersects with any other path, and if so, returns that intersection point.*/
-    static findPointIntersectAlongPatternPaths = (startPoint: Point, paths: PatternPath[]): IIntersection | null => {
+    /* Finds if the a point intersects with any other path, and if so, returns that intersection point.*/
+    static findPointIntersectAlongPatternPaths = (point: Point, paths: PatternPath[]): IIntersection | null => {
         for (let i = 0; i < paths.length; i++) {
             const thatPath = paths[i];
             const thatPathPoints = thatPath.getPoints();
-            const intersectionPoint = thatPath.getSegment()?.isPointNearSegment(startPoint, 10);
+            const intersectionPoint = thatPath.getSegment()?.isPointNearSegment(point, 10);
             if (intersectionPoint?.equals(thatPathPoints[0]) || intersectionPoint?.equals(thatPathPoints[thatPathPoints.length - 1])) {
                 continue;
             }
@@ -69,7 +69,7 @@ export class PathIntersection {
        and creating a line segment to check for an intersection on. */
     private static _findIntersectionOfLineSegmentAndPath = (thisLineSeg: LineSegment, path: PatternPath): IIntersection | null => {
         // Threshold for checking if a point is on a line. Range from 0 to 1, with 0 being the tightest and 1 being the loosest.
-        const THRESHOLD = .1;
+        const THRESHOLD = .01;
         const points = path.getPoints();
         for (let i = 1; i < points.length; i++ ) {
             const thatLineSeg = new LineSegment(points[i], points[i - 1]);

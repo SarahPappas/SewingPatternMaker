@@ -1,7 +1,7 @@
 import { Curve } from './Curve';
 import { Point } from './Point';
 import { Vector } from './Vector';
-import { Line } from './Line';
+import { LineSegment } from './LineSegment';
 
 export class ArcCurve extends Curve {
     private radius: number;
@@ -42,17 +42,17 @@ export class ArcCurve extends Curve {
         const originToSplitPoint = Vector.vectorBetweenPoints(this.center, point);
         const tangetToArcAtPoint = Vector.findPerpVector(originToSplitPoint);
         const pointOnTangentToArcAtPoint = Point.translate(point, tangetToArcAtPoint);
-        const lineOnTangentToArcAtPoint = new Line(point, pointOnTangentToArcAtPoint);
-        const lineFromStartToOldControlPoint = new Line(this.start, this.control);
+        const lineOnTangentToArcAtPoint = new LineSegment(point, pointOnTangentToArcAtPoint);
+        const lineFromStartToOldControlPoint = new LineSegment(this.start, this.control);
 
-        const control1 = Line.findIntersectionPointOfTwoLines(lineOnTangentToArcAtPoint, lineFromStartToOldControlPoint, false);
+        const control1 = LineSegment.findIntersectionPointOfTwoLines(lineOnTangentToArcAtPoint, lineFromStartToOldControlPoint, false);
         if (!control1) {
             throw new Error('Cannont find control point from first Arc in Arc split');
         }
         curves.push(new ArcCurve(this.start, point, control1));
 
-        const lineFromEndToOldControlPoint = new Line(this.end, this.control);
-        const control2 = Line.findIntersectionPointOfTwoLines(lineOnTangentToArcAtPoint, lineFromEndToOldControlPoint, false);
+        const lineFromEndToOldControlPoint = new LineSegment(this.end, this.control);
+        const control2 = LineSegment.findIntersectionPointOfTwoLines(lineOnTangentToArcAtPoint, lineFromEndToOldControlPoint, false);
         if (!control2) {
             throw new Error('Cannont find control point from second Arc in Arc split');
         }

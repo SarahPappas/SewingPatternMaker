@@ -2,7 +2,7 @@ import { Segment } from './Segment';
 import { Vector } from './Vector';
 import { Point } from './Point';
 
-export class Line extends Segment {
+export class LineSegment extends Segment {
     getLength = (): number => {
         return this.start.distanceTo(this.end);
     };
@@ -15,10 +15,10 @@ export class Line extends Segment {
     };
 
     // Precondition: point must be on the line. 
-    split = (point: Point): Line[] => {
+    split = (point: Point): LineSegment[] => {
         const lines = [];
-        lines.push(new Line(this.start, point));
-        lines.push(new Line(point, this.end));
+        lines.push(new LineSegment(this.start, point));
+        lines.push(new LineSegment(point, this.end));
         return lines;
 
     };
@@ -97,7 +97,7 @@ export class Line extends Segment {
      *                      within the inputted segments
      * @param threshold ??
      */ 
-    static findIntersectionPointOfTwoLines = (thisL: Line, thatL: Line, withinSegment: boolean, threshold?: number): Point | null => { 
+    static findIntersectionPointOfTwoLines = (thisL: LineSegment, thatL: LineSegment, withinSegment: boolean, threshold?: number): Point | null => { 
         threshold = threshold || 0;
 
         const x1 = thisL.getStart().x;

@@ -1,5 +1,5 @@
 import { PatternPath } from './PatternPath';
-import { Line } from 'canvas/Geometry/Line';
+import { LineSegment } from 'canvas/Geometry/LineSegment';
 import { Point } from 'canvas/Geometry/Point';
 import { Segment } from 'canvas/Geometry/Segment';
 
@@ -14,7 +14,7 @@ export class StraightLinePath extends PatternPath {
     };
 
     protected _setFittedSegment = (): void => {
-        this._fittedSegment = new Line(this._points[0], this._points[this._points.length - 1]);
+        this._fittedSegment = new LineSegment(this._points[0], this._points[this._points.length - 1]);
     };
 
     protected _addPoint = (point: Point): void => {

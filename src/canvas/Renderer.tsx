@@ -8,7 +8,8 @@ import { StraightLinePath } from './TracingPaths/StraightLinePath';
 import { FreeLinePath } from './TracingPaths/FreeLinePath';
 import { PathIntersection } from './PathIntersection';
 import { TracingPath } from './TracingPaths/TracingPath';
-import { SegmentFitter } from './Geometry/SegmentFitter';
+import { CurveFitter } from './Geometry/CurveFitter';
+import { LineSegment } from './Geometry/LineSegment';
 
 export class Renderer implements IRenderer {
     private _canvas: HTMLCanvasElement;
@@ -243,9 +244,16 @@ export class Renderer implements IRenderer {
                 callback();
             }
 
-            this._document.addPatternPath(
-                new PatternPath(this._pathType, SegmentFitter.Fit(this._toolType, this._currPath.getPoints()))
-            );
+            let newPatternPath;
+            const points = this._currPath.getPoints();
+            switch (this._toolType) {
+                case ToolType.StraightLine:
+                    newPatternPath = new PatternPath(this._pathType, new LineSegment(points[0], points[1]));
+                    break;
+                case ToolType.Freeline:
+                    newPatternPath = new PatternPath(this._pathType, CurveFitter.Fit(points));
+            }
+            this._document.addPatternPath(newPatternPath);
 
             console.log("paths", this._document.getPatternPaths());
             this._canvas.dispatchEvent(new Event('endTracing'));     

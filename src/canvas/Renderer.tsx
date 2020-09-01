@@ -71,12 +71,12 @@ export class Renderer implements IRenderer {
             if (this._isTracing && this._currPath) {
                 const position = new Point(e.offsetX, e.offsetY);
                 this._currPath.addPoint(position);
-                const paths = this._document.getPatternPaths();
-                if (paths.length < 1) {
+                const patternPaths = this._document.getPatternPaths();
+                if (patternPaths.length < 1) {
                     return;
                 }
 
-                const intersection = PathIntersection.findIntersectionOfPatternPathsByLineSeg(this._currPath, paths);
+                const intersection = PathIntersection.findIntersectionOfPatternPathsByLineSeg(this._currPath, patternPaths);
                 if (intersection) {
                     this._isTracing = false;
 

@@ -195,10 +195,10 @@ export class Renderer implements IRenderer {
     private _draw = (): void => {
         this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
     
-        this._drawPatternPaths();
+        this._drawPaths();
     };
 
-    private _drawPatternPaths = (): void => {
+    private _drawPaths = (): void => {
         const context = this._context;
         context.lineWidth = 5;
         context.lineJoin = 'round';
@@ -209,7 +209,7 @@ export class Renderer implements IRenderer {
             if (!pathColor) {
                 throw new Error("Could not get path color for " + this._pathType.toString());
             }
-            
+
             context.strokeStyle = pathColor;
             context.stroke(this._currPath.getPath2D());
         }

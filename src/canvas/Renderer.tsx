@@ -173,7 +173,7 @@ export class Renderer implements IRenderer {
      * the two new paths in the document. 
      */
     private _checkPathStartIntersectionAndSplit = (startPoint: Point, paths: PatternPath[]): Point => {
-        const intersection = PathIntersection.findPathStartIntersectAlongPatternPath(startPoint, paths);
+        const intersection = PathIntersection.findPointIntersectAlongPatternPaths(startPoint, paths);
         if (intersection) {
             const pathCrossedPoints = intersection.pathCrossed.getPoints();
             const pathCrossedStartPoint = pathCrossedPoints[0];

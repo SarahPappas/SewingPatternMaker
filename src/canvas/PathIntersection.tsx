@@ -49,7 +49,7 @@ export class PathIntersection {
     };
 
     /* Finds if the start point of a path intersects with any other path, and if so, returns that intersection point.*/
-    static findPathStartIntersectAlongPatternPath = (startPoint: Point, paths: PatternPath[]): IIntersection | null => {
+    static findPointIntersectAlongPatternPaths = (startPoint: Point, paths: PatternPath[]): IIntersection | null => {
         for (let i = 0; i < paths.length; i++) {
             const thatPath = paths[i];
             const thatPathPoints = thatPath.getPoints();

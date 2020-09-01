@@ -34,8 +34,8 @@ test("split", async () => {
 
     expect(lines[0].getStart()).toEqual(l.getStart());
     expect(lines[1].getEnd()).toEqual(l.getEnd());
-    expect(lines[0].getEnd()).toEqual(LineSegment[1].getStart());
-    expect(lines[0].getLength() + LineSegment[1].getLength()).toEqual(l.getLength());
+    expect(lines[0].getEnd()).toEqual(lines[1].getStart());
+    expect(lines[0].getLength() + lines[1].getLength()).toEqual(l.getLength());
 });
 
 test("is point near segment", async () => {

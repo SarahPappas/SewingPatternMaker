@@ -1,34 +1,49 @@
 import { Point } from './Point';
-import { Curve } from './Curve';
 import { BoundingBox } from './BoundingBox';
 import { BezierCurve } from './BezierCurve';
 import { ArcCurve } from './ArcCurve';
 import { BestCurveSelector } from './BestCurveSelector';
+import { ToolType } from 'canvas/Enums';
+import { LineSegment } from './LineSegment';
+import { Segment } from './Segment';
 
-export class CurveFitter {
+export class SegmentFitter {
     // The number of points on the potential curve that will be used to test the curve's fit.
     private static readonly numPointsOnPotentialcurve = 51;
 
-    static Fit = (points: Point[]): Curve => {
-        // If there are two points or less, return void because this cannnot be fit to a curve.
-        if (points.length <= 2) {
+    static Fit = (toolType: ToolType, points: Point[]): Segment => {
+        // If there are less than two points, we cannot fit any segment.
+        if (points.length < 2) {
             throw new Error("not enough points");
+        } else if (points.length === 2) { // with only 2 points, we can only fit a line.
+            toolType = ToolType.StraightLine;
         }
+
         const startPoint = points[0];
         const endPoint = points[points.length - 1];
+        let curveSelector: BestCurveSelector;
+        let boundingBox: BoundingBox;
 
-        const curveSelector = new BestCurveSelector(points, CurveFitter.numPointsOnPotentialcurve);
+        switch(toolType) {
+            case ToolType.StraightLine:
+                return new LineSegment(startPoint, endPoint);
+            
+            case ToolType.Freeline:
+                curveSelector = new BestCurveSelector(points, SegmentFitter.numPointsOnPotentialcurve);
+                
+                // Check candidate bezier curves by exploring control points inside a bounding box around the points.
+                boundingBox = new BoundingBox(points);
+                boundingBox.expand(2.5);
+                SegmentFitter.guessAndCheckControlPointsForBestBezierCurve(startPoint, endPoint, boundingBox, curveSelector);
 
-        // Check candidate bezier curves by exploring control points inside a bounding box around the points.
-        const boundingBox = new BoundingBox(points);
-        boundingBox.expand(2.5);
-        CurveFitter.guessAndCheckControlPointsForBestBezierCurve(startPoint, endPoint, boundingBox, curveSelector);
+                // Check candidate circle arcs that curve from start to end.
+                SegmentFitter.guessAndCheckControlPointsForBestArcCurve(startPoint, endPoint, curveSelector);
 
-        // Check candidate circle arcs that curve from start to end.
-        CurveFitter.guessAndCheckControlPointsForBestArcCurve(startPoint, endPoint, curveSelector);
+                return curveSelector.getBestCurve();
 
-        console.log(curveSelector.getBestCurve() instanceof ArcCurve ? "arc" : "bezier");
-        return curveSelector.getBestCurve();
+            default:
+                throw new Error("Unrecognized tool type");
+        }
     };
 
     private static guessAndCheckControlPointsForBestBezierCurve = (startPoint: Point, endPoint: Point, boundingBox: BoundingBox, curveSelector: BestCurveSelector): void => {

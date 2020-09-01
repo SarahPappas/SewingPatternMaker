@@ -1,13 +1,15 @@
 import { LineSegment } from 'canvas/Geometry/LineSegment';
 import { PatternPath } from 'canvas/PatternPaths/PatternPath';
 import { BoundingBox } from './Geometry/BoundingBox';
+import { Point } from './Geometry/Point';
+import { Path } from './Paths/Path';
 
 export class PathIntersection {
     /**
      * Checks for an intersection between the line segment formed by the last two points 
      * of one pattern path and line segments formed from the array of inputted pattern paths.
      */
-    static findIntersectionOfPatternPathsByLineSeg = (thisPath: PatternPath, paths: PatternPath[]): IIntersection | null => {
+    static findIntersectionOfPatternPathsByLineSeg = (thisPath: Path, paths: PatternPath[]): IIntersection | null => {
         if (!thisPath || !paths) {
             return null;
         }
@@ -22,9 +24,6 @@ export class PathIntersection {
         const thisLineSeg = new LineSegment(prevPointOnThisPath, lastPointOnThisPath);
         for (let i = 0; i < paths.length; i++) {
             const thatPath = paths[i];
-            if (thisPath === thatPath) {
-                continue;
-            }
 
             const pointsOnThatPath = thatPath.getPoints();
             // Check if paths' bounding boxes overlap, if not paths cannot overlap, so return null.
@@ -50,15 +49,11 @@ export class PathIntersection {
     };
 
     /* Finds if the start point of a path intersects with any other path, and if so, returns that intersection point.*/
-    static findPathStartIntersectAlongPatternPath = (path: PatternPath, paths: PatternPath[]): IIntersection | null => {
+    static findPathStartIntersectAlongPatternPath = (startPoint: Point, paths: PatternPath[]): IIntersection | null => {
         for (let i = 0; i < paths.length; i++) {
             const thatPath = paths[i];
-            if (path === thatPath) {
-                continue;
-            }
-
             const thatPathPoints = thatPath.getPoints();
-            const intersectionPoint = thatPath.getFittedSegment()?.isPointNearSegment(path.getPoints()[0], 10);
+            const intersectionPoint = thatPath.getSegment()?.isPointNearSegment(startPoint, 10);
             if (intersectionPoint?.equals(thatPathPoints[0]) || intersectionPoint?.equals(thatPathPoints[thatPathPoints.length - 1])) {
                 continue;
             }

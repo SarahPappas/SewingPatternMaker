@@ -72,7 +72,7 @@ export class LineSegment extends Segment {
         return iPoint;
     };
 
-    protected _drawTo = (path: Path2D): void => {
+    drawTo = (path: Path2D): void => {
         path.lineTo(this.end.x, this.end.y);
     };
 

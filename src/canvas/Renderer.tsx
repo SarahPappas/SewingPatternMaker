@@ -4,16 +4,18 @@ import { PathSelection } from './PathSelection';
 import { Point } from './Geometry/Point';
 import { PatternPathColor } from './PatternPaths/PatternPathColor';
 import { PatternPathType, ToolType } from './Enums';
-import { StraightLinePath } from './PatternPaths/StraightLinePath';
-import { FreeLinePath } from './PatternPaths/FreeLinePath';
+import { StraightLinePath } from './Paths/StraightLinePath';
+import { FreeLinePath } from './Paths/FreeLinePath';
 import { PathIntersection } from './PathIntersection';
+import { Path } from './Paths/Path';
+import { SegmentFitter } from './Geometry/SegmentFitter';
 
 export class Renderer implements IRenderer {
     private _canvas: HTMLCanvasElement;
     private _context: CanvasRenderingContext2D;
     private _document: Document;
     private _isTracing: boolean;
-    private _currPath: PatternPath | null;
+    private _currPath: Path | null;
     private _pathType: PatternPathType;
     private _toolType: ToolType;
     private _pathSelection: PathSelection;
@@ -53,17 +55,16 @@ export class Renderer implements IRenderer {
             
             switch(this._toolType) {
                 case(ToolType.StraightLine):
-                    this._currPath = new StraightLinePath(this._pathType);
+                    this._currPath = new StraightLinePath();
                     break;
                 case(ToolType.Freeline):
-                    this._currPath = new FreeLinePath(this._pathType);
+                    this._currPath = new FreeLinePath();
                     break;
             }
 
-            this._document.addPatternPath(this._currPath);
-            this._currPath.addPoint(new Point(e.offsetX, e.offsetY));
-
-            this._checkPathStartIntersectionAndSplit(this._currPath, this._document.getPatternPaths());
+            const position = new Point(e.offsetX, e.offsetY);
+            const snappedPosition = this._checkPathStartIntersectionAndSplit(position, this._document.getPatternPaths());
+            this._currPath.addPoint(snappedPosition);
         };
 
         this._canvas.onmousemove = (e) => {
@@ -71,7 +72,7 @@ export class Renderer implements IRenderer {
                 const position = new Point(e.offsetX, e.offsetY);
                 this._currPath.addPoint(position);
                 const paths = this._document.getPatternPaths();
-                if (paths.length < 2) {
+                if (paths.length < 1) {
                     return;
                 }
 
@@ -161,33 +162,34 @@ export class Renderer implements IRenderer {
         this._canvas.onmousemove = null;
     };
 
-    /* Checks if the path starts by intersecting another path. If it does, and that intersection is 
+    /**
+     * Checks if the path starts by intersecting another path. If it does, and that intersection is 
      * near the start of the intersected path, then the path start is snapped to the start of the 
      * intersected path. If that intersection is near the end of the intersecte path, then the path start
      * is snapped to the end of the intersected path. If the path starts near a point along the 
      * intersected path, then the path start is snapped to that point along the intersected path. 
      * If the intersected path is crossed at a point along the path and not an endpoint, the
      * intersected path is bisected at the intersection point and the original path is replaced with
-     * the two new paths in the document. */
-    private _checkPathStartIntersectionAndSplit = (path: PatternPath, paths: PatternPath[]): void => {
-        const intersection = PathIntersection.findPathStartIntersectAlongPatternPath(path, paths);
+     * the two new paths in the document. 
+     */
+    private _checkPathStartIntersectionAndSplit = (startPoint: Point, paths: PatternPath[]): Point => {
+        const intersection = PathIntersection.findPathStartIntersectAlongPatternPath(startPoint, paths);
         if (intersection) {
             const pathCrossedPoints = intersection.pathCrossed.getPoints();
             const pathCrossedStartPoint = pathCrossedPoints[0];
             if (intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
-                path.snapStartToPoint(pathCrossedStartPoint);
-                return;
+                return pathCrossedStartPoint;
             }
 
             const pathCrossedEndPoint = pathCrossedPoints[pathCrossedPoints.length - 1];
             if (intersection.point.isWithinRadius(pathCrossedEndPoint, 10)) {
-                path.snapStartToPoint(pathCrossedEndPoint);
-                return;
+                return pathCrossedEndPoint;
             }
 
-            path.snapStartToPoint(intersection.point);
             this._handleIntersection(intersection);
+            return intersection.point;
         }
+        return startPoint;
     };
 
     private _draw = (): void => {
@@ -202,8 +204,17 @@ export class Renderer implements IRenderer {
         context.lineJoin = 'round';
         context.lineCap = 'round';
         
-        const paths = this._document.getPatternPaths();
-        paths.forEach(path => {
+        if (this._currPath) {
+            const pathColor = PatternPathColor.get(this._pathType);
+            if (!pathColor) {
+                throw new Error("Could not get path color for " + this._pathType.toString());
+            }
+            context.strokeStyle = pathColor;
+            context.stroke(this._currPath.getPath2D());
+        }
+
+        const patternPaths = this._document.getPatternPaths();
+        patternPaths.forEach(path => {
             const path2D = path.getPath2D();
             let pathColor: string | undefined;
             if (path === this._pathSelection.getSelectedPath() || path === this._pathSelection.getHighlightedPath()){
@@ -226,10 +237,14 @@ export class Renderer implements IRenderer {
         if (this._currPath) {
             this._currPath.addPoint(position);
             this._currPath.snapEndpoints(this._document.getPatternPaths());
-            this._currPath.setFittedSegment();
+
             if (callback) {
                 callback();
             }
+
+            this._document.addPatternPath(
+                new PatternPath(this._pathType, SegmentFitter.Fit(this._toolType, this._currPath.getPoints()))
+            );
 
             console.log("paths", this._document.getPatternPaths());
             this._canvas.dispatchEvent(new Event('endTracing'));     

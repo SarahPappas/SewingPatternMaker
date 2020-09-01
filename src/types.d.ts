@@ -32,7 +32,7 @@ type IDocument = {
     findPatternPieces: () => void;
 };
 
-type IPath = {
+type ITracingPath = {
     getPoints: () => Point[];
     getPath2D: () => Path2D;
     addPoint: (point: Point) => boolean;

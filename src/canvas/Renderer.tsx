@@ -4,10 +4,10 @@ import { PathSelection } from './PathSelection';
 import { Point } from './Geometry/Point';
 import { PatternPathColor } from './PatternPaths/PatternPathColor';
 import { PatternPathType, ToolType } from './Enums';
-import { StraightLinePath } from './Paths/StraightLinePath';
-import { FreeLinePath } from './Paths/FreeLinePath';
+import { StraightLinePath } from './TracingPaths/StraightLinePath';
+import { FreeLinePath } from './TracingPaths/FreeLinePath';
 import { PathIntersection } from './PathIntersection';
-import { Path } from './Paths/Path';
+import { TracingPath } from './TracingPaths/TracingPath';
 import { SegmentFitter } from './Geometry/SegmentFitter';
 
 export class Renderer implements IRenderer {
@@ -15,7 +15,7 @@ export class Renderer implements IRenderer {
     private _context: CanvasRenderingContext2D;
     private _document: Document;
     private _isTracing: boolean;
-    private _currPath: Path | null;
+    private _currPath: TracingPath | null;
     private _pathType: PatternPathType;
     private _toolType: ToolType;
     private _pathSelection: PathSelection;

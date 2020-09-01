@@ -1,7 +1,7 @@
-import { Path } from './Path';
+import { TracingPath } from './TracingPath';
 import { Point } from 'canvas/Geometry/Point';
 
-export class StraightLinePath extends Path {
+export class StraightLinePath extends TracingPath {
     protected _addPoint = (point: Point): void => {
         this._points[1] = point;
     };

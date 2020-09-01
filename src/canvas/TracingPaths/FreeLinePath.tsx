@@ -1,7 +1,7 @@
-import { Path } from './Path';
+import { TracingPath } from './TracingPath';
 import { Point } from '../Geometry/Point';
 
-export class FreeLinePath extends Path { 
+export class FreeLinePath extends TracingPath { 
     protected _addPoint = (point: Point): void => {
         this._points.push(point);
     };

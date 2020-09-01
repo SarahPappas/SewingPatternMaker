@@ -7,7 +7,7 @@ import { TracingPath } from './TracingPaths/TracingPath';
 export class PathIntersection {
     /**
      * Checks for an intersection between the line segment formed by the last two points 
-     * of one pattern path and line segments formed from the array of inputted pattern paths.
+     * of one tracing path and line segments formed from the array of inputted pattern paths.
      */
     static findIntersectionOfPatternPathsByLineSeg = (thisPath: TracingPath, paths: PatternPath[]): IIntersection | null => {
         if (!thisPath || !paths) {

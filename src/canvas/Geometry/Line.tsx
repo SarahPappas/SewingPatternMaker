@@ -40,12 +40,12 @@ export class Line extends Segment {
      * @param threshold 
      */
     isPointNearSegment = (point: Point, threshold: number): Point | null => {
-        if (this.start.distanceTo(point) < threshold) {
-            return this.start;
+        if (this.start.equals(point)) {
+            return point;
         }
 
-        if (this.end.distanceTo(point) < threshold) {
-            return this.end;
+        if (this.end.equals(point)) {
+            return point;
         }
 
         const startToPoint = Vector.vectorBetweenPoints(this.start, point);

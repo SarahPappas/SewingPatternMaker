@@ -77,9 +77,9 @@ export class LineSegment extends Segment {
     };
 
     /**
-     * Finds an intersection point of two lines. If withinSegment in false, it 
+     * Finds an intersection point of two lines. If withinSegment is false, it 
      * will return the intersection point between the lines that support 
-     * the two inputted lines regardless of where that point is, and return null
+     * the two inputted lines segments regardless of where that point is, and return null
      * if the lines are parallel.
      * If withinSegment is true, it will only return the point of intersection
      * if that point belongs to both of the inputted segments, and null

@@ -1,3 +1,5 @@
+import { Segment } from "canvas/Geometry/Segment";
+
 /* COMPONENT TYPES */
 type Button = {
     label: string;
@@ -28,9 +30,9 @@ type IPatternPath = {
     getPoints: () => Point[];
     getType: () => PatternPathType;
     getPath2D: () => Path2D;
-    addPoint: (point: Point) => boolean;
-    snapEndpoints: (paths: PatternPath[]) => void;
     getLengthInPixels: () => number;
+    getSegment: () => Segment;
+    splitAtPoint: (intersection: Point) => PatternPath[];
 };
 
 type IPatternPathType = {

@@ -2,7 +2,7 @@ import { Point } from '../Geometry/Point';
 import { PatternPathType } from '../Enums';
 import { Segment } from 'canvas/Geometry/Segment';
 
-export class PatternPath {
+export class PatternPath implements IPatternPath {
     protected _type: PatternPathType;
     protected _path2D: Path2D;
     protected _segment: Segment;

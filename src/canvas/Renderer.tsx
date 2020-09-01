@@ -209,6 +209,7 @@ export class Renderer implements IRenderer {
             if (!pathColor) {
                 throw new Error("Could not get path color for " + this._pathType.toString());
             }
+            
             context.strokeStyle = pathColor;
             context.stroke(this._currPath.getPath2D());
         }

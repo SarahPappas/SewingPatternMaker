@@ -65,7 +65,7 @@ export class Line extends Segment {
         // Compare the distance between the point given to the closest point on the line and the threshold.
         const iPoint = Point.translate(this.start, startToEnd.multiplyByScalar(t));
         const pointToLine = point.distanceTo(iPoint);
-        if (pointToLine >= threshold) {
+        if (pointToLine > threshold) {
             return null;
         }
         

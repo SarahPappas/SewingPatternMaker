@@ -30,12 +30,12 @@ export class BezierCurve extends Curve {
         const NUMPOINTS = 100;
         const points = this.computePoints();
         let index = -1;
-        points.forEach((pt, i) => { 
-            if (pt.isWithinRadius(point, 10)) {
+        for (let i = 0; i < points.length; i++) {
+            if (points[i].isWithinRadius(point, 10)){
                 index = i;
-                return true;
+                break;
             }
-        });
+        }
 
         if (index === -1) {
             throw new Error("the point is not on the curve");

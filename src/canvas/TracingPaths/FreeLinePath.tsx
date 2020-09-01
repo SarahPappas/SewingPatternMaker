@@ -3,7 +3,9 @@ import { Point } from '../Geometry/Point';
 
 export class FreeLinePath extends TracingPath { 
     protected _addPoint = (point: Point): void => {
-        this._points.push(point);
+        if (!this._points[this._points.length - 1].equals(point)) {
+            this._points.push(point);
+        }
     };
 
     /* 

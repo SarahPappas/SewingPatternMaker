@@ -56,7 +56,13 @@ export class PathIntersection {
             if (path === thatPath) {
                 continue;
             }
+
+            const thatPathPoints = thatPath.getPoints();
             const intersectionPoint = thatPath.getFittedSegment()?.isPointNearSegment(path.getPoints()[0], 10);
+            if (intersectionPoint?.equals(thatPathPoints[0]) || intersectionPoint?.equals(thatPathPoints[thatPathPoints.length - 1])) {
+                continue;
+            }
+
             if (intersectionPoint) {
                 return {point: intersectionPoint, pathCrossed: thatPath};
             }
@@ -68,7 +74,7 @@ export class PathIntersection {
        and creating a line segment to check for an intersection on. */
     private static _findIntersectionOfLineSegmentAndPath = (thisLineSeg: Line, path: PatternPath): IIntersection | null => {
         // Threshold for checking if a point is on a line. Range from 0 to 1, with 0 being the tightest and 1 being the loosest.
-        const THRESHOLD = .01;
+        const THRESHOLD = .1;
         const points = path.getPoints();
         for (let i = 1; i < points.length; i++ ) {
             const thatLineSeg = new Line(points[i], points[i - 1]);

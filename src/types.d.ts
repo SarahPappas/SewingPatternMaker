@@ -21,7 +21,15 @@ type Input = {
 type IDocument = {
     getPatternPaths: () => PatternPath[];
     addPatternPath: (patternPath: PatternPath) => boolean;
+    emptyPatternPathsTrash: () => void;
+    getPatternPathsTrash: () => IPatternPathTrash[];
     removePatternPath: () => boolean;
+    removeSpecificPatternPath: (path: PatternPath) => number;
+    replacePatternPath: (pathToReplace: PatternPath, pathsToInsert: PatternPath[]) => void;
+    arePatternPiecesEnclosed: () => boolean;
+    isEmpty: () => boolean;
+    setSizeRatio: (inputMeasurementInches: number, selectecPath: PatternPath) => void;
+    findPatternPieces: () => void;
 };
 
 type IPath = {
@@ -47,10 +55,24 @@ type IPatternPathType = {
 
 type IPoint = {
     equals: (o: Point) => boolean;
+    isWithinRadius: (other: Point, radius: number) => boolean;
+    distanceSquared: (other: Point) => number;
+    distanceTo: (other: Point) => number;
+    closestDistanceSquaredFromSetOfPoints: (points: Point[]) => number;
+    toString: () => string;
+};
+
+type IVector = {
+    norm: () => number;
+    normalize: () => Vector;
+    multiplyByScalar: (value: number) => Vector;
+    getAngle: () => number;
 };
 
 type IRenderer = {
     init: () => HTMLCanvasElement;
+    measurementInit: () => void;
+    finalReviewInit: () => void;
 };
 
 type IIntersection = {

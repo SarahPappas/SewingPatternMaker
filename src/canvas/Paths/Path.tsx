@@ -1,7 +1,7 @@
 import { Point } from '../Geometry/Point';
 import { PatternPath } from 'canvas/PatternPaths/PatternPath';
 
-export abstract class Path {
+export abstract class Path implements IPath {
     protected _points: Point[];
     protected _path2D: Path2D;
     protected _isPath2DValid: boolean;

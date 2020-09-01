@@ -1,5 +1,3 @@
-import { Segment } from "canvas/Geometry/Segment";
-
 /* COMPONENT TYPES */
 type Button = {
     label: string;
@@ -24,6 +22,13 @@ type IDocument = {
     getPatternPaths: () => PatternPath[];
     addPatternPath: (patternPath: PatternPath) => boolean;
     removePatternPath: () => boolean;
+};
+
+type IPath = {
+    getPoints: () => Point[];
+    getPath2D: () => Path2D;
+    addPoint: (point: Point) => boolean;
+    snapEndpoints: (paths: PatternPath[]) => void;
 };
 
 type IPatternPath = {

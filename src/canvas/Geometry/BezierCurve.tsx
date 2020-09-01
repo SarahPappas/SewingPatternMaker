@@ -6,40 +6,42 @@ export class BezierCurve extends Curve {
     split = (point: Point): BezierCurve[] => {
         const curves:  BezierCurve[] = [];
         const t = this._findT(point);
+        const pointOnCurve = this.computePoint(t);
 
         let controlPointX = this.lerp(this.start.x, this.control.x, t);
         let controlPointY = this.lerp(this.start.y, this.control.y, t);
-        curves.push(new BezierCurve(this.start, point, new Point(controlPointX, controlPointY)));
+        curves.push(new BezierCurve(this.start, pointOnCurve, new Point(controlPointX, controlPointY)));
 
         controlPointX = this.lerp(this.control.x, this.end.x, t);
         controlPointY = this.lerp(this.control.y, this.end.y, t);
-        curves.push(new BezierCurve(point, this.end, new Point(controlPointX, controlPointY)));
+        curves.push(new BezierCurve(pointOnCurve, this.end, new Point(controlPointX, controlPointY)));
 
         return curves;
     }; 
 
-    private _solveQuadratic = (a: number, b: number, c: number): number[] => {
-        const result: number[] = [];
-        const d = b * b - 4 * a * c; // d is the discriminant
-        if (d === 0) {
-            result.push((-1 * b) / (2 * a));
-        } else if (d > 0) {
-            result.push(((-1 * b) + Math.sqrt(d)) / (2 * a));
-            result.push(((-1 * b) - Math.sqrt(d)) / (2 * a));
-        }
-        return result;
-    };
-
     private _findT = (point: Point): number => {
-        const EPSILON = 1e-3;
-        const solx = this._solveQuadratic(this.start.x - 2 * this.control.x + this.end.x, 2 * (this.control.x - this.start.x), this.start.x - point.x);
-        const soly = this._solveQuadratic(this.start.y - 2 * this.control.y + this.end.y, 2 * (this.control.y - this.start.y), this.start.y - point.y);
-        const solInCommon = solx.filter(sx => soly.some(sy => Math.abs(sx - sy) < EPSILON));
-        
-        if (solInCommon.length !== 1) {
-            throw new Error("could not find t");
+        // TODO: we tried finding t using direct calculation methods
+        // (solving for t in a pair of parametric equations from 
+        // P = (1-t2)S + 2t(1-t)C + t2E) but that leads to many different
+        // cases. Need more thought to make this method fail safe.
+
+        // TODO: this method may fail if the bezier curve is too long:
+        // the tested point might slip in between 2 of the computed points        
+        const NUMPOINTS = 100;
+        const points = this.computePoints();
+        let index = -1;
+        for (let i = 0; i < points.length; i++) {
+            if (points[i].isWithinRadius(point, 10)){
+                index = i;
+                break;
+            }
         }
-        return solInCommon[0];
+
+        if (index === -1) {
+            throw new Error("the point is not on the curve");
+        }
+        
+        return index / NUMPOINTS;
     };
 
     // Returns a point on the Bezier curve between its start point and

@@ -48,7 +48,7 @@ export class PathIntersection {
         return null;
     };
 
-    /* Finds if the a point intersects with any other path, and if so, returns that intersection point.*/
+    /* Finds if a point intersects with any path, and if so, returns that intersection point.*/
     static findPointIntersectAlongPatternPaths = (point: Point, paths: PatternPath[]): IIntersection | null => {
         for (let i = 0; i < paths.length; i++) {
             const thatPath = paths[i];

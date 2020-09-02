@@ -64,6 +64,10 @@ export class Point implements IPoint {
         return new Point(p.x + displacement.x, p.y + displacement.y);
     };
 
+    clone = (): Point => {
+        return new Point(this.x, this.y);
+    };
+
     toString = (): string => {
         return "[" + this.x + ", " + this.y + "]";
     };

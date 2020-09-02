@@ -83,8 +83,11 @@ export class Renderer implements IRenderer {
 
                     const pathCrossedStartPoint = intersection.pathCrossed.getPoints()[0];
                     const pathCrossedEndpoint = intersection.pathCrossed.getPoints()[intersection.pathCrossed.getPoints().length - 1];
-                    if (intersection.point.isWithinRadius(pathCrossedEndpoint, 10) || intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
-                        this._endTracing(intersection.point);
+                    if (intersection.point.isWithinRadius(pathCrossedEndpoint, 10)) {
+                        this._endTracing(pathCrossedEndpoint);
+                        return;
+                    } else if (intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
+                        this._endTracing(pathCrossedStartPoint);
                         return;
                     }
 
@@ -187,8 +190,7 @@ export class Renderer implements IRenderer {
                 return pathCrossedEndPoint;
             }
 
-            this._handleIntersection(intersection);
-            return intersection.point;
+            return this._handleIntersection(intersection);
         }
         return startPoint;
     };
@@ -241,19 +243,17 @@ export class Renderer implements IRenderer {
             this._currPath.snapEndpoints(this._document.getPatternPaths());
 
             if (callback) {
-                callback();
+                this._currPath.addPoint(callback());
             }
 
-            let newPatternPath;
             const points = this._currPath.getPoints();
             switch (this._toolType) {
                 case ToolType.StraightLine:
-                    newPatternPath = new PatternPath(this._pathType, new LineSegment(points[0], points[1]));
+                    this._document.addPatternPath(new PatternPath(this._pathType, new LineSegment(points[0], points[1])));
                     break;
                 case ToolType.Freeline:
-                    newPatternPath = new PatternPath(this._pathType, CurveFitter.Fit(points));
+                    this._document.addPatternPath(new PatternPath(this._pathType, CurveFitter.Fit(points)));
             }
-            this._document.addPatternPath(newPatternPath);
 
             console.log("paths", this._document.getPatternPaths());
             this._canvas.dispatchEvent(new Event('endTracing'));     
@@ -261,9 +261,10 @@ export class Renderer implements IRenderer {
         this._resetTracing();
     };
 
-    private _handleIntersection = (intersection: IIntersection): void => {
-        const splitPaths = intersection.pathCrossed.splitAtPoint(intersection.point);
+    private _handleIntersection = (intersection: IIntersection): Point => {
+        const splitPaths: PatternPath[] = intersection.pathCrossed.splitAtPoint(intersection.point);
         this._document.replacePatternPath(intersection.pathCrossed, splitPaths);
+        return splitPaths[1].getStartPoint();
     };
 
     private _resetTracing = (): void => {

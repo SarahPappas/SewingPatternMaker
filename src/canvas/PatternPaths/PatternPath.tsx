@@ -20,14 +20,6 @@ export class PatternPath implements IPatternPath {
         return this._points;
     };
 
-    getStartPoint = (): Point => {
-        return this._points[0];
-    };
-
-    getEndPoint = (): Point => {
-        return this._points[this._points.length - 1];
-    };
-
     getType = (): PatternPathType => {
         return this._type;
     };

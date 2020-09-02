@@ -89,8 +89,11 @@ export class Renderer implements IRenderer {
 
                     const pathCrossedStartPoint = intersection.pathCrossed.getPoints()[0];
                     const pathCrossedEndpoint = intersection.pathCrossed.getPoints()[intersection.pathCrossed.getPoints().length - 1];
-                    if (intersection.point.isWithinRadius(pathCrossedEndpoint, 10) || intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
-                        this._endTracing(intersection.point);
+                    if (intersection.point.isWithinRadius(pathCrossedEndpoint, 10)) {
+                        this._endTracing(pathCrossedEndpoint);
+                        return;
+                    } else if (intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
+                        this._endTracing(pathCrossedStartPoint);
                         return;
                     }
 
@@ -256,8 +259,17 @@ export class Renderer implements IRenderer {
         this._resetTracing();
     };
 
+    /**
+     * Splits the path from the intersection in 2 paths at the point
+     * that is closest to the intersection's point on the path. 
+     * Updates the patternPath list in the document, and returns
+     * the new endpoint shared by the 2 pieces of the split paths
+     * @param intersection 
+     */
     private _handleIntersection = (intersection: IIntersection): void => {
-        const splitPaths = intersection.pathCrossed.splitAtPoint(intersection.point);
+        const splitPaths: PatternPath[] = intersection.pathCrossed.splitAtPoint(intersection.point);
+        // update the intersection to hold the point on the path
+        intersection.point = splitPaths[1].getPoints()[0];
         this._document.replacePatternPath(intersection.pathCrossed, splitPaths);
     };
 

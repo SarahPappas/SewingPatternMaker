@@ -76,9 +76,9 @@ export abstract class TracingPath implements ITracingPath {
         this._points[this._points.length -1] = point;
     };
 
-    snapEndpoints = (paths: PatternPath[]): void => {
-        const myFirstPoint = this._points[0];
-        const myLastPoint = this._points[this._points.length - 1];
+    snapEndpoints = (paths: PatternPath[], snapStart: boolean, snapEnd: boolean, point?: Point): boolean => {
+        const myFirstPoint = snapStart && point ? point : this._points[0];
+        const myLastPoint = snapEnd && point ? point : this._points[this._points.length - 1];
         // Radius to check within to see if we should snap to point.
         const radius = 10;
         let updatedFirstPoint = false;
@@ -91,22 +91,22 @@ export abstract class TracingPath implements ITracingPath {
             const otherFirstPoint = points[0];
             const otherLastPoint = points[points.length - 1];
 
-            if(!updatedFirstPoint && myFirstPoint.isWithinRadius(otherFirstPoint, radius)) {
+            if(snapStart && !updatedFirstPoint && myFirstPoint.isWithinRadius(otherFirstPoint, radius)) {
                 this.snapStartToPoint(otherFirstPoint);
                 updatedFirstPoint = true;
             }
 
-            if(!updatedFirstPoint && myFirstPoint.isWithinRadius(otherLastPoint, radius)) {
+            if(snapStart && !updatedFirstPoint && myFirstPoint.isWithinRadius(otherLastPoint, radius)) {
                 this.snapStartToPoint(otherLastPoint);
                 updatedFirstPoint = true;
             }
 
-            if(!updatedLastPoint && myLastPoint.isWithinRadius(otherFirstPoint, radius)) {
+            if(snapEnd && !updatedLastPoint && myLastPoint.isWithinRadius(otherFirstPoint, radius)) {
                 this.snapEndToPoint(otherFirstPoint);
                 updatedLastPoint = true;
             }
 
-            if(!updatedLastPoint && myLastPoint.isWithinRadius(otherLastPoint, radius)) {
+            if(snapEnd && !updatedLastPoint && myLastPoint.isWithinRadius(otherLastPoint, radius)) {
                 this.snapEndToPoint(otherLastPoint);
                 updatedLastPoint = true;
             }
@@ -115,7 +115,10 @@ export abstract class TracingPath implements ITracingPath {
 
         if (updatedFirstPoint || updatedLastPoint) {
             this._updatePath2D();
+            return true;
         }
+
+        return false;
     };
 
     protected abstract _updatePath2D(): void;

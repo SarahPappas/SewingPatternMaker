@@ -24,10 +24,7 @@ export class LineSegment extends Segment {
     };
 
     computePoints = (): Point[] => {
-        const points = [];
-        points.push(this.getStart());
-        points.push(this.getEnd());
-        return points;
+        return [this.start.clone(), this.end.clone()];
     };
 
     /**

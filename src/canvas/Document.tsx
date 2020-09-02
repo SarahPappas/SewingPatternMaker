@@ -100,7 +100,7 @@ export class Document implements IDocument {
                     continue;
                 }
 
-                if (point.equals(o.point)) {
+                if (point === o.point) {
                     endpoints[i].matched = true;
                     endpoints[j].matched = true;
                 }

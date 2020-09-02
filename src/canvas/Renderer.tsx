@@ -246,14 +246,16 @@ export class Renderer implements IRenderer {
                 this._currPath.addPoint(callback());
             }
 
+            let newPatternPath;
             const points = this._currPath.getPoints();
             switch (this._toolType) {
                 case ToolType.StraightLine:
-                    this._document.addPatternPath(new PatternPath(this._pathType, new LineSegment(points[0], points[1])));
+                    newPatternPath = new PatternPath(this._pathType, new LineSegment(points[0], points[1]));
                     break;
                 case ToolType.Freeline:
-                    this._document.addPatternPath(new PatternPath(this._pathType, CurveFitter.Fit(points)));
+                    newPatternPath = new PatternPath(this._pathType, CurveFitter.Fit(points));
             }
+            this._document.addPatternPath(newPatternPath);
 
             console.log("paths", this._document.getPatternPaths());
             this._canvas.dispatchEvent(new Event('endTracing'));     

@@ -92,10 +92,10 @@ export class FaceFinder {
         // with the theoretical number of faces according to Euler's planar 
         // graph formula, reduced by one because we excluded the face 
         // that is the outside of the graph.
-        if (faces.length < ((2 - vertices.size + segments.length) - 1)) {
+        if (faces.length < ((2 - vertices.length + segments.length) - 1)) {
             // Todo: throw error
             console.log("The number of faces found by the findFaces algorithm is too low");
-        } else if (faces.length > ((2 - vertices.size + segments.length) - 1)) {
+        } else if (faces.length > ((2 - vertices.length + segments.length) - 1)) {
             // Todo: throw error
             console.log("The number of faces found by the findFaces algorithm is too high");
         }
@@ -103,12 +103,29 @@ export class FaceFinder {
         return faces;
     };   
 
-    private static _findVertices = (segments: Segment[]): Set<Point> => {
-        const vertices = new Set<Point>();
+    private static _findVertices = (segments: Segment[]): Point[] => {
+        const vertices = [];
         for (let i = 0; i < segments.length; i++) {
-            const segment = segments[i];
-            vertices.add(segment.getStart());
-            vertices.add(segment.getEnd());
+            const segmentStart = segments[i].getStart();
+            const segmentEnd = segments[i].getEnd();
+            let addStart = true;
+            let addEnd = true;
+            // start and end cannot be equal per the Segment constructor,
+            // so we can check for both at the same time
+            vertices.forEach(otherVertex => {
+                if (otherVertex.equals(segmentStart)) {
+                    addStart = false;
+                }
+                if (otherVertex.equals(segmentEnd)) {
+                    addEnd = false;
+                }
+            });
+            if (addStart) {
+                vertices.push(segmentStart);
+            }
+            if (addEnd) {
+                vertices.push(segmentEnd);
+            }
         }
         return vertices;
     };
@@ -143,7 +160,7 @@ export class FaceFinder {
      * @param vertices A set of Points.
      * @param edges An array of Edges.
      */
-    private static _createLeavingEdgesMap = (vertices: Set<Point>, edges: Edge[]): Map<Point, Edge[]> => {
+    private static _createLeavingEdgesMap = (vertices: Point[], edges: Edge[]): Map<Point, Edge[]> => {
         const leavingEdgesMap = new Map();
         vertices.forEach(vertex => {
             const leavingEdges: Array<Edge> = [];

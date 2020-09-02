@@ -1,6 +1,6 @@
 import { Point } from './Point';
 
-export class Vector {
+export class Vector implements IVector {
     x: number;
     y: number;
 
@@ -20,13 +20,14 @@ export class Vector {
      * Rescales the vector in order to make it of length 1.
      * Throws an Error if this is the zero vector.
      */
-    normalize = (): void => {
+    normalize = (): Vector => {
         const norm = this.norm();
         if (norm === 0) {
             throw new Error("The zero vector cannot be normalized");
         }
         this.x /= norm;
         this.y /= norm;
+        return this;
     };
 
     /**

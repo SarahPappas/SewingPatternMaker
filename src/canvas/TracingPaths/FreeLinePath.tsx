@@ -1,27 +1,11 @@
-import { PatternPath } from './PatternPath';
-import { CurveFitter } from '../Geometry/CurveFitter';
+import { TracingPath } from './TracingPath';
 import { Point } from '../Geometry/Point';
-import { Segment } from '../Geometry/Segment';
 
-export class FreeLinePath extends PatternPath { 
-    protected _createPathsFromSegments = (segments: Segment[]): PatternPath[] => {
-        const paths: FreeLinePath[] = [];
-        segments.forEach(segment => {
-            paths.push(new FreeLinePath(this._type, segment));
-        });
-
-        return paths;
-    };
-
-    protected _setFittedSegment = (): void => {
-        this._path2D = new Path2D();
-        this._isPath2DValid = true;
-        this._fittedSegment = CurveFitter.Fit(this._points);
-        this._fittedSegment.draw(this._path2D);
-    };
-    
+export class FreeLinePath extends TracingPath { 
     protected _addPoint = (point: Point): void => {
-        this._points.push(point);
+        if (!this._points[this._points.length - 1].equals(point)) {
+            this._points.push(point);
+        }
     };
 
     /* 

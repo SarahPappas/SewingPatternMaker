@@ -1,4 +1,4 @@
-import { Vector } from "canvas/Geometry/Vector"
+import { Vector } from "canvas/Geometry/Vector";
 
 test("norm should return the length of a vector", async () => {
     const v1 = new Vector(0, 0);

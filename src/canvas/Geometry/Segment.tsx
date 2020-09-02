@@ -25,11 +25,6 @@ export abstract class Segment {
     
     abstract getTangent(t: number): Vector;
 
-    draw = (path: Path2D): void => {
-        path.moveTo(this.start.x, this.start.y);
-        this._drawTo(path);
-    };
-
     abstract computePoints(numOfPoints?: number): Point[];
 
     abstract split(point: Point): Segment[];
@@ -38,5 +33,5 @@ export abstract class Segment {
      *  Otherwise, it returns the point on the semgent closest to the point provided. */
     abstract isPointNearSegment (point: Point, threshold: number): Point | null;
 
-    protected abstract _drawTo(path: Path2D): void;
+    abstract drawTo(path: Path2D): void;
 }

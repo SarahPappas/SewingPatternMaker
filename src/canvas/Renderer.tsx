@@ -261,10 +261,17 @@ export class Renderer implements IRenderer {
         this._resetTracing();
     };
 
+    /**
+     * Splits the path crossed by the intersection in 2 at the point
+     * that is closest to the intersection's point on the path. 
+     * Updates the patternPath list in the document, and returns
+     * the new endpoint shared by the 2 pieces of the split paths
+     * @param intersection 
+     */
     private _handleIntersection = (intersection: IIntersection): Point => {
         const splitPaths: PatternPath[] = intersection.pathCrossed.splitAtPoint(intersection.point);
         this._document.replacePatternPath(intersection.pathCrossed, splitPaths);
-        return splitPaths[1].getStartPoint();
+        return splitPaths[1].getPoints()[0];
     };
 
     private _resetTracing = (): void => {

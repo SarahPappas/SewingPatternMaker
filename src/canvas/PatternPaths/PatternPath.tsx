@@ -57,7 +57,7 @@ export class PatternPath implements IPatternPath {
     
     protected _updatePath2D = (): void => {
         this._path2D = new Path2D();
-        const start = this.getStartPoint();
+        const start = this._points[0];
         this._path2D.moveTo(start.x, start.y);
         this._segment.drawTo(this._path2D);
     };

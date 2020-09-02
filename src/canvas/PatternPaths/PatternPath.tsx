@@ -11,11 +11,8 @@ export class PatternPath implements IPatternPath {
     constructor (pathType: PatternPathType, segment: Segment) {
         this._type = pathType;
         this._segment = segment;
-
         this._points = segment.computePoints();
-
-        this._path2D = new Path2D();
-        this._updatePath2D();
+        this._path2D = this._computePath2D();
     }
 
     getPoints = (): Point[] => {
@@ -65,10 +62,11 @@ export class PatternPath implements IPatternPath {
         return paths;
     };   
     
-    protected _updatePath2D = (): void => {
-        this._path2D = new Path2D();
-        const start = this._segment.getStart();
-        this._path2D.moveTo(start.x, start.y);
-        this._segment.drawTo(this._path2D);
+    protected _computePath2D = (): Path2D => {
+        const result = new Path2D();
+        const start = this.getStartPoint();
+        result.moveTo(start.x, start.y);
+        this._segment.drawTo(result);
+        return result;
     };
 }

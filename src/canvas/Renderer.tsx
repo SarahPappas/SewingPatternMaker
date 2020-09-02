@@ -65,7 +65,7 @@ export class Renderer implements IRenderer {
 
             const position = new Point(e.offsetX, e.offsetY);
             // Try to snap to other endpoints
-            const snapStartPoints = this._currPath?.snapEndpoints(this._document.getPatternPaths(), true, false, position);
+            const snapStartPoints = this._currPath?.snapStartPoint(this._document.getPatternPaths(), position);
             // If we were unable to snap to other endpoints, we will try to snap along other paths.
             if (!snapStartPoints) {
                 const snappedPosition = this._checkPathStartIntersectionAndSplit(position, this._document.getPatternPaths());
@@ -232,7 +232,7 @@ export class Renderer implements IRenderer {
     private _endTracing = (position: Point, callback?: Function): void => {
         if (this._currPath) {
             this._currPath.addPoint(position);
-            this._currPath.snapEndpoints(this._document.getPatternPaths(), false, true);
+            this._currPath.snapEndPoint(this._document.getPatternPaths());
 
             if (callback) {
                 callback();

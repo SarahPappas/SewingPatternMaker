@@ -36,7 +36,8 @@ type ITracingPath = {
     getPoints: () => Point[];
     getPath2D: () => Path2D;
     addPoint: (point: Point) => boolean;
-    snapEndpoints: (paths: PatternPath[], snapStart: boolean, snapEnd: boolean, point?: Point) => boolean;
+    snapStartPoint: (paths: PatternPath[], point?: Point) => boolean;
+    snapEndPoint: (paths: PatternPath[], point?: Point) => boolean;
 };
 
 type IPatternPath = {

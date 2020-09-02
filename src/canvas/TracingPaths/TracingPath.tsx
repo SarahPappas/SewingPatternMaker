@@ -68,21 +68,20 @@ export abstract class TracingPath implements ITracingPath {
         return true;
     };
 
-    snapStartToPoint = (point: Point): void => {
-        this._points[0] = point;
+    snapStartPoint = (paths: PatternPath[], point?: Point): boolean => {
+        const checkPoint = point || this._points[0];
+        return this._snapEndPoints(paths, checkPoint);
     };
 
-    snapEndToPoint = (point: Point): void => {
-        this._points[this._points.length -1] = point;
+    snapEndPoint = (paths: PatternPath[], point?: Point): boolean => {
+        const checkPoint = point || this._points[this._points.length - 1];
+        return this._snapEndPoints(paths, checkPoint);
     };
 
-    snapEndpoints = (paths: PatternPath[], snapStart: boolean, snapEnd: boolean, point?: Point): boolean => {
-        const myFirstPoint = snapStart && point ? point : this._points[0];
-        const myLastPoint = snapEnd && point ? point : this._points[this._points.length - 1];
+    private _snapEndPoints = (paths: PatternPath[], point: Point): boolean => {
         // Radius to check within to see if we should snap to point.
         const radius = 10;
-        let updatedFirstPoint = false;
-        let updatedLastPoint = false;
+        let updatedPoint = false;
 
         for (let i = 0; i < paths.length; i++) {
             const path = paths[i];
@@ -91,29 +90,18 @@ export abstract class TracingPath implements ITracingPath {
             const otherFirstPoint = points[0];
             const otherLastPoint = points[points.length - 1];
 
-            if(snapStart && !updatedFirstPoint && myFirstPoint.isWithinRadius(otherFirstPoint, radius)) {
-                this.snapStartToPoint(otherFirstPoint);
-                updatedFirstPoint = true;
+            if(!updatedPoint && point.isWithinRadius(otherFirstPoint, radius)) {
+                this._points[0] = otherFirstPoint;
+                updatedPoint = true;
             }
 
-            if(snapStart && !updatedFirstPoint && myFirstPoint.isWithinRadius(otherLastPoint, radius)) {
-                this.snapStartToPoint(otherLastPoint);
-                updatedFirstPoint = true;
+            if(!updatedPoint && point.isWithinRadius(otherLastPoint, radius)) {
+                this._points[0] = otherLastPoint;
+                updatedPoint = true;
             }
-
-            if(snapEnd && !updatedLastPoint && myLastPoint.isWithinRadius(otherFirstPoint, radius)) {
-                this.snapEndToPoint(otherFirstPoint);
-                updatedLastPoint = true;
-            }
-
-            if(snapEnd && !updatedLastPoint && myLastPoint.isWithinRadius(otherLastPoint, radius)) {
-                this.snapEndToPoint(otherLastPoint);
-                updatedLastPoint = true;
-            }
-
         }
 
-        if (updatedFirstPoint || updatedLastPoint) {
+        if (point) {
             this._updatePath2D();
             return true;
         }

@@ -10,7 +10,18 @@ export abstract class Curve extends Segment {
         this.control = control;
     }
 
-    protected abstract computePoint(t: number): Point;
+    protected computePoint = (t: number): Point => {
+        // If t is 0 or 1, return the start or end points respectively.
+        if (t === 0) {
+            return this.start;
+        } else if (t === 1) {
+            return this.end;
+        }
+
+        return this._computePoint(t);
+    };
+
+    protected abstract _computePoint(t: number): Point;
 
     computePoints = (numPoints?: number): Point[] => {
         numPoints = numPoints || 100;

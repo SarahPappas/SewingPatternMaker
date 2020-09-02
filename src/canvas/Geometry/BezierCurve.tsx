@@ -48,8 +48,8 @@ export class BezierCurve extends Curve {
     // its end point. If t=0, it returns the starting point. If t=1, 
     // it returns the end point.
     // Overrides abstract method in parent
-    // Precondition: t is a number between 0 and 1
-    protected computePoint = (t: number): Point => {
+    // Precondition: t is a number between 0 and 1, excluding 0 and 1
+    protected _computePoint = (t: number): Point => {
         // Using De Casteljau's algorithm instead of the parametric equation.
         // This method is slower but more stable.
         const startToControlX = this.lerp(this.start.x, this.control.x, t);

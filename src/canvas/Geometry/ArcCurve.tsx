@@ -115,7 +115,8 @@ export class ArcCurve extends Curve {
     };
 
     // Overrides the abstract method in the parent class.
-    protected computePoint = (t: number): Point => {     
+    // Precondition: t is a number between 0 and 1, excluding 0 and 1.
+    protected _computePoint = (t: number): Point => {     
         const x = this.center.x + 
                   this.radius * Math.cos(this.lerp(this.startAngle, this.endAngle, t));
         const y = this.center.y + 

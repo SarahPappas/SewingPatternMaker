@@ -13,12 +13,6 @@ export class PatternPath implements IPatternPath {
         this._segment = segment;
 
         this._points = segment.computePoints();
-        if (!this._points[0].equals(segment.getStart())) {
-            this._points.unshift(segment.getStart());
-        }
-        if (!this._points[this._points.length - 1].equals(segment.getEnd())) {
-            this._points.push(segment.getEnd());
-        }
 
         this._path2D = new Path2D();
         this._updatePath2D();

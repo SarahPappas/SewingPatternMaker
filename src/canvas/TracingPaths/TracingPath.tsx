@@ -68,17 +68,35 @@ export abstract class TracingPath implements ITracingPath {
         return true;
     };
 
-    snapStartPoint = (paths: PatternPath[], point?: Point): boolean => {
+    /**
+     * Returns true if the start point was snapped to an endpoint of a pattern path.
+     * Otherwise, it returns false.
+     * 
+     * @param patternPaths A list of pattern paths whose endpoints we will compare to the
+     * start point, or a point given.
+     * @param point A point that can be used in place of the start point. We compare this point
+     * to the endpoints of the pattern paths to decide if we should snap or not.
+     */
+    snapStartPoint = (patternPaths: PatternPath[], point?: Point): boolean => {
         const checkPoint = point || this._points[0];
-        return this._snapEndPoints(paths, 0, checkPoint);
+        return this._snapEndPoints(patternPaths, 0, checkPoint);
     };
 
-    snapEndPoint = (paths: PatternPath[], point?: Point): boolean => {
+    /**
+     * Returns true if the last point was snapped to an endpoint of a pattern path.
+     * Otherwise, it returns false.
+     * 
+     * @param patternPaths A list of pattern paths whose endpoints we will compare to the
+     * last point, or a point given.
+     * @param point A point that can be used in place of the last point. We compare this point
+     * to the endpoints of the pattern paths to decide if we should snap or not.
+     */
+    snapEndPoint = (patternPaths: PatternPath[], point?: Point): boolean => {
         const checkPoint = point || this._points[this._points.length - 1];
-        return this._snapEndPoints(paths, this._points.length - 1, checkPoint);
+        return this._snapEndPoints(patternPaths, this._points.length - 1, checkPoint);
     };
 
-    private _snapEndPoints = (paths: PatternPath[], index: number, point: Point): boolean => {
+    private _snapEndPoints = (patternPaths: PatternPath[], index: number, point: Point): boolean => {
         if (!point) {
             throw new Error("Point to we are snapping to is undefined.");
         }
@@ -86,9 +104,9 @@ export abstract class TracingPath implements ITracingPath {
         const radius = 10;
         let updatedPoint = false;
 
-        for (let i = 0; i < paths.length; i++) {
-            const path = paths[i];
-            const points = path.getPoints();
+        for (let i = 0; i < patternPaths.length; i++) {
+            const patternPath = patternPaths[i];
+            const points = patternPath.getPoints();
 
             const otherFirstPoint = points[0];
             const otherLastPoint = points[points.length - 1];

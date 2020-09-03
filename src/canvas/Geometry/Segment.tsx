@@ -9,8 +9,8 @@ export abstract class Segment {
         if (start.equals(end)) {
             throw new Error("starting point of Segment must be different from end point");
         }
-        this.start = start;
-        this.end = end;
+        this.start = start.clone();
+        this.end = end.clone();
     }
 
     getStart = (): Point => {

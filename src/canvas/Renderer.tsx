@@ -97,7 +97,7 @@ export class Renderer implements IRenderer {
                         return;
                     }
 
-                    this._handleIntersection(intersection);
+                    this._splitPathAtIntersection(intersection);
                     this._endTracing(intersection.point);
                 }
             }
@@ -186,7 +186,7 @@ export class Renderer implements IRenderer {
     private _checkPathStartIntersectionAndSplit = (startPoint: Point, paths: PatternPath[]): Point => {
         const intersection = PathIntersection.findPointIntersectAlongPatternPaths(startPoint, paths);
         if (intersection) {
-            this._handleIntersection(intersection);
+            this._splitPathAtIntersection(intersection);
             return intersection.point;
         }
         return startPoint;
@@ -271,7 +271,7 @@ export class Renderer implements IRenderer {
      * the new endpoint shared by the 2 pieces of the split paths
      * @param intersection 
      */
-    private _handleIntersection = (intersection: IIntersection): void => {
+    private _splitPathAtIntersection = (intersection: IIntersection): void => {
         const splitPaths: PatternPath[] = intersection.pathCrossed.splitAtPoint(intersection.point);
         // update the intersection to hold the splitting point
         intersection.point = splitPaths[1].getPoints()[0].clone();

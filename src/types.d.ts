@@ -1,3 +1,5 @@
+import { Point } from "canvas/Geometry/Point";
+
 /* COMPONENT TYPES */
 type Button = {
     label: string;
@@ -62,6 +64,7 @@ type IPoint = {
     distanceTo: (other: Point) => number;
     closestDistanceSquaredFromSetOfPoints: (points: Point[]) => number;
     toString: () => string;
+    clone: () => Point;
 };
 
 type IVector = {

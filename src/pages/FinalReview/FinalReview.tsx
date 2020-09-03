@@ -8,7 +8,7 @@ export const FinalReview: React.FC = () => {
     }, []);
     
     const handleExport = (): void => {
-        console.log('export');
+        App.exporter.save();
     };
 
     const exportButton: Button = {label: 'EXPORT PDF', className: 'navButton'};

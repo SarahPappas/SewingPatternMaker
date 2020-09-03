@@ -1,5 +1,3 @@
-import { Point } from "canvas/Geometry/Point";
-
 /* COMPONENT TYPES */
 type Button = {
     label: string;

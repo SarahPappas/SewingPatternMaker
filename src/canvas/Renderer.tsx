@@ -253,6 +253,14 @@ export class Renderer implements IRenderer {
             console.log("paths", this._document.getPatternPaths());
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }
+
+        // This check ensures we used different point objects in all PatternPaths
+        const endPointsArray = this._document.getPatternPaths().map(path => [path.getPoints()[0], path.getPoints()[path.getPoints().length - 1]]).flat(1);
+        const endPointsSet = new Set<Point>(endPointsArray);
+        if (endPointsArray.length !== endPointsSet.size) {
+            throw new Error();
+        }
+
         this._resetTracing();
     };
 

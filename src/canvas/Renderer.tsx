@@ -90,10 +90,10 @@ export class Renderer implements IRenderer {
                     const pathCrossedStartPoint = intersection.pathCrossed.getPoints()[0];
                     const pathCrossedEndpoint = intersection.pathCrossed.getPoints()[intersection.pathCrossed.getPoints().length - 1];
                     if (intersection.point.isWithinRadius(pathCrossedEndpoint, 10)) {
-                        this._endTracing(pathCrossedEndpoint);
+                        this._endTracing(pathCrossedEndpoint.clone());
                         return;
                     } else if (intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
-                        this._endTracing(pathCrossedStartPoint);
+                        this._endTracing(pathCrossedStartPoint.clone());
                         return;
                     }
 

@@ -123,7 +123,7 @@ export abstract class TracingPath implements ITracingPath {
             }
         }
 
-        if (updatedPoint) {
+        if (updatedPoint && this._lastIndexAddedToPath2D >= 0) {
             this._updatePath2D();
             return true;
         }

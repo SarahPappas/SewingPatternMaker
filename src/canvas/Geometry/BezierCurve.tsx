@@ -29,19 +29,21 @@ export class BezierCurve extends Curve {
         // the tested point might slip in between 2 of the computed points        
         const NUMPOINTS = 100;
         const points = this.computePoints();
-        let index = -1;
-        for (let i = 0; i < points.length; i++) {
-            if (points[i].isWithinRadius(point, 10)){
-                index = i;
-                break;
+        let minDist = point.distanceTo(points[0]);
+        let closestPointIndex = 0;
+        for (let i = 1; i < points.length; i++) {
+            const dist = point.distanceTo(points[i]);
+            if (dist < minDist) {
+                minDist = dist;
+                closestPointIndex = i;
             }
         }
 
-        if (index === -1) {
+        if (!point.isWithinRadius(points[closestPointIndex], 10)){
             throw new Error("the point is not on the curve");
-        }
+        } 
         
-        return index / NUMPOINTS;
+        return closestPointIndex / NUMPOINTS;
     };
 
     // Returns a point on the Bezier curve between its start point and

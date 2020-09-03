@@ -29,7 +29,7 @@ export class BezierCurve extends Curve {
         // the tested point might slip in between 2 of the computed points        
         const NUMPOINTS = 100;
         const points = this.computePoints(NUMPOINTS);
-        const indexOfClosestPoint = this.indexOfClosestPointOnCurve(point, points);
+        const indexOfClosestPoint = this._indexOfClosestPointOnCurve(point, points);
 
         if (!point.isWithinRadius(points[indexOfClosestPoint], 10)){
             throw new Error("the point is not on the curve");

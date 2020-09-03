@@ -74,8 +74,9 @@ export abstract class Curve extends Segment {
      * and then checking if that point is within a radius at the given threshold.
     */
     isPointNearSegment = (point: Point, threshold: number): Point | null => {
-        const points = this.computePoints(100);
-        const indexOfClosestPoint = this.indexOfClosestPointOnCurve(point, points);
+        const NUMPOINTS = 100;
+        const points = this.computePoints(NUMPOINTS);
+        const indexOfClosestPoint = this._indexOfClosestPointOnCurve(point, points);
 
         if (point.isWithinRadius(points[indexOfClosestPoint], threshold)) {
             return points[indexOfClosestPoint];
@@ -84,7 +85,7 @@ export abstract class Curve extends Segment {
         }
     };
 
-    protected indexOfClosestPointOnCurve = (point: Point, pointsOnCurve: Point[]): number => {
+    protected _indexOfClosestPointOnCurve = (point: Point, pointsOnCurve: Point[]): number => {
         let minDist = point.distanceTo(pointsOnCurve[0]);
         let closestPointIndex = 0;
         for (let i = 1; i < pointsOnCurve.length; i++) {

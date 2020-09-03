@@ -96,11 +96,11 @@ export abstract class TracingPath implements ITracingPath {
      * last point.
      */
     snapEndPoint = (patternPaths: PatternPath[]): boolean => {
-        const snapped = this._snapEndPoints(patternPaths, this._points.length - 1);
-        if (snapped) {
+        const updatedEndPoint = this._snapEndPoints(patternPaths, this._points.length - 1);
+        if (updatedEndPoint) {
             this._updatePath2D();
         }
-        return snapped;
+        return updatedEndPoint;
     };
 
     private _snapEndPoints = (patternPaths: PatternPath[], index: number): boolean => {

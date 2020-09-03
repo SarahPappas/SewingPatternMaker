@@ -24,7 +24,10 @@ export class LineSegment extends Segment {
     };
 
     computePoints = (): Point[] => {
-        return [this.start, this.end];
+        const points = [];
+        points.push(this.getStart());
+        points.push(this.getEnd());
+        return points;
     };
 
     /**
@@ -38,11 +41,11 @@ export class LineSegment extends Segment {
      */
     isPointNearSegment = (point: Point, threshold: number): Point | null => {
         if (this.start.equals(point)) {
-            return this.start;
+            return this.start.clone();
         }
 
         if (this.end.equals(point)) {
-            return this.end;
+            return this.end.clone();
         }
 
         const startToPoint = Vector.vectorBetweenPoints(this.start, point);

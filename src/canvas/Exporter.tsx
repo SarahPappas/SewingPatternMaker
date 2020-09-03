@@ -6,7 +6,6 @@ export class Exporter {
     constructor () {
         this.doc = new jsPDF();
         this.doc.text("Hello world!", 10, 10);
-        this.doc.save("a4.pdf");
     }
 
     save = () => {

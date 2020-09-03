@@ -70,15 +70,18 @@ export abstract class TracingPath implements ITracingPath {
 
     snapStartPoint = (paths: PatternPath[], point?: Point): boolean => {
         const checkPoint = point || this._points[0];
-        return this._snapEndPoints(paths, checkPoint);
+        return this._snapEndPoints(paths, 0, checkPoint);
     };
 
     snapEndPoint = (paths: PatternPath[], point?: Point): boolean => {
         const checkPoint = point || this._points[this._points.length - 1];
-        return this._snapEndPoints(paths, checkPoint);
+        return this._snapEndPoints(paths, this._points.length - 1, checkPoint);
     };
 
-    private _snapEndPoints = (paths: PatternPath[], point: Point): boolean => {
+    private _snapEndPoints = (paths: PatternPath[], index: number, point: Point): boolean => {
+        if (!point) {
+            throw new Error("Point to we are snapping to is undefined.");
+        }
         // Radius to check within to see if we should snap to point.
         const radius = 10;
         let updatedPoint = false;
@@ -91,17 +94,17 @@ export abstract class TracingPath implements ITracingPath {
             const otherLastPoint = points[points.length - 1];
 
             if(!updatedPoint && point.isWithinRadius(otherFirstPoint, radius)) {
-                this._points[0] = otherFirstPoint;
+                this._points[index] = otherFirstPoint;
                 updatedPoint = true;
             }
 
             if(!updatedPoint && point.isWithinRadius(otherLastPoint, radius)) {
-                this._points[0] = otherLastPoint;
+                this._points[index] = otherLastPoint;
                 updatedPoint = true;
             }
         }
 
-        if (point) {
+        if (updatedPoint) {
             this._updatePath2D();
             return true;
         }

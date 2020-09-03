@@ -96,7 +96,11 @@ export abstract class TracingPath implements ITracingPath {
      * last point.
      */
     snapEndPoint = (patternPaths: PatternPath[]): boolean => {
-        return this._snapEndPoints(patternPaths, this._points.length - 1);
+        const snapped = this._snapEndPoints(patternPaths, this._points.length - 1);
+        if (snapped) {
+            this._updatePath2D();
+        }
+        return snapped;
     };
 
     private _snapEndPoints = (patternPaths: PatternPath[], index: number): boolean => {
@@ -123,12 +127,7 @@ export abstract class TracingPath implements ITracingPath {
             }
         }
 
-        if (updatedPoint && this._lastIndexAddedToPath2D >= 0) {
-            this._updatePath2D();
-            return true;
-        }
-
-        return false;
+        return updatedPoint;
     };
 
     protected abstract _updatePath2D(): void;

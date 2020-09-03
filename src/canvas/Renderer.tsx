@@ -97,7 +97,8 @@ export class Renderer implements IRenderer {
                         return;
                     }
 
-                    this._endTracing(intersection.point, this._handleIntersection.bind(null, intersection));
+                    this._handleIntersection(intersection);
+                    this._endTracing(intersection.point);
                 }
             }
         };
@@ -233,15 +234,11 @@ export class Renderer implements IRenderer {
         });
     };
 
-    private _endTracing = (position: Point, callback?: Function): void => {
+    private _endTracing = (position: Point): void => {
         if (this._currPath) {
             this._currPath.addPoint(position);
             this._currPath.snapEndPoint(this._document.getPatternPaths());
-
-            if (callback) {
-                callback();
-            }
-
+            
             let newPatternPath;
             const points = this._currPath.getPoints();
             switch (this._toolType) {
@@ -268,7 +265,7 @@ export class Renderer implements IRenderer {
      */
     private _handleIntersection = (intersection: IIntersection): void => {
         const splitPaths: PatternPath[] = intersection.pathCrossed.splitAtPoint(intersection.point);
-        // update the intersection to hold the point on the path
+        // update the intersection to hold the splitting point
         intersection.point = splitPaths[1].getPoints()[0].clone();
         this._document.replacePatternPath(intersection.pathCrossed, splitPaths);
     };

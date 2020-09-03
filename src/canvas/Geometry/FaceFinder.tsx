@@ -116,16 +116,20 @@ export class FaceFinder {
                 if (otherVertex.equals(segmentStart)) {
                     addStart = false;
                 }
+
                 if (otherVertex.equals(segmentEnd)) {
                     addEnd = false;
                 }
+
             });
             if (addStart) {
                 vertices.push(segmentStart);
             }
+
             if (addEnd) {
                 vertices.push(segmentEnd);
             }
+            
         }
         return vertices;
     };

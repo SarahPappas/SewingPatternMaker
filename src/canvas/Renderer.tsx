@@ -269,7 +269,7 @@ export class Renderer implements IRenderer {
     private _handleIntersection = (intersection: IIntersection): void => {
         const splitPaths: PatternPath[] = intersection.pathCrossed.splitAtPoint(intersection.point);
         // update the intersection to hold the point on the path
-        intersection.point = splitPaths[1].getPoints()[0];
+        intersection.point = splitPaths[1].getPoints()[0].clone();
         this._document.replacePatternPath(intersection.pathCrossed, splitPaths);
     };
 

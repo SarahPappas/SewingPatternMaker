@@ -80,9 +80,8 @@ export class Document implements IDocument {
         const endpoints: {point: Point; matched: boolean}[] = [];
 
         this._patternPaths.forEach(path => {
-            const points = path.getPoints();
-            endpoints.push({point: points[0], matched: false});
-            endpoints.push({point: points[points.length - 1], matched:false});
+            endpoints.push({point: path.getStart(), matched: false});
+            endpoints.push({point: path.getEnd(), matched:false});
         });
 
         for(let i = 0; i < endpoints.length; i++) {

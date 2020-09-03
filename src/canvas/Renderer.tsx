@@ -87,13 +87,13 @@ export class Renderer implements IRenderer {
                 if (intersection) {
                     this._isTracing = false;
 
-                    const pathCrossedStartPoint = intersection.pathCrossed.getPoints()[0];
-                    const pathCrossedEndpoint = intersection.pathCrossed.getPoints()[intersection.pathCrossed.getPoints().length - 1];
+                    const pathCrossedStartPoint = intersection.pathCrossed.getStart();
+                    const pathCrossedEndpoint = intersection.pathCrossed.getEnd();
                     if (intersection.point.isWithinRadius(pathCrossedEndpoint, 10)) {
-                        this._endTracing(pathCrossedEndpoint.clone());
+                        this._endTracing(pathCrossedEndpoint);
                         return;
                     } else if (intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
-                        this._endTracing(pathCrossedStartPoint.clone());
+                        this._endTracing(pathCrossedStartPoint);
                         return;
                     }
 
@@ -255,7 +255,7 @@ export class Renderer implements IRenderer {
         }
 
         // This check ensures we used different point objects in all PatternPaths
-        const endPointsArray = this._document.getPatternPaths().map(path => [path.getPoints()[0], path.getPoints()[path.getPoints().length - 1]]).flat(1);
+        const endPointsArray = this._document.getPatternPaths().map(path => [path.getStart(), path.getEnd()]).flat(1);
         const endPointsSet = new Set<Point>(endPointsArray);
         if (endPointsArray.length !== endPointsSet.size) {
             throw new Error();
@@ -274,7 +274,7 @@ export class Renderer implements IRenderer {
     private _splitPathAtIntersection = (intersection: IIntersection): void => {
         const splitPaths: PatternPath[] = intersection.pathCrossed.splitAtPoint(intersection.point);
         // update the intersection to hold the splitting point
-        intersection.point = splitPaths[1].getPoints()[0].clone();
+        intersection.point = splitPaths[1].getStart();
         this._document.replacePatternPath(intersection.pathCrossed, splitPaths);
     };
 

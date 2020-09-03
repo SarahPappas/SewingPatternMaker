@@ -62,6 +62,7 @@ type IPoint = {
     distanceTo: (other: Point) => number;
     closestDistanceSquaredFromSetOfPoints: (points: Point[]) => number;
     toString: () => string;
+    clone: () => Point;
 };
 
 type IVector = {

@@ -41,11 +41,11 @@ export class LineSegment extends Segment {
      */
     isPointNearSegment = (point: Point, threshold: number): Point | null => {
         if (this.start.equals(point)) {
-            return point;
+            return this.start.clone();
         }
 
         if (this.end.equals(point)) {
-            return point;
+            return this.end.clone();
         }
 
         const startToPoint = Vector.vectorBetweenPoints(this.start, point);

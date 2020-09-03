@@ -32,9 +32,9 @@ test("split", async () => {
     const l = new LineSegment(p1, p2);
     const lines = l.split(new Point(3, 4));
 
-    expect(lines[0].getStart()).toEqual(l.getStart());
-    expect(lines[1].getEnd()).toEqual(l.getEnd());
-    expect(lines[0].getEnd()).toEqual(lines[1].getStart());
+    expect(lines[0].getStart().equals(l.getStart())).toBeTruthy();
+    expect(lines[1].getEnd().equals(l.getEnd())).toBeTruthy();
+    expect(lines[0].getEnd().equals(lines[1].getStart())).toBeTruthy();
     expect(lines[0].getLength() + lines[1].getLength()).toEqual(l.getLength());
 });
 
@@ -48,8 +48,9 @@ test("is point near segment", async () => {
     const p6 = new Point(6.1, 8);
     const p7 = new Point(3, 5);
 
-    expect(l.isPointNearSegment(p1, 0.1)).toEqual(p1);
-    expect(l.isPointNearSegment(p2, 0.1)).toEqual(p2);
+    expect(l.isPointNearSegment(p1, 0.1)).toBeTruthy();
+    expect(l.isPointNearSegment(p1, 0.1)?.equals(p1)).toBeTruthy();
+    expect(l.isPointNearSegment(p2, 0.1)?.equals(p2)).toBeTruthy();
     expect(l.isPointNearSegment(p3, 0.1)?.equals(p3)).toBeTruthy();
     expect(l.isPointNearSegment(p4, 0.1)).toBeTruthy();
     expect(l.isPointNearSegment(p5, 0.1)).toBeFalsy();

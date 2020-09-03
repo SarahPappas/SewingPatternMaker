@@ -11,7 +11,7 @@ export class Point implements IPoint {
     }
 
     equals = (other: Point): boolean => {
-        const EPSILON = 1e-10;
+        const EPSILON = 1e-15;
         return Math.abs(this.x  - other.x) <= EPSILON && Math.abs(this.y - other.y) <= EPSILON;
     };
 
@@ -62,6 +62,10 @@ export class Point implements IPoint {
 
     static translate = (p: Point, displacement: Vector): Point => {
         return new Point(p.x + displacement.x, p.y + displacement.y);
+    };
+
+    clone = (): Point => {
+        return new Point(this.x, this.y);
     };
 
     toString = (): string => {

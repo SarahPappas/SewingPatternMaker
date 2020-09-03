@@ -23,7 +23,7 @@ export class FaceFinder {
      */
     static FindFaces = (segments: Segment[]): number[][] => {
         const vertices = FaceFinder._findVertices(segments);
-        const edges = FaceFinder._findEdges(segments);
+        const edges = FaceFinder._findEdges(segments, vertices);
 
         // Create a map between vertices and an ordered array of all its
         // outgoing edges, ordered by angle of departure from the vertex
@@ -92,10 +92,10 @@ export class FaceFinder {
         // with the theoretical number of faces according to Euler's planar 
         // graph formula, reduced by one because we excluded the face 
         // that is the outside of the graph.
-        if (faces.length < ((2 - vertices.size + segments.length) - 1)) {
+        if (faces.length < ((2 - vertices.length + segments.length) - 1)) {
             // Todo: throw error
             console.log("The number of faces found by the findFaces algorithm is too low");
-        } else if (faces.length > ((2 - vertices.size + segments.length) - 1)) {
+        } else if (faces.length > ((2 - vertices.length + segments.length) - 1)) {
             // Todo: throw error
             console.log("The number of faces found by the findFaces algorithm is too high");
         }
@@ -103,30 +103,57 @@ export class FaceFinder {
         return faces;
     };   
 
-    private static _findVertices = (segments: Segment[]): Set<Point> => {
-        const vertices = new Set<Point>();
+    private static _findVertices = (segments: Segment[]): Point[] => {
+        const vertices = [];
         for (let i = 0; i < segments.length; i++) {
-            const segment = segments[i];
-            vertices.add(segment.getStart());
-            vertices.add(segment.getEnd());
+            const segmentStart = segments[i].getStart().clone();
+            const segmentEnd = segments[i].getEnd().clone();
+            let addStart = true;
+            let addEnd = true;
+            // start and end cannot be equal per the Segment constructor,
+            // so we can check for both at the same time
+            vertices.forEach(otherVertex => {
+                if (otherVertex.equals(segmentStart)) {
+                    addStart = false;
+                }
+
+                if (otherVertex.equals(segmentEnd)) {
+                    addEnd = false;
+                }
+
+            });
+            if (addStart) {
+                vertices.push(segmentStart);
+            }
+
+            if (addEnd) {
+                vertices.push(segmentEnd);
+            }
+
         }
         return vertices;
     };
 
-    private static _findEdges = (segments: Segment[]): Edge[] => {
+    private static _findEdges = (segments: Segment[], vertices: Point[]): Edge[] => {
         const edges: Edge[] = [];
         for (let i = 0; i < segments.length; i++) {
             const segment = segments[i];
+            const startVertex = vertices.find((vertex) => vertex.equals(segment.getStart()));
+            const endVertex = vertices.find((vertex) => vertex.equals(segment.getEnd()));
+            if (!startVertex || !endVertex) {
+                throw new Error("Could not find the segment's endpoint in the vertices array");
+            }
+
             edges.push({
-                origin: segment.getStart(), 
-                destination: segment.getEnd(), 
+                origin: startVertex, 
+                destination: endVertex, 
                 tangentAtOrigin: segment.getTangent(0), 
                 tangentAtDestination: segment.getTangent(1), 
                 index: i
             });
             edges.push({
-                origin: segment.getEnd(), 
-                destination: segment.getStart(), 
+                origin: endVertex, 
+                destination: startVertex, 
                 tangentAtOrigin: Vector.findOpposite(segment.getTangent(1)), 
                 tangentAtDestination: Vector.findOpposite(segment.getTangent(0)), 
                 index: i
@@ -143,7 +170,7 @@ export class FaceFinder {
      * @param vertices A set of Points.
      * @param edges An array of Edges.
      */
-    private static _createLeavingEdgesMap = (vertices: Set<Point>, edges: Edge[]): Map<Point, Edge[]> => {
+    private static _createLeavingEdgesMap = (vertices: Point[], edges: Edge[]): Map<Point, Edge[]> => {
         const leavingEdgesMap = new Map();
         vertices.forEach(vertex => {
             const leavingEdges: Array<Edge> = [];

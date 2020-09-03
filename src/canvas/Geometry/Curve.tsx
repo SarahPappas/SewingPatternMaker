@@ -7,7 +7,7 @@ export abstract class Curve extends Segment {
 
     constructor (start: Point, end: Point, control: Point) {
         super(start, end);
-        this.control = control;
+        this.control = control.clone();
     }
 
     protected abstract computePoint(t: number): Point;

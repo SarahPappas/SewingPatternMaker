@@ -52,9 +52,8 @@ export class PathIntersection {
     static findPointIntersectAlongPatternPaths = (point: Point, paths: PatternPath[]): IIntersection | null => {
         for (let i = 0; i < paths.length; i++) {
             const thatPath = paths[i];
-            const thatPathPoints = thatPath.getPoints();
             const intersectionPoint = thatPath.getSegment()?.isPointNearSegment(point, 10);
-            if (intersectionPoint?.equals(thatPathPoints[0]) || intersectionPoint?.equals(thatPathPoints[thatPathPoints.length - 1])) {
+            if (intersectionPoint?.equals(thatPath.getStart()) || intersectionPoint?.equals(thatPath.getEnd())) {
                 continue;
             }
 

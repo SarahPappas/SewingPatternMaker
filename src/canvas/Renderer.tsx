@@ -87,14 +87,18 @@ export class Renderer implements IRenderer {
                 if (intersection) {
                     this._isTracing = false;
 
-                    const pathCrossedStartPoint = intersection.pathCrossed.getPoints()[0];
-                    const pathCrossedEndpoint = intersection.pathCrossed.getPoints()[intersection.pathCrossed.getPoints().length - 1];
-                    if (intersection.point.isWithinRadius(pathCrossedEndpoint, 10) || intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
-                        this._endTracing(intersection.point);
+                    const pathCrossedStartPoint = intersection.pathCrossed.getStart();
+                    const pathCrossedEndpoint = intersection.pathCrossed.getEnd();
+                    if (intersection.point.isWithinRadius(pathCrossedEndpoint, 10)) {
+                        this._endTracing(pathCrossedEndpoint);
+                        return;
+                    } else if (intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
+                        this._endTracing(pathCrossedStartPoint);
                         return;
                     }
 
-                    this._endTracing(intersection.point, this._handleIntersection.bind(null, intersection));
+                    this._splitPathAtIntersection(intersection);
+                    this._endTracing(intersection.point);
                 }
             }
         };
@@ -182,7 +186,7 @@ export class Renderer implements IRenderer {
     private _checkPathStartIntersectionAndSplit = (startPoint: Point, paths: PatternPath[]): Point => {
         const intersection = PathIntersection.findPointIntersectAlongPatternPaths(startPoint, paths);
         if (intersection) {
-            this._handleIntersection(intersection);
+            this._splitPathAtIntersection(intersection);
             return intersection.point;
         }
         return startPoint;
@@ -230,15 +234,11 @@ export class Renderer implements IRenderer {
         });
     };
 
-    private _endTracing = (position: Point, callback?: Function): void => {
+    private _endTracing = (position: Point): void => {
         if (this._currPath) {
             this._currPath.addPoint(position);
             this._currPath.snapEndPoint(this._document.getPatternPaths());
-
-            if (callback) {
-                callback();
-            }
-
+            
             let newPatternPath;
             const points = this._currPath.getPoints();
             switch (this._toolType) {
@@ -253,11 +253,21 @@ export class Renderer implements IRenderer {
             console.log("paths", this._document.getPatternPaths());
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }
+
         this._resetTracing();
     };
 
-    private _handleIntersection = (intersection: IIntersection): void => {
-        const splitPaths = intersection.pathCrossed.splitAtPoint(intersection.point);
+    /**
+     * Splits the path from the intersection in 2 paths at the point
+     * that is closest to the intersection's point on the path. 
+     * Updates the patternPath list in the document, and returns
+     * the new endpoint shared by the 2 pieces of the split paths
+     * @param intersection 
+     */
+    private _splitPathAtIntersection = (intersection: IIntersection): void => {
+        const splitPaths: PatternPath[] = intersection.pathCrossed.splitAtPoint(intersection.point);
+        // update the intersection to hold the splitting point
+        intersection.point = splitPaths[1].getStart();
         this._document.replacePatternPath(intersection.pathCrossed, splitPaths);
     };
 

@@ -11,21 +11,24 @@ export class PatternPath implements IPatternPath {
     constructor (pathType: PatternPathType, segment: Segment) {
         this._type = pathType;
         this._segment = segment;
-
         this._points = segment.computePoints();
-        if (!this._points[0].equals(segment.getStart())) {
-            this._points.unshift(segment.getStart());
-        }
-        if (!this._points[this._points.length - 1].equals(segment.getEnd())) {
-            this._points.push(segment.getEnd());
-        }
-
         this._path2D = new Path2D();
         this._updatePath2D();
     }
 
+    // Returns clones of the points for protection
     getPoints = (): Point[] => {
-        return this._points;
+        return this._points.map(point => point.clone());
+    };
+
+    // Returns a clone of the start point of the path for protection
+    getStart = (): Point => {
+        return this._segment.getStart().clone();
+    };
+
+    // Returns a clone of the end point of the path for protection
+    getEnd = (): Point => {
+        return this._segment.getEnd().clone();
     };
 
     getType = (): PatternPathType => {

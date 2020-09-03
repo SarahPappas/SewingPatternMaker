@@ -111,18 +111,14 @@ export abstract class TracingPath implements ITracingPath {
 
         for (let i = 0; i < patternPaths.length; i++) {
             const patternPath = patternPaths[i];
-            const points = patternPath.getPoints();
 
-            const otherFirstPoint = points[0];
-            const otherLastPoint = points[points.length - 1];
-
-            if(!updatedPoint && point.isWithinRadius(otherFirstPoint, radius)) {
-                this._points[index] = otherFirstPoint;
+            if(!updatedPoint && point.isWithinRadius(patternPath.getStart(), radius)) {
+                this._points[index] = patternPath.getStart();
                 updatedPoint = true;
             }
 
-            if(!updatedPoint && point.isWithinRadius(otherLastPoint, radius)) {
-                this._points[index] = otherLastPoint;
+            if(!updatedPoint && point.isWithinRadius(patternPath.getEnd(), radius)) {
+                this._points[index] = patternPath.getEnd();
                 updatedPoint = true;
             }
         }

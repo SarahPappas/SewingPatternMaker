@@ -11,7 +11,7 @@ export class Point implements IPoint {
     }
 
     equals = (other: Point): boolean => {
-        const EPSILON = 1e-12;
+        const EPSILON = 1e-15;
         return Math.abs(this.x  - other.x) <= EPSILON && Math.abs(this.y - other.y) <= EPSILON;
     };
 

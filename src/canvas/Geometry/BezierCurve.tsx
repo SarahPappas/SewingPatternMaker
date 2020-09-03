@@ -28,20 +28,14 @@ export class BezierCurve extends Curve {
         // TODO: this method may fail if the bezier curve is too long:
         // the tested point might slip in between 2 of the computed points        
         const NUMPOINTS = 100;
-        const points = this.computePoints();
-        let index = -1;
-        for (let i = 0; i < points.length; i++) {
-            if (points[i].isWithinRadius(point, 10)){
-                index = i;
-                break;
-            }
-        }
+        const pointsOnCurve = this.computePoints(NUMPOINTS);
+        const indexOfClosestPoint = this._indexOfClosestPointOnCurve(point, pointsOnCurve);
 
-        if (index === -1) {
+        if (!point.isWithinRadius(pointsOnCurve[indexOfClosestPoint], 10)){
             throw new Error("the point is not on the curve");
-        }
+        } 
         
-        return index / NUMPOINTS;
+        return indexOfClosestPoint / NUMPOINTS;
     };
 
     // Returns a point on the Bezier curve between its start point and

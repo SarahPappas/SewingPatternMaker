@@ -68,20 +68,34 @@ export abstract class Curve extends Segment {
     };
 
     /* 
-     * Returns null if a points is not near the segement, otherwise it returns the closest
-     * point on the segement. Checks if a point is near the curve by computing a number of 
-     * points on that curve and then checking if the given point is within a radius at the 
-     * given threshold of each computed point.
+     * Returns null if a point is not near the segement, otherwise it returns the closest
+     * point on the segment. Checks if a point is near the curve by computing a number of 
+     * points on that curve, finding the point among those that is closest to the inputted point,
+     * and then checking if that point is within a radius at the given threshold.
     */
     isPointNearSegment = (point: Point, threshold: number): Point | null => {
-        const points = this.computePoints();
-        for (let i = 0; i < points.length; i++) {
-            if (point.isWithinRadius(points[i], threshold)) {
-                return points[i];
+        const NUMPOINTS = 100;
+        const pointsOnCurve = this.computePoints(NUMPOINTS);
+        const indexOfClosestPoint = this._indexOfClosestPointOnCurve(point, pointsOnCurve);
+
+        if (point.isWithinRadius(pointsOnCurve[indexOfClosestPoint], threshold)) {
+            return pointsOnCurve[indexOfClosestPoint];
+        } else {
+            return null;
+        }
+    };
+
+    protected _indexOfClosestPointOnCurve = (point: Point, pointsOnCurve: Point[]): number => {
+        let minDist = point.distanceTo(pointsOnCurve[0]);
+        let closestPointIndex = 0;
+        for (let i = 1; i < pointsOnCurve.length; i++) {
+            const dist = point.distanceTo(pointsOnCurve[i]);
+            if (dist < minDist) {
+                minDist = dist;
+                closestPointIndex = i;
             }
         }
-
-        return null;
+        return closestPointIndex;
     };
 
     protected lerp = (start: number, end: number, t: number): number => {

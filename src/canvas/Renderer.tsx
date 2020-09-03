@@ -243,10 +243,10 @@ export class Renderer implements IRenderer {
             const points = this._currPath.getPoints();
             switch (this._toolType) {
                 case ToolType.StraightLine:
-                    newPatternPath = new PatternPath(this._pathType, new LineSegment(points[0], points[1]));
+                    newPatternPath = new PatternPath(this._pathType, [new LineSegment(points[0], points[1])]);
                     break;
                 case ToolType.Freeline:
-                    newPatternPath = new PatternPath(this._pathType, CurveFitter.Fit(points));
+                    newPatternPath = new PatternPath(this._pathType, [CurveFitter.Fit(points)]);
             }
             this._document.addPatternPath(newPatternPath);
 
@@ -265,7 +265,7 @@ export class Renderer implements IRenderer {
      * @param intersection 
      */
     private _splitPathAtIntersection = (intersection: IIntersection): void => {
-        const splitPaths: PatternPath[] = intersection.pathCrossed.splitAtPoint(intersection.point);
+        const splitPaths: PatternPath[] = intersection.pathCrossed.splitAtPoint(intersection.point, intersection.indexOfSegmentCrossed);
         // update the intersection to hold the splitting point
         intersection.point = splitPaths[1].getStart();
         this._document.replacePatternPath(intersection.pathCrossed, splitPaths);

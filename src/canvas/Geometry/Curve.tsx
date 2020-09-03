@@ -75,11 +75,11 @@ export abstract class Curve extends Segment {
     */
     isPointNearSegment = (point: Point, threshold: number): Point | null => {
         const NUMPOINTS = 100;
-        const points = this.computePoints(NUMPOINTS);
-        const indexOfClosestPoint = this._indexOfClosestPointOnCurve(point, points);
+        const pointsOnCurve = this.computePoints(NUMPOINTS);
+        const indexOfClosestPoint = this._indexOfClosestPointOnCurve(point, pointsOnCurve);
 
-        if (point.isWithinRadius(points[indexOfClosestPoint], threshold)) {
-            return points[indexOfClosestPoint];
+        if (point.isWithinRadius(pointsOnCurve[indexOfClosestPoint], threshold)) {
+            return pointsOnCurve[indexOfClosestPoint];
         } else {
             return null;
         }

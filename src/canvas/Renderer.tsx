@@ -64,8 +64,14 @@ export class Renderer implements IRenderer {
             }
 
             const position = new Point(e.offsetX, e.offsetY);
-            const snappedPosition = this._checkPathStartIntersectionAndSplit(position, this._document.getPatternPaths());
-            this._currPath.addPoint(snappedPosition);
+            this._currPath.addPoint(position);
+            // Try to snap to other endpoints
+            const snapStartPoint = this._currPath?.snapStartPoint(this._document.getPatternPaths());
+            // If we were unable to snap to other endpoints, we will try to snap along other paths.
+            if (!snapStartPoint) {
+                const snappedPosition = this._checkPathStartIntersectionAndSplit(position, this._document.getPatternPaths());
+                this._currPath.snapStartPointTo(snappedPosition);
+            }
         };
 
         this._canvas.onmousemove = (e) => {
@@ -176,17 +182,6 @@ export class Renderer implements IRenderer {
     private _checkPathStartIntersectionAndSplit = (startPoint: Point, paths: PatternPath[]): Point => {
         const intersection = PathIntersection.findPointIntersectAlongPatternPaths(startPoint, paths);
         if (intersection) {
-            const pathCrossedPoints = intersection.pathCrossed.getPoints();
-            const pathCrossedStartPoint = pathCrossedPoints[0];
-            if (intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
-                return pathCrossedStartPoint;
-            }
-
-            const pathCrossedEndPoint = pathCrossedPoints[pathCrossedPoints.length - 1];
-            if (intersection.point.isWithinRadius(pathCrossedEndPoint, 10)) {
-                return pathCrossedEndPoint;
-            }
-
             this._handleIntersection(intersection);
             return intersection.point;
         }
@@ -238,7 +233,7 @@ export class Renderer implements IRenderer {
     private _endTracing = (position: Point, callback?: Function): void => {
         if (this._currPath) {
             this._currPath.addPoint(position);
-            this._currPath.snapEndpoints(this._document.getPatternPaths());
+            this._currPath.snapEndPoint(this._document.getPatternPaths());
 
             if (callback) {
                 callback();

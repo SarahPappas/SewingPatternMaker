@@ -68,54 +68,67 @@ export abstract class TracingPath implements ITracingPath {
         return true;
     };
 
-    snapStartToPoint = (point: Point): void => {
-        this._points[0] = point;
+    /**
+     * Returns true if the start point was snapped to an endpoint of a pattern path.
+     * Otherwise, it returns false.
+     * 
+     * @param patternPaths A list of pattern paths whose endpoints we will compare to the
+     * start point.
+     */
+    snapStartPoint = (patternPaths: PatternPath[]): boolean => {
+        return this._snapEndPoints(patternPaths, 0);
     };
 
-    snapEndToPoint = (point: Point): void => {
-        this._points[this._points.length -1] = point;
+    /**
+     * Sets the start point of the tracing path to the given point.
+     * 
+     * @param point A point where the tracing path should start.
+     */
+    snapStartPointTo = (point: Point): void => {
+        this._points[0] = point;    
     };
 
-    snapEndpoints = (paths: PatternPath[]): void => {
-        const myFirstPoint = this._points[0];
-        const myLastPoint = this._points[this._points.length - 1];
+    /**
+     * Returns true if the last point was snapped to an endpoint of a pattern path.
+     * Otherwise, it returns false.
+     * 
+     * @param patternPaths A list of pattern paths whose endpoints we will compare to the
+     * last point.
+     */
+    snapEndPoint = (patternPaths: PatternPath[]): boolean => {
+        return this._snapEndPoints(patternPaths, this._points.length - 1);
+    };
+
+    private _snapEndPoints = (patternPaths: PatternPath[], index: number): boolean => {
+        const point = this._points[index];
         // Radius to check within to see if we should snap to point.
         const radius = 10;
-        let updatedFirstPoint = false;
-        let updatedLastPoint = false;
+        let updatedPoint = false;
 
-        for (let i = 0; i < paths.length; i++) {
-            const path = paths[i];
-            const points = path.getPoints();
+        for (let i = 0; i < patternPaths.length; i++) {
+            const patternPath = patternPaths[i];
+            const points = patternPath.getPoints();
 
             const otherFirstPoint = points[0];
             const otherLastPoint = points[points.length - 1];
 
-            if(!updatedFirstPoint && myFirstPoint.isWithinRadius(otherFirstPoint, radius)) {
-                this.snapStartToPoint(otherFirstPoint);
-                updatedFirstPoint = true;
+            if(!updatedPoint && point.isWithinRadius(otherFirstPoint, radius)) {
+                this._points[index] = otherFirstPoint;
+                updatedPoint = true;
             }
 
-            if(!updatedFirstPoint && myFirstPoint.isWithinRadius(otherLastPoint, radius)) {
-                this.snapStartToPoint(otherLastPoint);
-                updatedFirstPoint = true;
+            if(!updatedPoint && point.isWithinRadius(otherLastPoint, radius)) {
+                this._points[index] = otherLastPoint;
+                updatedPoint = true;
             }
-
-            if(!updatedLastPoint && myLastPoint.isWithinRadius(otherFirstPoint, radius)) {
-                this.snapEndToPoint(otherFirstPoint);
-                updatedLastPoint = true;
-            }
-
-            if(!updatedLastPoint && myLastPoint.isWithinRadius(otherLastPoint, radius)) {
-                this.snapEndToPoint(otherLastPoint);
-                updatedLastPoint = true;
-            }
-
         }
 
-        if (updatedFirstPoint || updatedLastPoint) {
+        if (updatedPoint) {
             this._updatePath2D();
+            return true;
         }
+
+        return false;
     };
 
     protected abstract _updatePath2D(): void;

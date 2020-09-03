@@ -64,12 +64,13 @@ export class Renderer implements IRenderer {
             }
 
             const position = new Point(e.offsetX, e.offsetY);
+            this._currPath.addPoint(position);
             // Try to snap to other endpoints
-            const snapStartPoint = this._currPath?.snapStartPoint(this._document.getPatternPaths(), position);
+            const snapStartPoint = this._currPath?.snapStartPoint(this._document.getPatternPaths());
             // If we were unable to snap to other endpoints, we will try to snap along other paths.
             if (!snapStartPoint) {
                 const snappedPosition = this._checkPathStartIntersectionAndSplit(position, this._document.getPatternPaths());
-                this._currPath.addPoint(snappedPosition);
+                this._currPath.snapStartPointTo(snappedPosition);
             }
         };
 

@@ -73,13 +73,19 @@ export abstract class TracingPath implements ITracingPath {
      * Otherwise, it returns false.
      * 
      * @param patternPaths A list of pattern paths whose endpoints we will compare to the
-     * start point, or a point given.
-     * @param point A point that can be used in place of the start point. We compare this point
-     * to the endpoints of the pattern paths to decide if we should snap or not.
+     * start point.
      */
-    snapStartPoint = (patternPaths: PatternPath[], point?: Point): boolean => {
-        const checkPoint = point || this._points[0];
-        return this._snapEndPoints(patternPaths, 0, checkPoint);
+    snapStartPoint = (patternPaths: PatternPath[]): boolean => {
+        return this._snapEndPoints(patternPaths, 0);
+    };
+
+    /**
+     * Sets the start point of the tracing path to the given point.
+     * 
+     * @param point A point where the tracing path should start.
+     */
+    snapStartPointTo = (point: Point): void => {
+        this._points[0] = point;    
     };
 
     /**
@@ -87,19 +93,14 @@ export abstract class TracingPath implements ITracingPath {
      * Otherwise, it returns false.
      * 
      * @param patternPaths A list of pattern paths whose endpoints we will compare to the
-     * last point, or a point given.
-     * @param point A point that can be used in place of the last point. We compare this point
-     * to the endpoints of the pattern paths to decide if we should snap or not.
+     * last point.
      */
-    snapEndPoint = (patternPaths: PatternPath[], point?: Point): boolean => {
-        const checkPoint = point || this._points[this._points.length - 1];
-        return this._snapEndPoints(patternPaths, this._points.length - 1, checkPoint);
+    snapEndPoint = (patternPaths: PatternPath[]): boolean => {
+        return this._snapEndPoints(patternPaths, this._points.length - 1);
     };
 
-    private _snapEndPoints = (patternPaths: PatternPath[], index: number, point: Point): boolean => {
-        if (!point) {
-            throw new Error("Point to we are snapping to is undefined.");
-        }
+    private _snapEndPoints = (patternPaths: PatternPath[], index: number): boolean => {
+        const point = this._points[index];
         // Radius to check within to see if we should snap to point.
         const radius = 10;
         let updatedPoint = false;

@@ -23,7 +23,7 @@ export class FaceFinder {
      */
     static FindFaces = (segments: Segment[]): number[][] => {
         const vertices = FaceFinder._findVertices(segments);
-        const edges = FaceFinder._findEdges(segments);
+        const edges = FaceFinder._findEdges(segments, vertices);
 
         // Create a map between vertices and an ordered array of all its
         // outgoing edges, ordered by angle of departure from the vertex
@@ -106,8 +106,8 @@ export class FaceFinder {
     private static _findVertices = (segments: Segment[]): Point[] => {
         const vertices = [];
         for (let i = 0; i < segments.length; i++) {
-            const segmentStart = segments[i].getStart();
-            const segmentEnd = segments[i].getEnd();
+            const segmentStart = segments[i].getStart().clone();
+            const segmentEnd = segments[i].getEnd().clone();
             let addStart = true;
             let addEnd = true;
             // start and end cannot be equal per the Segment constructor,
@@ -130,20 +130,25 @@ export class FaceFinder {
         return vertices;
     };
 
-    private static _findEdges = (segments: Segment[]): Edge[] => {
+    private static _findEdges = (segments: Segment[], vertices: Point[]): Edge[] => {
         const edges: Edge[] = [];
         for (let i = 0; i < segments.length; i++) {
             const segment = segments[i];
+            const startVertex = vertices.find((vertex) => vertex.equals(segment.getStart()));
+            const endVertex = vertices.find((vertex) => vertex.equals(segment.getEnd()));
+            if (!startVertex || !endVertex) {
+                throw new Error();
+            }
             edges.push({
-                origin: segment.getStart(), 
-                destination: segment.getEnd(), 
+                origin: startVertex, 
+                destination: endVertex, 
                 tangentAtOrigin: segment.getTangent(0), 
                 tangentAtDestination: segment.getTangent(1), 
                 index: i
             });
             edges.push({
-                origin: segment.getEnd(), 
-                destination: segment.getStart(), 
+                origin: endVertex, 
+                destination: startVertex, 
                 tangentAtOrigin: Vector.findOpposite(segment.getTangent(1)), 
                 tangentAtDestination: Vector.findOpposite(segment.getTangent(0)), 
                 index: i

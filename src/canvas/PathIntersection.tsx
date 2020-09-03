@@ -74,7 +74,7 @@ export class PathIntersection {
 
     /* Finds the intersection between a lineSegment and a path by taking each pair of consecutive points
        and creating a line segment to check for an intersection on. */
-       private static _findIntersectionOfLineSegmentAndPath = (thisLineSeg: LineSegment, path: PatternPath): IIntersection | null => {
+    private static _findIntersectionOfLineSegmentAndPath = (thisLineSeg: LineSegment, path: PatternPath): IIntersection | null => {
         // Threshold for checking if a point is on a line. Range from 0 to 1, with 0 being the tightest and 1 being the loosest.
         const THRESHOLD = .01;
         const points = path.getPoints();

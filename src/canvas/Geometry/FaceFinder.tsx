@@ -129,7 +129,7 @@ export class FaceFinder {
             if (addEnd) {
                 vertices.push(segmentEnd);
             }
-            
+
         }
         return vertices;
     };
@@ -141,8 +141,9 @@ export class FaceFinder {
             const startVertex = vertices.find((vertex) => vertex.equals(segment.getStart()));
             const endVertex = vertices.find((vertex) => vertex.equals(segment.getEnd()));
             if (!startVertex || !endVertex) {
-                throw new Error();
+                throw new Error("Could not find the segment's endpoint in the vertices array");
             }
+
             edges.push({
                 origin: startVertex, 
                 destination: endVertex, 

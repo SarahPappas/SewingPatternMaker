@@ -70,8 +70,7 @@ export class PatternPath implements IPatternPath {
     splitAtPoint = (point: Point, segmentIndex: number): PatternPath[] => {
         const splitSegments = this._splitSegments(point, segmentIndex);
         return [new PatternPath(this._type, splitSegments[0]),
-                new PatternPath(this._type, splitSegments[1])];    
-        
+                new PatternPath(this._type, splitSegments[1])];
     };
 
     /**
@@ -91,6 +90,7 @@ export class PatternPath implements IPatternPath {
         } else {
             index = 0;
         }
+
         this._segments = this._splitSegments(point, segmentIndex)[index];
         // Update data fields
         this._points = this._computePoints();
@@ -103,6 +103,7 @@ export class PatternPath implements IPatternPath {
         if (splitSegments.length !== 2) {
             throw new Error("Split did not return correct number of segments");
         }
+        
         const segmentsBeforePoint = [];
         for (let i = 0; i < segmentIndex; i++) {
             segmentsBeforePoint.push(this._segments[i]);

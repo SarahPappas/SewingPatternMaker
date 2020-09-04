@@ -83,18 +83,19 @@ export class PatternPath implements IPatternPath {
     getAllowance = (): PatternPath => {
         // Get the path that is offset from this one
         const offsetSegments = this._getOffsetSegments();
+        const lengthOfLineProlongations = 100;
 
         // Add a line segment at the beginning of the offset path,
         // following the tangent of the offset at that point  
-        const first = offsetSegments[0];      
-        const p1 = first.getStart();
-        const p2 = Point.translate(p1, first.getTangent(0).normalize().multiplyByScalar(-100));
+        const firstSegment = offsetSegments[0];      
+        const p1 = firstSegment.getStart();
+        const p2 = Point.translate(p1, firstSegment.getTangent(0).normalize().multiplyByScalar(-1 * lengthOfLineProlongations));
         
         // Add a line segment at the end of the offset path,
         // following the tangent of the offset at that point
-        const last = offsetSegments[offsetSegments.length - 1];
-        const q1 = last.getEnd();
-        const q2 = Point.translate(q1, last.getTangent(1).normalize().multiplyByScalar(100));
+        const lastSegment = offsetSegments[offsetSegments.length - 1];
+        const q1 = lastSegment.getEnd();
+        const q2 = Point.translate(q1, lastSegment.getTangent(1).normalize().multiplyByScalar(lengthOfLineProlongations));
         
         let result: Segment[] = [new LineSegment(p2, p1)];
         result = result.concat(offsetSegments);

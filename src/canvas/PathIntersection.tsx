@@ -52,13 +52,21 @@ export class PathIntersection {
     static findPointIntersectAlongPatternPaths = (point: Point, paths: PatternPath[]): IIntersection | null => {
         for (let i = 0; i < paths.length; i++) {
             const thatPath = paths[i];
-            const intersectionPoint = thatPath.getSegment()?.isPointNearSegment(point, 10);
+            const thatPathSegments = thatPath.getSegments();
+            let intersectionPoint = null;
+            let segmentIndex;
+            for (segmentIndex = 0; !intersectionPoint && segmentIndex < thatPathSegments.length; segmentIndex++) {
+                intersectionPoint = thatPathSegments[segmentIndex].isPointNearSegment(point, 10);
+            }
+            
             if (intersectionPoint?.equals(thatPath.getStart()) || intersectionPoint?.equals(thatPath.getEnd())) {
                 continue;
             }
 
             if (intersectionPoint) {
-                return {point: intersectionPoint, pathCrossed: thatPath};
+                // cancel the last increment so the segmentIndex is the index of the intersection
+                const indexOfSegmentCrossed = segmentIndex - 1;
+                return {point: intersectionPoint, pathCrossed: thatPath, indexOfSegmentCrossed: indexOfSegmentCrossed};
             }
         }
         return null;
@@ -69,12 +77,16 @@ export class PathIntersection {
     private static _findIntersectionOfLineSegmentAndPath = (thisLineSeg: LineSegment, path: PatternPath): IIntersection | null => {
         // Threshold for checking if a point is on a line. Range from 0 to 1, with 0 being the tightest and 1 being the loosest.
         const THRESHOLD = .01;
-        const points = path.getPoints();
-        for (let i = 1; i < points.length; i++ ) {
-            const thatLineSeg = new LineSegment(points[i], points[i - 1]);
-            const intersectionPoint = LineSegment.findIntersectionPointOfTwoLines(thisLineSeg, thatLineSeg, true, THRESHOLD);
-            if (intersectionPoint ) {
-                return {point: intersectionPoint, pathCrossed: path};
+        const segments = path.getSegments();
+        for (let segmentIndex = 0; segmentIndex < segments.length; segmentIndex++) {
+            const segment = segments[segmentIndex];
+            const segmentPoints = segment.getPoints();
+            for (let j = 1; j < segmentPoints.length; j++ ) {
+                const thatLineSeg = new LineSegment(segmentPoints[j], segmentPoints[j - 1]);
+                const intersectionPoint = LineSegment.findIntersectionPointOfTwoLines(thisLineSeg, thatLineSeg, true, THRESHOLD);
+                if (intersectionPoint ) {
+                    return {point: intersectionPoint, pathCrossed: path, indexOfSegmentCrossed: segmentIndex};
+                }
             }
         }
 

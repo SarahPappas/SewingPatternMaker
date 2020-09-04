@@ -1,6 +1,6 @@
 import { Point } from 'canvas/Geometry/Point';
 import { Vector } from 'canvas/Geometry/Vector';
-import { Segment } from 'canvas/Geometry/Segment';
+import { PatternPath } from 'canvas/PatternPaths/PatternPath';
 
 interface Edge {
     origin: Point;
@@ -21,9 +21,9 @@ export class FaceFinder {
      * face in the inputted segments array. The inner array's order indicates
      * how to go around the face in the negative direction.
      */
-    static FindFaces = (segments: Segment[]): number[][] => {
-        const vertices = FaceFinder._findVertices(segments);
-        const edges = FaceFinder._findEdges(segments, vertices);
+    static FindFaces = (paths: PatternPath[]): number[][] => {
+        const vertices = FaceFinder._findVertices(paths);
+        const edges = FaceFinder._findEdges(paths, vertices);
 
         // Create a map between vertices and an ordered array of all its
         // outgoing edges, ordered by angle of departure from the vertex
@@ -92,10 +92,10 @@ export class FaceFinder {
         // with the theoretical number of faces according to Euler's planar 
         // graph formula, reduced by one because we excluded the face 
         // that is the outside of the graph.
-        if (faces.length < ((2 - vertices.length + segments.length) - 1)) {
+        if (faces.length < ((2 - vertices.length + paths.length) - 1)) {
             // Todo: throw error
             console.log("The number of faces found by the findFaces algorithm is too low");
-        } else if (faces.length > ((2 - vertices.length + segments.length) - 1)) {
+        } else if (faces.length > ((2 - vertices.length + paths.length) - 1)) {
             // Todo: throw error
             console.log("The number of faces found by the findFaces algorithm is too high");
         }
@@ -103,43 +103,41 @@ export class FaceFinder {
         return faces;
     };   
 
-    private static _findVertices = (segments: Segment[]): Point[] => {
+    private static _findVertices = (paths: PatternPath[]): Point[] => {
         const vertices = [];
-        for (let i = 0; i < segments.length; i++) {
-            const segmentStart = segments[i].getStart().clone();
-            const segmentEnd = segments[i].getEnd().clone();
+        for (let i = 0; i < paths.length; i++) {
             let addStart = true;
             let addEnd = true;
             // start and end cannot be equal per the Segment constructor,
             // so we can check for both at the same time
             vertices.forEach(otherVertex => {
-                if (otherVertex.equals(segmentStart)) {
+                if (otherVertex.equals(paths[i].getStart())) {
                     addStart = false;
                 }
 
-                if (otherVertex.equals(segmentEnd)) {
+                if (otherVertex.equals(paths[i].getEnd())) {
                     addEnd = false;
                 }
 
             });
             if (addStart) {
-                vertices.push(segmentStart);
+                vertices.push(paths[i].getStart());
             }
 
             if (addEnd) {
-                vertices.push(segmentEnd);
+                vertices.push(paths[i].getEnd());
             }
 
         }
         return vertices;
     };
 
-    private static _findEdges = (segments: Segment[], vertices: Point[]): Edge[] => {
+    private static _findEdges = (paths: PatternPath[], vertices: Point[]): Edge[] => {
         const edges: Edge[] = [];
-        for (let i = 0; i < segments.length; i++) {
-            const segment = segments[i];
-            const startVertex = vertices.find((vertex) => vertex.equals(segment.getStart()));
-            const endVertex = vertices.find((vertex) => vertex.equals(segment.getEnd()));
+        for (let i = 0; i < paths.length; i++) {
+            const path = paths[i];
+            const startVertex = vertices.find((vertex) => vertex.equals(path.getStart()));
+            const endVertex = vertices.find((vertex) => vertex.equals(path.getEnd()));
             if (!startVertex || !endVertex) {
                 throw new Error("Could not find the segment's endpoint in the vertices array");
             }
@@ -147,15 +145,15 @@ export class FaceFinder {
             edges.push({
                 origin: startVertex, 
                 destination: endVertex, 
-                tangentAtOrigin: segment.getTangent(0), 
-                tangentAtDestination: segment.getTangent(1), 
+                tangentAtOrigin: path.getTangentAtStart(), 
+                tangentAtDestination: path.getTangentAtEnd(), 
                 index: i
             });
             edges.push({
                 origin: endVertex, 
                 destination: startVertex, 
-                tangentAtOrigin: Vector.findOpposite(segment.getTangent(1)), 
-                tangentAtDestination: Vector.findOpposite(segment.getTangent(0)), 
+                tangentAtOrigin: Vector.findOpposite(path.getTangentAtEnd()), 
+                tangentAtDestination: Vector.findOpposite(path.getTangentAtStart()), 
                 index: i
             });
         }

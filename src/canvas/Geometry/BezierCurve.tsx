@@ -76,7 +76,7 @@ export class BezierCurve extends Curve {
         const numSegments = NUMPOINTS - 1;
         for (let t = 0; t <= 1; t += (1 / numSegments)) {
             const pointOnBezier = this._computePoint(t);
-            const displacement = Vector.findPerpVector(this.getTangent(t)).normalize().multiplyByScalar(distance);
+            const displacement = Vector.findOpposite(Vector.findPerpVector(this.getTangent(t))).normalize().multiplyByScalar(distance);
             offsetPoints.push(Point.translate(pointOnBezier, displacement));
         }
 

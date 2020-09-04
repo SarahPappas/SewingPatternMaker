@@ -55,8 +55,8 @@ export class PatternPiece {
         const numAllowances = allowances.length;
         for (let i = 0; i < numAllowances; i++) {
             const intersections = this._findIntersectionBetweenPaths(allowances[i], allowances[(i + 1) % numAllowances]);
-            allowances[i].trimBeforePoint(intersections[0].point, intersections[0].indexOfSegmentCrossed);
-            allowances[(i + 1) % numAllowances].trimAfterPoint(intersections[1].point, intersections[1].indexOfSegmentCrossed);
+            allowances[i].trimAfterPoint(intersections[0].point, intersections[0].indexOfSegmentCrossed);
+            allowances[(i + 1) % numAllowances].trimBeforePoint(intersections[1].point, intersections[1].indexOfSegmentCrossed);
         }
         this._allowancePaths = allowances;
     };
@@ -64,9 +64,6 @@ export class PatternPiece {
     private _findIntersectionBetweenPaths = (path1: PatternPath, path2: PatternPath): IIntersection[] => {
         // find first encountered intersection of paths, exploring path1 in reverse direction and path2 in regular direction
         
-        console.log("path1 segments: " + path1.getSegments());
-        console.log("path2 segments: " + path2.getSegments());
-
         const reversedPath1 = path1.reversedClone();
         const reversedPath1Segments = reversedPath1.getSegments();
         const numSegmentsIn1 = reversedPath1Segments.length;
@@ -77,7 +74,7 @@ export class PatternPiece {
                 const intersectionOnPath2 = PathIntersection.findIntersectionOfLineSegmentAndPath(lineSeg, path2);
                 if (intersectionOnPath2) {
                     return [
-                        // Intersection on path 1
+                        // Intersection on path 1 (not reversed)
                         {
                             point: intersectionOnPath2.point,
                             pathCrossed: path1,

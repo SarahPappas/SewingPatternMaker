@@ -186,13 +186,13 @@ export class Document implements IDocument {
         const patternPieces = faces.map(face => (
             new PatternPiece(face.map((edge) => {
                 if (edge.isReversed) {
-                    return this._patternPaths[edge.index].clone();
-                } else {
                     return this._patternPaths[edge.index].reversedClone();
+                } else {
+                    return this._patternPaths[edge.index].clone();
                 }
             }))
         ));
-        
+
         return patternPieces;
     };
 

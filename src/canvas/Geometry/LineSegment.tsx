@@ -137,9 +137,7 @@ export class LineSegment extends Segment {
     };
 
     getOffsetSegments = (distance: number): Segment[] => {
-        const displacement = Vector.findPerpVector(this.getTangent(0));
-        displacement.normalize();
-        displacement.multiplyByScalar(distance);
+        const displacement = Vector.findOpposite(Vector.findPerpVector(this.getTangent(0))).normalize().multiplyByScalar(distance);
 
         const result = this.clone();
         result.translate(displacement);

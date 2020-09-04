@@ -136,7 +136,6 @@ export class Renderer implements IRenderer {
             const pathsRemovedThisTracingSession = this._document.getPatternPathsTrash();
             this._document.removePatternPath();
             this._undoPathReplacementsInTracingSession(pathsRemovedThisTracingSession);
-            console.log("paths", this._document.getPatternPaths());
         }) as EventListener);
 
         return this._canvas;

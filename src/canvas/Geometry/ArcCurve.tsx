@@ -144,10 +144,10 @@ export class ArcCurve extends Curve {
 
     getOffsetSegments = (distance: number): Segment[] => {
         const tangentAtStart = this.getTangent(0);
-        const displacementOfStart = Vector.findPerpVector(tangentAtStart).normalize().multiplyByScalar(distance);
+        const displacementOfStart = Vector.findOpposite(Vector.findPerpVector(tangentAtStart)).normalize().multiplyByScalar(distance);
 
         const tangentAtEnd = this.getTangent(1);
-        const displacementOfEnd = Vector.findPerpVector(tangentAtEnd).normalize().multiplyByScalar(distance);
+        const displacementOfEnd = Vector.findOpposite(Vector.findPerpVector(tangentAtEnd)).normalize().multiplyByScalar(distance);
 
         const result = this.clone();
         result.start = Point.translate(this.start, displacementOfStart);

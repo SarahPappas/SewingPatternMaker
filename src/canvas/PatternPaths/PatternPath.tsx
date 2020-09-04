@@ -87,8 +87,6 @@ export class PatternPath implements IPatternPath {
             throw new Error("Split did not return correct number of segments");
         }
 
-        console.log("trimming segment " + segmentIndex + " after intersection");
-
         const newSegments = [];
         for (let i = 0; i < segmentIndex; i++) {
             newSegments.push(this._segments[i]);
@@ -106,9 +104,6 @@ export class PatternPath implements IPatternPath {
         if (splitSegments.length !== 2) {
             throw new Error("Split did not return correct number of segments");
         }
-
-        console.log("trimming segment " + segmentIndex + " before intersection");
-
         const newSegments = [splitSegments[1]];
         for (let i = segmentIndex + 1; i < this._segments.length; i++) {
             newSegments.push(this._segments[i]);
@@ -122,7 +117,7 @@ export class PatternPath implements IPatternPath {
     getAllowance = (): PatternPath => {
         // Get the path that is offset from this one
         const offsetSegments = this._getOffsetSegments();
-        const lengthOfLineProlongations = 100;
+        const lengthOfLineProlongations = 200;
 
         // Add a line segment at the beginning of the offset path,
         // following the tangent of the offset at that point  

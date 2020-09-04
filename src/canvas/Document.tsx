@@ -172,7 +172,7 @@ export class Document implements IDocument {
     };
 
     // Precondition: arePatternPiecesEnclosed returned true 
-    computePatternPieces = (): void => {
+    findPatternPieces = (): void => {
         const faces = FaceFinder.FindFaces(this._patternPaths);
         
         this._patternPieces = faces.map(face => (

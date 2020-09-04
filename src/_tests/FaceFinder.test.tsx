@@ -14,8 +14,8 @@ test("find the inside face of a triangle", async () => {
     const reverseTriangle = [new PatternPath(PatternPathType.Edge, [new LineSegment(p2, p1)]), 
                             new PatternPath(PatternPathType.Edge, [new LineSegment(p3, p2)]), 
                             new PatternPath(PatternPathType.Edge, [new LineSegment(p1, p3)])];
-    expect(FaceFinder.FindFaces(triangle)).toEqual([[0, 1, 2]]);
-    expect(FaceFinder.FindFaces(reverseTriangle)).toEqual([[0, 1, 2]]);
+    expect(FaceFinder.FindFaces(triangle)).toEqual([[{"index": 0, "isReversed": false}, {"index": 1, "isReversed": false}, {"index": 2, "isReversed": false}]]);
+    expect(FaceFinder.FindFaces(reverseTriangle)).toEqual([[{"index": 0, "isReversed": true}, {"index": 1, "isReversed": true}, {"index": 2, "isReversed": true}]]);
 });
 
 test("find the inside faces of a split square", async () => {
@@ -29,7 +29,7 @@ test("find the inside faces of a split square", async () => {
                          new PatternPath(PatternPathType.Edge, [new LineSegment(p3, p4)]), 
                          new PatternPath(PatternPathType.Edge, [new LineSegment(p1, p4)])];
     const result = FaceFinder.FindFaces(splitSquare);
-    expect(result).toContainEqual([0, 1, 2]);
-    expect(result).toContainEqual([2, 3, 4]);
+    expect(result).toContainEqual([{"index": 0, "isReversed": false}, {"index": 1, "isReversed": true}, {"index": 2, "isReversed": false}]);
+    expect(result).toContainEqual([{"index": 2, "isReversed": true}, {"index": 3, "isReversed": false}, {"index": 4, "isReversed": true}]);
     expect(result).toHaveLength(2);
 });

@@ -95,11 +95,9 @@ export class FaceFinder {
         // graph formula, reduced by one because we excluded the face 
         // that is the outside of the graph.
         if (faces.length < ((2 - vertices.length + paths.length) - 1)) {
-            // Todo: throw error
-            console.log("The number of faces found by the findFaces algorithm is too low");
+            throw new Error("The number of faces found by the findFaces algorithm is too low");
         } else if (faces.length > ((2 - vertices.length + paths.length) - 1)) {
-            // Todo: throw error
-            console.log("The number of faces found by the findFaces algorithm is too high");
+            throw new Error("The number of faces found by the findFaces algorithm is too high");
         }
 
         return faces;

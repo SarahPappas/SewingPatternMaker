@@ -25,6 +25,13 @@ export abstract class Segment {
 
     abstract getLength(): number;
     
+    /**
+     * Returns a vector that is tangent to the curve at the position indicated by
+     * the parameter t.
+     * 
+     * @param t Describes the position on the curve where we want the tangent vector.
+     *          t should be equal to 0 or 1, 0 for the start of the curve, 1 for the end
+     */
     abstract getTangent(t: number): Vector;
 
     /**
@@ -58,4 +65,11 @@ export abstract class Segment {
     abstract isPointNearSegment (point: Point, threshold: number): Point | null;
 
     abstract drawTo(path: Path2D): void;
+
+    abstract getOffsetSegments(distance: number): Segment[];
+
+    abstract translate(displacement: Vector): void;
+
+    abstract clone(): Segment;
+    abstract reversedClone(): Segment;
 }

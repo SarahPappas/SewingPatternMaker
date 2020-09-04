@@ -1,19 +1,20 @@
 import { PatternPath } from './PatternPaths/PatternPath';
 import { Point } from './Geometry/Point';
 import { FaceFinder } from './Geometry/FaceFinder';
+import { PatternPathType } from './Enums';
+import { PatternPiece } from './PatternPiece';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
     private _patternPathsTrash: IPatternPathTrash[];
     private _sizeRatio: null | number; // in pixels per inch
-    private _patternPieces: PatternPath[][]; // an array of patternpath arrays, 
-                                             // each representing one piece of the pattern
+    private _allowanceSizes: Map<PatternPathType, number> | null; // allowance sizes in pixels
 
     constructor () {
         this._patternPaths = new Array<PatternPath>();
         this._patternPathsTrash = [];
         this._sizeRatio = null;
-        this._patternPieces = [];
+        this._allowanceSizes = null;
     }
 
     getPatternPaths = (): PatternPath[] => {
@@ -132,18 +133,55 @@ export class Document implements IDocument {
         } 
         return this._sizeRatio;        
     };
+
+    getAllowanceSize = (type: PatternPathType): number => {
+        if (!this._allowanceSizes) {
+            throw new Error();
+        }
+        const allowance = this._allowanceSizes.get(type);
+        if (allowance === undefined) {
+            throw new Error();
+        }
+        return allowance;
+    };
+
+    /**
+     * Sets the allowance sizes to 0 inches for folds, the input edgeAllowance 
+     * for edges and the input seam allowance for seams. If parameters are
+     * omitted, the edge allowance will be set to a default of 2 inches 
+     * and the seam allowance to a default of 1 inch. The sizes are stored in
+     * pixels in the allowanceSizes map data field.
+     * 
+     * Warning: every time this method is called the old data is erased.
+     *
+     * @param edgeAllowance 
+     * @param seamAllowance 
+     */
+    setAllowanceSizes = (edgeAllowance?: number, seamAllowance?: number): void => {
+        if (!this._sizeRatio) {
+            throw new Error("the size ratio was not yet defined for this pattern.");
+        }
+
+        this._allowanceSizes = new Map();
+        this._allowanceSizes.set(PatternPathType.Edge, (edgeAllowance || 2) * this._sizeRatio);
+        this._allowanceSizes.set(PatternPathType.Fold, 0);
+        this._allowanceSizes.set(PatternPathType.Seam, (seamAllowance || 1) * this._sizeRatio);
+    };
     
     // Precondition: arePatternPiecesEnclosed returned true 
-    findPatternPieces = (): void => {
+    findPatternPieces = (): PatternPiece[] => {
         const faces = FaceFinder.FindFaces(this._patternPaths);
-        this._patternPieces = faces.map(face => face.map(i => this._patternPaths[i]));
         
-        // Logging the pattern pieces for debugging
-        this._patternPieces.forEach(patternPiece => {
-            console.log("pattern piece: ");
-            patternPiece.forEach(patternPath => {
-                console.log("patternPath: type " + patternPath.getType().toString() + ", length " + patternPath.getLengthInPixels());
-            });
-        });
+        const patternPieces = faces.map(face => (
+            new PatternPiece(face.map((edge) => {
+                if (edge.isReversed) {
+                    return this._patternPaths[edge.index].clone();
+                } else {
+                    return this._patternPaths[edge.index].reversedClone();
+                }
+            }))
+        ));
+        
+        return patternPieces;
     };
 }

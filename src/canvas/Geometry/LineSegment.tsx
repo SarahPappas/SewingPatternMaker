@@ -135,4 +135,27 @@ export class LineSegment extends Segment {
         
         return new Point(xIntersectionPoint, yIntersectionPoint);
     };
+
+    getOffsetSegments = (distance: number): Segment[] => {
+        const displacement = Vector.findPerpVector(this.getTangent(0));
+        displacement.normalize();
+        displacement.multiplyByScalar(distance);
+
+        const result = this.clone();
+        result.translate(displacement);
+        return [result];
+    };
+
+    translate = (displacement: Vector): void => {
+        this.start = Point.translate(this.start, displacement);
+        this.end = Point.translate(this.end, displacement);
+    };
+
+    clone = (): LineSegment => {
+        return new LineSegment(this.start, this.end);
+    };
+
+    reversedClone = (): LineSegment => {
+        return new LineSegment(this.end, this.start);
+    };
 }

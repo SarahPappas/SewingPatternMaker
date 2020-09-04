@@ -2,6 +2,7 @@ import { Curve } from './Curve';
 import { Point } from './Point';
 import { Vector } from './Vector';
 import { LineSegment } from './LineSegment';
+import { Segment } from './Segment';
 
 export class ArcCurve extends Curve {
     private radius: number;
@@ -133,5 +134,42 @@ export class ArcCurve extends Curve {
     // Overrides the approximation algorithm in the parent class.
     getLength = (): number => {
         return Math.abs(this.startAngle - this.endAngle) * this.radius;
+    };
+
+    getOffsetSegments = (distance: number): Segment[] => {
+        const tangentAtStart = this.getTangent(0);
+        const displacementOfStart = Vector.findPerpVector(tangentAtStart).normalize().multiplyByScalar(distance);
+
+        const tangentAtEnd = this.getTangent(1);
+        const displacementOfEnd = Vector.findPerpVector(tangentAtEnd).normalize().multiplyByScalar(distance);
+
+        const result = this.clone();
+        result.start = Point.translate(this.start, displacementOfStart);
+        result.end = Point.translate(this.end, displacementOfEnd);
+        result.radius = result.start.distanceTo(result.center);
+        result.control = Point.translate(Point.translate(this.control, displacementOfStart), displacementOfEnd); 
+        // result's center, startAngle and endAngle don't need to be updated.
+        return [result];
+    };
+
+    translate = (displacement: Vector): void => {
+        this.start = Point.translate(this.start, displacement);
+        this.control = Point.translate(this.control, displacement);
+        this.end = Point.translate(this.end, displacement);
+        this.center = Point.translate(this.center, displacement);
+    };
+
+    getTangent = (t: number): Vector => {
+        const x = -1 * (this.endAngle - this.startAngle) * this.radius * Math.sin(this.lerp(this.startAngle, this.endAngle, t));
+        const y = (this.endAngle - this.startAngle) * this.radius * Math.cos(this.lerp(this.startAngle, this.endAngle, t));
+        return new Vector(x, y);
+    };
+
+    clone = (): ArcCurve => {
+        return new ArcCurve(this.start, this.end, this.control);
+    };
+    
+    reversedClone = (): ArcCurve => {
+        return new ArcCurve(this.end, this.start, this.control);
     };
 }

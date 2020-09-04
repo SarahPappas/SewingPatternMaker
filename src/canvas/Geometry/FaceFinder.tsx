@@ -8,6 +8,8 @@ interface Edge {
     tangentAtOrigin: Vector;
     tangentAtDestination: Vector;
     index: number; // the index of the segment
+    isReversed: boolean; // true if the edge is in the same direction
+                         // as the segment, false otherwise
 }
 
 export class FaceFinder {
@@ -21,7 +23,7 @@ export class FaceFinder {
      * face in the inputted segments array. The inner array's order indicates
      * how to go around the face in the negative direction.
      */
-    static FindFaces = (paths: PatternPath[]): number[][] => {
+    static FindFaces = (paths: PatternPath[]): { index: number; isReversed: boolean }[][] => {
         const vertices = FaceFinder._findVertices(paths);
         const edges = FaceFinder._findEdges(paths, vertices);
 
@@ -29,7 +31,7 @@ export class FaceFinder {
         // outgoing edges, ordered by angle of departure from the vertex
         const leavingEdgesMap = FaceFinder._createLeavingEdgesMap(vertices, edges);
 
-        const faces = new Array<Array<number>>();
+        const faces: { index: number; isReversed: boolean }[][] = [];
 
         /**
          * Starting from each edge, find the face to its left by cycling 
@@ -37,7 +39,7 @@ export class FaceFinder {
          * the most in the positive rotation direction at intersections.
          */
         edges.forEach(startingEdge => {
-            const faceEdgesIndices: number[] = [];
+            const face = [];
             let current = startingEdge;
             let next = null;
             // The algorithm will find the same face multiple times, for 
@@ -53,12 +55,12 @@ export class FaceFinder {
             // totalAngle of -2PI).
             let totalAngle = 0;
             do {
-                faceEdgesIndices.push(current.index);
+                face.push({ index: current.index, isReversed: current.isReversed });
                 totalAngle += Vector.changeInAngle(current.tangentAtOrigin, current.tangentAtDestination);
 
                 const leavingEdges = leavingEdgesMap.get(current.destination);
                 if (!leavingEdges) {
-                    throw new Error();
+                    throw new Error("Could not retreive the destination point of this edge in the vertex keys of the map");
                 }
 
                 // Find the index of the edge that follows the same path as 
@@ -84,7 +86,7 @@ export class FaceFinder {
             // In order to allow small rounding errors, we test for a small difference instead of equality.
             const epsilon = 1e-10;
             if (faceHasSmallestIndexFirst && Math.abs(totalAngle - (2 * Math.PI)) < epsilon) {
-                faces.push(faceEdgesIndices);
+                faces.push(face);
             }
         });
 
@@ -147,14 +149,16 @@ export class FaceFinder {
                 destination: endVertex, 
                 tangentAtOrigin: path.getTangentAtStart(), 
                 tangentAtDestination: path.getTangentAtEnd(), 
-                index: i
+                index: i,
+                isReversed: false
             });
             edges.push({
                 origin: endVertex, 
                 destination: startVertex, 
                 tangentAtOrigin: Vector.findOpposite(path.getTangentAtEnd()), 
                 tangentAtDestination: Vector.findOpposite(path.getTangentAtStart()), 
-                index: i
+                index: i,
+                isReversed: true
             });
         }
         return edges;

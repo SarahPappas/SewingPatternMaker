@@ -264,8 +264,6 @@ export class Renderer implements IRenderer {
                     newPatternPath = new PatternPath(this._pathType, [CurveFitter.Fit(points)]);
             }
             this._document.addPatternPath(newPatternPath);
-
-            console.log("paths", this._document.getPatternPaths());
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }
 

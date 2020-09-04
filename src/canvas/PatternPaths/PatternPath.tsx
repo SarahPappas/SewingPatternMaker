@@ -80,6 +80,45 @@ export class PatternPath implements IPatternPath {
                 new PatternPath(this._type, segmentsOfSecondPath)];
     };
 
+    trimAfterPoint = (intersection: Point, segmentIndex: number): void => {
+        const segmentToSplit = this._segments[segmentIndex];
+        const splitSegments = segmentToSplit.split(intersection);
+        if (splitSegments.length !== 2) {
+            throw new Error("Split did not return correct number of segments");
+        }
+
+        console.log("trimming segment " + segmentIndex + " after intersection");
+
+        const newSegments = [];
+        for (let i = 0; i < segmentIndex; i++) {
+            newSegments.push(this._segments[i]);
+        }
+        newSegments.push(splitSegments[0]);
+
+        this._segments = newSegments;
+        this._points = this._computePoints();
+        this._path2D = this._computePath2D();
+    };
+
+    trimBeforePoint = (intersection: Point, segmentIndex: number): void => {
+        const segmentToSplit = this._segments[segmentIndex];
+        const splitSegments = segmentToSplit.split(intersection);
+        if (splitSegments.length !== 2) {
+            throw new Error("Split did not return correct number of segments");
+        }
+
+        console.log("trimming segment " + segmentIndex + " before intersection");
+
+        const newSegments = [splitSegments[1]];
+        for (let i = segmentIndex + 1; i < this._segments.length; i++) {
+            newSegments.push(this._segments[i]);
+        }
+        
+        this._segments = newSegments;
+        this._points = this._computePoints();
+        this._path2D = this._computePath2D();
+    };
+
     getAllowance = (): PatternPath => {
         // Get the path that is offset from this one
         const offsetSegments = this._getOffsetSegments();

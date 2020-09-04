@@ -54,27 +54,19 @@ export class PatternPiece {
         // accordingly
         const numAllowances = allowances.length;
         for (let i = 0; i < numAllowances; i++) {
-            this._trimPastIntersection(allowances[i], allowances[(i + 1) % numAllowances]);
+            const intersections = this._findIntersectionBetweenPaths(allowances[i], allowances[(i + 1) % numAllowances]);
+            allowances[i].trimBeforePoint(intersections[0].point, intersections[0].indexOfSegmentCrossed);
+            allowances[(i + 1) % numAllowances].trimAfterPoint(intersections[1].point, intersections[1].indexOfSegmentCrossed);
         }
         this._allowancePaths = allowances;
     };
 
-    private _trimPastIntersection = (allow1: PatternPath, allow2: PatternPath): void => {
-        const intersections = this._findIntersectionBetweenPaths(allow1, allow2);
-
-        // if (!intersections) {
-        //     console.log("Could not find intersection between 2 consecutive allowance PatternPahts");
-        // } else {
-        //     console.log("intersections: " + intersections[0].point + ", " + intersections[1].point);
-        //     //move this out of else once debugging is complete
-        //     allow1 = PathIntersection.splitAtIntersection(intersections[0].point, intersections[0].pathCrossed, intersections[0].indexOfSegmentCrossed)[0];
-        //     allow2 = PathIntersection.splitAtIntersection(intersections[1].point, intersections[1].pathCrossed, intersections[1].indexOfSegmentCrossed)[1];
-        // }
-    };
-
-    private _findIntersectionBetweenPaths = (path1: PatternPath, path2: PatternPath): IIntersection[] | null => {
+    private _findIntersectionBetweenPaths = (path1: PatternPath, path2: PatternPath): IIntersection[] => {
         // find first encountered intersection of paths, exploring path1 in reverse direction and path2 in regular direction
         
+        console.log("path1 segments: " + path1.getSegments());
+        console.log("path2 segments: " + path2.getSegments());
+
         const reversedPath1 = path1.reversedClone();
         const reversedPath1Segments = reversedPath1.getSegments();
         const numSegmentsIn1 = reversedPath1Segments.length;
@@ -82,20 +74,20 @@ export class PatternPiece {
             const segmentPoints = reversedPath1Segments[segmentIndex].getPoints();
             for (let j = 1; j < segmentPoints.length; j++) {
                 const lineSeg = new LineSegment(segmentPoints[j - 1], segmentPoints[j]);
-                const intersectionOn2 = PathIntersection.findIntersectionOfLineSegmentAndPath(lineSeg, path2);
-                if (intersectionOn2) {
+                const intersectionOnPath2 = PathIntersection.findIntersectionOfLineSegmentAndPath(lineSeg, path2);
+                if (intersectionOnPath2) {
                     return [
-                        // Intersection on 1
+                        // Intersection on path 1
                         {
-                            point: intersectionOn2.point,
+                            point: intersectionOnPath2.point,
                             pathCrossed: path1,
                             indexOfSegmentCrossed: numSegmentsIn1 - segmentIndex - 1
                         }, 
-                        intersectionOn2
+                        intersectionOnPath2
                     ];
                 }
             }
         }      
-        return null;
+        throw new Error("Could not find any intersection between 2 consecutive allowances");
     };
 }

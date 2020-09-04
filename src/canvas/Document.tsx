@@ -3,6 +3,7 @@ import { Point } from './Geometry/Point';
 import { FaceFinder } from './Geometry/FaceFinder';
 import { PatternPathType } from './Enums';
 import { PatternPiece } from './PatternPiece';
+import { Vector } from './Geometry/Vector';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
@@ -136,11 +137,11 @@ export class Document implements IDocument {
 
     getAllowanceSize = (type: PatternPathType): number => {
         if (!this._allowanceSizes) {
-            throw new Error();
+            throw new Error("Allowance sizes were not set yet.");
         }
         const allowance = this._allowanceSizes.get(type);
         if (allowance === undefined) {
-            throw new Error();
+            throw new Error("Could not find allowance for this path type.");
         }
         return allowance;
     };
@@ -167,9 +168,19 @@ export class Document implements IDocument {
         this._allowanceSizes.set(PatternPathType.Fold, 0);
         this._allowanceSizes.set(PatternPathType.Seam, (seamAllowance || 1) * this._sizeRatio);
     };
+
+    prepPatternPieces = (): void => {
+        const patternPieces: PatternPiece[] = this._findPatternPieces();
+        patternPieces.forEach(piece => {
+            piece.addAllowances();
+        });
+
+        // Temporary step to inspect pattern pieces and allowances on final review page while developping.
+        this._patternPaths = this._spreadPatternPieces(patternPieces);
+    };
     
     // Precondition: arePatternPiecesEnclosed returned true 
-    findPatternPieces = (): PatternPiece[] => {
+    private _findPatternPieces = (): PatternPiece[] => {
         const faces = FaceFinder.FindFaces(this._patternPaths);
         
         const patternPieces = faces.map(face => (
@@ -183,5 +194,17 @@ export class Document implements IDocument {
         ));
         
         return patternPieces;
+    };
+
+    // Temporary method to inspect pattern pieces and allowances on final review page while developping.
+    private _spreadPatternPieces = (patternPieces: PatternPiece[]): PatternPath[] => {
+        let result: PatternPath[] = [];
+
+        for (let i = 0; i < patternPieces.length; i++) {
+            patternPieces[i].translate(new Vector(50 * i, 0));
+            result = result.concat(patternPieces[i].getAllPaths());
+        }
+
+        return result;
     };
 }

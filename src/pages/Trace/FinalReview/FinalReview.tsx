@@ -3,7 +3,10 @@ import { App } from "canvas/AppController";
 
 export const FinalReview: React.FC = () => {
     useEffect(() => {
-        App.renderer.finalReviewInit();
+        //App.renderer.finalReviewInit();
+
+        // for inspection of paths on final review
+        App.renderer.measurementInit();
     }, []);
     
     return (<>

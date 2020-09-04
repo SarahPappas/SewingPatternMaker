@@ -75,29 +75,24 @@ export class PatternPath implements IPatternPath {
     };
 
     /**
-     * Shortens the current path by removing the part that is after the inputted point.
+     * Shortens the current path by removing the part that is before or after the inputted point. 
+     * If trimBeforePoint is true, will remove the part of the path that is 
+     * before the point. Otherwise it will remove the part of the path that is after the point.
      * 
      * Precondition: the input point is on the path
      * 
      * @param point the point on the path where we split the path
      * @param segmentIndex the index of the path's segment that contains the point
      */
-    trimAfterPoint = (point: Point, segmentIndex: number): void => {
-        this._segments = this._splitSegments(point, segmentIndex)[0];
-        this._points = this._computePoints();
-        this._path2D = this._computePath2D();
-    };
-
-    /**
-     * Shortens the current path by removing the part that is before the inputted point.
-     * 
-     * Precondition: the input point is on the path
-     * 
-     * @param point the point on the path where we split the path
-     * @param segmentIndex the index of the path's segment that contains the point
-     */
-    trimBeforePoint = (point: Point, segmentIndex: number): void => {
-        this._segments = this._splitSegments(point, segmentIndex)[1];
+    trimAtPoint = (point: Point, segmentIndex: number, trimBeforePoint: boolean): void => {
+        let index;
+        if (trimBeforePoint) {
+            index = 1;
+        } else {
+            index = 0;
+        }
+        this._segments = this._splitSegments(point, segmentIndex)[index];
+        // Update data fields
         this._points = this._computePoints();
         this._path2D = this._computePath2D();
     };

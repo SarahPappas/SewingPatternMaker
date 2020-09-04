@@ -56,8 +56,8 @@ export class PatternPiece {
         for (let i = 0; i < numAllowances; i++) {
             const intersections = this._findIntersectionBetweenPaths(allowances[i], allowances[(i + 1) % numAllowances]);
             if (intersections) {
-                allowances[i].trimAfterPoint(intersections[0].point, intersections[0].indexOfSegmentCrossed);
-                allowances[(i + 1) % numAllowances].trimBeforePoint(intersections[1].point, intersections[1].indexOfSegmentCrossed);
+                allowances[i].trimAtPoint(intersections[0].point, intersections[0].indexOfSegmentCrossed, false);
+                allowances[(i + 1) % numAllowances].trimAtPoint(intersections[1].point, intersections[1].indexOfSegmentCrossed, true);
             } else {
                 // If no intersection was found, join the two allowance paths by adding a line segment at the end of the
                 // first allowance

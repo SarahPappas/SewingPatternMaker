@@ -136,6 +136,12 @@ export class ArcCurve extends Curve {
         return Math.abs(this.startAngle - this.endAngle) * this.radius;
     };
 
+    getTangent = (t: number): Vector => {
+        const x = -1 * (this.endAngle - this.startAngle) * this.radius * Math.sin(this.lerp(this.startAngle, this.endAngle, t));
+        const y = (this.endAngle - this.startAngle) * this.radius * Math.cos(this.lerp(this.startAngle, this.endAngle, t));
+        return new Vector(x, y);
+    };
+
     getOffsetSegments = (distance: number): Segment[] => {
         const tangentAtStart = this.getTangent(0);
         const displacementOfStart = Vector.findPerpVector(tangentAtStart).normalize().multiplyByScalar(distance);
@@ -157,12 +163,6 @@ export class ArcCurve extends Curve {
         this.control = Point.translate(this.control, displacement);
         this.end = Point.translate(this.end, displacement);
         this.center = Point.translate(this.center, displacement);
-    };
-
-    getTangent = (t: number): Vector => {
-        const x = -1 * (this.endAngle - this.startAngle) * this.radius * Math.sin(this.lerp(this.startAngle, this.endAngle, t));
-        const y = (this.endAngle - this.startAngle) * this.radius * Math.cos(this.lerp(this.startAngle, this.endAngle, t));
-        return new Vector(x, y);
     };
 
     clone = (): ArcCurve => {

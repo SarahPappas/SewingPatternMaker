@@ -62,6 +62,12 @@ export class BezierCurve extends Curve {
     drawTo = (path: Path2D): void => {
         path.quadraticCurveTo(this.control.x, this.control.y, this.end.x, this.end.y);   
     };
+    
+    getTangent = (t: number): Vector => {
+        const x = -2 * (1 - t) * this.start.x + (2 - 4 * t) * this.control.x + 2 * t * this.end.x;
+        const y = -2 * (1 - t) * this.start.y + (2 - 4 * t) * this.control.y + 2 * t * this.end.y;
+        return new Vector(x, y);
+    };
 
     getOffsetSegments = (distance: number): Segment[] => {
         // Compute offset points
@@ -91,12 +97,6 @@ export class BezierCurve extends Curve {
         this.start = Point.translate(this.start, displacement);
         this.control = Point.translate(this.control, displacement);
         this.end = Point.translate(this.end, displacement);
-    };
-
-    getTangent = (t: number): Vector => {
-        const x = -2 * (1 - t) * this.start.x + (2 - 4 * t) * this.control.x + 2 * t * this.end.x;
-        const y = -2 * (1 - t) * this.start.y + (2 - 4 * t) * this.control.y + 2 * t * this.end.y;
-        return new Vector(x, y);
     };
 
     clone = (): BezierCurve => {

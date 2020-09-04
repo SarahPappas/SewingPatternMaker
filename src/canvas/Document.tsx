@@ -10,12 +10,14 @@ export class Document implements IDocument {
     private _patternPathsTrash: IPatternPathTrash[];
     private _sizeRatio: null | number; // in pixels per inch
     private _allowanceSizes: Map<PatternPathType, number> | null; // allowance sizes in pixels
+    private _patternPieces: PatternPiece[] | null;
 
     constructor () {
         this._patternPaths = new Array<PatternPath>();
         this._patternPathsTrash = [];
         this._sizeRatio = null;
         this._allowanceSizes = null;
+        this._patternPieces = null;
     }
 
     getPatternPaths = (): PatternPath[] => {
@@ -169,21 +171,11 @@ export class Document implements IDocument {
         this._allowanceSizes.set(PatternPathType.Seam, (seamAllowance || 0.625) * this._sizeRatio);
     };
 
-    prepPatternPieces = (): void => {
-        const patternPieces: PatternPiece[] = this._findPatternPieces();
-        patternPieces.forEach(piece => {
-            piece.computeAllowancePaths();
-        });
-
-        // Temporary step to inspect pattern pieces and allowances on final review page while developping.
-        this._patternPaths = this._spreadPatternPieces(patternPieces);
-    };
-    
     // Precondition: arePatternPiecesEnclosed returned true 
-    private _findPatternPieces = (): PatternPiece[] => {
+    computePatternPieces = (): void => {
         const faces = FaceFinder.FindFaces(this._patternPaths);
         
-        const patternPieces = faces.map(face => (
+        this._patternPieces = faces.map(face => (
             new PatternPiece(face.map((edge) => {
                 if (edge.isReversed) {
                     return this._patternPaths[edge.index].reversedClone();
@@ -193,7 +185,8 @@ export class Document implements IDocument {
             }))
         ));
 
-        return patternPieces;
+        // Temporary step to inspect pattern pieces and allowances on final review page while developping.
+        this._patternPaths = this._spreadPatternPieces(this._patternPieces);
     };
 
     // Temporary method to inspect pattern pieces and allowances on final review page while developping.

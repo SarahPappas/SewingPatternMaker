@@ -18,7 +18,7 @@ export class PatternPiece {
      */
     constructor(paths: PatternPath[]) {
         this._paths = paths;
-        this._allowancePaths = [];
+        this._allowancePaths = this._computeAllowancePaths();
     }
     
     /**
@@ -44,7 +44,7 @@ export class PatternPiece {
         });
     };
 
-    computeAllowancePaths = (): void => {
+    private _computeAllowancePaths = (): PatternPath[] => {
         // First, compute the allowance paths.
         // These are prolonged paths that run parallel to the edges.
         const allowances = this._paths.map(path => path.getAllowance());
@@ -65,7 +65,7 @@ export class PatternPiece {
             }
             
         }
-        this._allowancePaths = allowances;
+        return allowances;
     };
 
     private _findIntersectionBetweenPaths = (path1: PatternPath, path2: PatternPath): IIntersection[] | null=> {

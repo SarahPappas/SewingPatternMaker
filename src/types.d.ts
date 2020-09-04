@@ -29,7 +29,7 @@ type IDocument = {
     arePatternPiecesEnclosed: () => boolean;
     isEmpty: () => boolean;
     setSizeRatio: (inputMeasurementInches: number, selectecPath: PatternPath) => void;
-    prepPatternPieces: () => void;
+    computePatternPieces: () => void;
 };
 
 type ITracingPath = {

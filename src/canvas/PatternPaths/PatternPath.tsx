@@ -16,7 +16,6 @@ export class PatternPath implements IPatternPath {
         this._path2D = this._computePath2D();
     }
 
-    // Returns clones of the points for protection
     getPoints = (): Point[] => {
         return this._points;
     };

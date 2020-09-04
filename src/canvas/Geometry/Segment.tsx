@@ -31,6 +31,8 @@ export abstract class Segment {
      * Returns an array of numOfPoints pts (defaults to 100) on the 
      * segment if it's aCurve, 2 points if it's a LineSegment. If 
      * called repeatedly, will recompute the points every time.
+     * Does not expose this segment's endpoints data fields 
+     * (clones are made where necessary).
      * 
      * @param numOfPoints number of points in the returned array. Optional.
      */
@@ -39,7 +41,8 @@ export abstract class Segment {
     /**
      * Returns an array of 100 pts on the segment if it's a Curve, 
      * 2 points if it's a LineSegment. If called repeatedly, will 
-     * not re-compute the points.
+     * not re-compute the points. Does not expose this segment's 
+     * endpoints data fields (clones are made where necessary).
      */
     getPoints = (): Point[] => {
         if (!this.points){

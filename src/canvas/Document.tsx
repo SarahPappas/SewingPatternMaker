@@ -134,7 +134,7 @@ export class Document implements IDocument {
     };
     
     // Precondition: arePatternPiecesEnclosed returned true 
-    findPatternPieces = (): PatternPath[][] => {
+    findPatternPieces = (): void => {
         const faces = FaceFinder.FindFaces(this._patternPaths);
         this._patternPieces = faces.map(face => face.map(i => this._patternPaths[i]));
         
@@ -145,7 +145,9 @@ export class Document implements IDocument {
                 console.log("patternPath: type " + patternPath.getType().toString() + ", length " + patternPath.getLengthInPixels());
             });
         });
-
-        return this._patternPieces;
     };
+
+    getPatternPieces = (): PatternPath[][] => {
+        return this._patternPieces;
+    }
 }

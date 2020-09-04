@@ -3,6 +3,7 @@ export enum PatternPathType {
     Seam,
     Fold,
     Edge,
+    Allowance
 }
 
 export enum ToolType {

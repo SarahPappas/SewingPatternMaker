@@ -149,8 +149,8 @@ export class Document implements IDocument {
     /**
      * Sets the allowance sizes to 0 inches for folds, the input edgeAllowance 
      * for edges and the input seam allowance for seams. If parameters are
-     * omitted, the edge allowance will be set to a default of 2 inches 
-     * and the seam allowance to a default of 1 inch. The sizes are stored in
+     * omitted, the edge allowance will be set to a default of 5/8 inch 
+     * and the seam allowance to a default of 5/8 inch. The sizes are stored in
      * pixels in the allowanceSizes map data field.
      * 
      * Warning: every time this method is called the old data is erased.
@@ -164,9 +164,9 @@ export class Document implements IDocument {
         }
 
         this._allowanceSizes = new Map();
-        this._allowanceSizes.set(PatternPathType.Edge, (edgeAllowance || 2) * this._sizeRatio);
+        this._allowanceSizes.set(PatternPathType.Edge, (edgeAllowance || 0.625) * this._sizeRatio);
         this._allowanceSizes.set(PatternPathType.Fold, 0);
-        this._allowanceSizes.set(PatternPathType.Seam, (seamAllowance || 1) * this._sizeRatio);
+        this._allowanceSizes.set(PatternPathType.Seam, (seamAllowance || 0.625) * this._sizeRatio);
     };
 
     prepPatternPieces = (): void => {

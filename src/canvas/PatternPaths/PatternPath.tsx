@@ -134,7 +134,7 @@ export class PatternPath implements IPatternPath {
         let result: Segment[] = [new LineSegment(p2, p1)];
         result = result.concat(offsetSegments);
         result.push(new LineSegment(q1, q2));
-        return new PatternPath(this._type, result);
+        return new PatternPath(PatternPathType.Allowance, result);
     };
 
     translate = (displacement: Vector): void => {

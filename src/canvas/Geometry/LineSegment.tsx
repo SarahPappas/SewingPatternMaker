@@ -23,7 +23,7 @@ export class LineSegment extends Segment {
 
     };
 
-    protected _computePoints = (): Point[] => {
+    computePoints = (): Point[] => {
         const points = [];
         points.push(this.getStart().clone());
         points.push(this.getEnd().clone());

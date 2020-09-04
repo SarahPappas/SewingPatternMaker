@@ -15,15 +15,6 @@ export abstract class Segment {
         this.points = null;
     }
 
-    // returns an array of 100 pts on the segment if it's a Curve,
-    // 2 points if it's a LineSegment.
-    getPoints = (): Point[] => {
-        if (!this.points){
-            this.points = this._computePoints();
-        }
-        return this.points;
-    }
-
     getStart = (): Point => {
         return this.start;
     };
@@ -36,7 +27,16 @@ export abstract class Segment {
     
     abstract getTangent(t: number): Vector;
 
-    protected abstract _computePoints(): Point[];
+    abstract computePoints(numPoints?: number): Point[];
+
+    // returns an array of 100 pts on the segment if it's a Curve,
+    // 2 points if it's a LineSegment.
+    getPoints = (): Point[] => {
+        if (!this.points){
+            this.points = this.computePoints();
+        }
+        return this.points;
+    };
 
     abstract split(point: Point): Segment[];
 

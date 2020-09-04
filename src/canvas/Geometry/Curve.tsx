@@ -12,7 +12,7 @@ export abstract class Curve extends Segment {
 
     protected abstract _computePoint(t: number): Point;
 
-    protected _computePoints = (numPoints?: number): Point[] => {
+    computePoints = (numPoints?: number): Point[] => {
         numPoints = numPoints || 100;
         const resultingPoints = new Array<Point>();
         for (let i = 0; i < numPoints; i++) {
@@ -37,7 +37,7 @@ export abstract class Curve extends Segment {
         // would yield roughly 1 point every pixel.
         const PRECISION = 0.2;
         const NUMPOINTS = upperBound * PRECISION;
-        const pointsOnCurve = this._computePoints(NUMPOINTS);
+        const pointsOnCurve = this.computePoints(NUMPOINTS);
         for (let i = 0; i < NUMPOINTS - 1; i++) {
             length += pointsOnCurve[i+1].distanceTo(pointsOnCurve[i]);
         }
@@ -75,7 +75,7 @@ export abstract class Curve extends Segment {
     */
     isPointNearSegment = (point: Point, threshold: number): Point | null => {
         const NUMPOINTS = 100;
-        const pointsOnCurve = this._computePoints(NUMPOINTS);
+        const pointsOnCurve = this.computePoints(NUMPOINTS);
         const indexOfClosestPoint = this._indexOfClosestPointOnCurve(point, pointsOnCurve);
 
         if (point.isWithinRadius(pointsOnCurve[indexOfClosestPoint], threshold)) {

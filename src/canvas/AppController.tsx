@@ -13,7 +13,7 @@ class AppController {
         this.document = new Document();
         this.pathSelection = new PathSelection();
         this.renderer = new Renderer(this.document, this.pathSelection);
-        this.exporter = new Exporter(this.document.findPatternPieces());
+        this.exporter = new Exporter(this.document);
     }
 }
 

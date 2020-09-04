@@ -1,6 +1,7 @@
 import { Segment } from './Segment';
 import { Vector } from './Vector';
 import { Point } from './Point';
+import { Context2d } from 'jspdf';
 
 export class LineSegment extends Segment {
     getLength = (): number => {
@@ -72,7 +73,7 @@ export class LineSegment extends Segment {
         return iPoint;
     };
 
-    drawTo = (path: Path2D): void => {
+    drawTo = (path: Path2D | Context2d): void => {
         path.lineTo(this.end.x, this.end.y);
     };
 

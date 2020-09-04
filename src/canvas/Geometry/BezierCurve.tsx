@@ -1,5 +1,6 @@
 import { Point } from './Point';
 import { Curve } from './Curve';
+import { Context2d } from 'jspdf';
 
 export class BezierCurve extends Curve {
     // Precondition: split is a point on the curve.
@@ -57,7 +58,7 @@ export class BezierCurve extends Curve {
     };
 
     // Overrides the abstract method in parent class.
-    drawTo = (path: Path2D): void => {
+    drawTo = (path: Path2D | Context2d): void => {
         path.quadraticCurveTo(this.control.x, this.control.y, this.end.x, this.end.y);   
     };
 }

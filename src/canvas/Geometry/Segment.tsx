@@ -1,5 +1,6 @@
 import { Point } from './Point';
 import { Vector } from './Vector';
+import { Context2d } from 'jspdf';
 
 export abstract class Segment {
     protected points: Point[] | null;
@@ -57,5 +58,5 @@ export abstract class Segment {
      *  Otherwise, it returns the point on the semgent closest to the point provided. */
     abstract isPointNearSegment (point: Point, threshold: number): Point | null;
 
-    abstract drawTo(path: Path2D): void;
+    abstract drawTo(path: Path2D | Context2d): void;
 }

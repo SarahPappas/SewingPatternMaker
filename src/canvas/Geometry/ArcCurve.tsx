@@ -2,6 +2,7 @@ import { Curve } from './Curve';
 import { Point } from './Point';
 import { Vector } from './Vector';
 import { LineSegment } from './LineSegment';
+import { Context2d } from 'jspdf';
 
 export class ArcCurve extends Curve {
     private radius: number;
@@ -124,7 +125,7 @@ export class ArcCurve extends Curve {
     };
 
     // Overrides the abstract method in the parent class.
-    drawTo = (path: Path2D): void => {
+    drawTo = (path: Path2D | Context2d): void => {
         path.arcTo(this.control.x, this.control.y, 
                    this.end.x, this.end.y, 
                    this.radius);

@@ -6,9 +6,6 @@ import { BestCurveSelector } from './BestCurveSelector';
 import { Segment } from './Segment';
 
 export class CurveFitter {
-    // The number of points on the potential curve that will be used to test the curve's fit.
-    private static readonly numPointsOnPotentialcurve = 51;
-
     static Fit = (points: Point[]): Segment => {
         // If there are less than two points, we cannot fit any curve.
         if (points.length < 3) {
@@ -17,7 +14,7 @@ export class CurveFitter {
 
         const startPoint = points[0];
         const endPoint = points[points.length - 1];
-        const curveSelector = new BestCurveSelector(points, CurveFitter.numPointsOnPotentialcurve);
+        const curveSelector = new BestCurveSelector(points);
                 
         // Check candidate bezier curves by exploring control points inside a bounding box around the points.
         const boundingBox = new BoundingBox(points);

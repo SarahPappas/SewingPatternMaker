@@ -7,7 +7,7 @@ export class PatternPath implements IPatternPath {
     protected _type: PatternPathType;
     protected _path2D: Path2D;
     protected _segments: Segment[];
-    protected _points: Point[][];
+    protected _points: Point[];
 
     constructor (pathType: PatternPathType, segments: Segment[]) {
         this._type = pathType;
@@ -17,8 +17,8 @@ export class PatternPath implements IPatternPath {
     }
 
     // Returns clones of the points for protection
-    getPoints = (): Point[][] => {
-        return this._points.map(segmentPoints => segmentPoints.map(point => point.clone()));
+    getPoints = (): Point[] => {
+        return this._points;
     };
 
     // Returns a clone of the start point of the path for protection
@@ -80,10 +80,10 @@ export class PatternPath implements IPatternPath {
                 new PatternPath(this._type, segmentsOfSecondPath)];
     };
 
-    private _computePoints = (): Point[][] => {
-        const points: Point[][] = [];
+    private _computePoints = (): Point[] => {
+        let points: Point[] = [];
         this._segments.forEach(segment => {
-            points.push(segment.computePoints());
+            points = points.concat(segment.getPoints());
         });
         return points;
     };

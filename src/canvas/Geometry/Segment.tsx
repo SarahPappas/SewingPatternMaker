@@ -2,6 +2,7 @@ import { Point } from './Point';
 import { Vector } from './Vector';
 
 export abstract class Segment {
+    protected points: Point[] | null;
     protected start: Point;
     protected end: Point;
 
@@ -11,6 +12,14 @@ export abstract class Segment {
         }
         this.start = start.clone();
         this.end = end.clone();
+        this.points = null;
+    }
+
+    getPoints = (): Point[] => {
+        if (!this.points){
+            this.points = this._computePoints();
+        }
+        return this.points;
     }
 
     getStart = (): Point => {
@@ -25,7 +34,7 @@ export abstract class Segment {
     
     abstract getTangent(t: number): Vector;
 
-    abstract computePoints(numOfPoints?: number): Point[];
+    protected abstract _computePoints(): Point[];
 
     abstract split(point: Point): Segment[];
 

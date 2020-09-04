@@ -25,7 +25,7 @@ export class PathIntersection {
         for (let i = 0; i < paths.length; i++) {
             const thatPath = paths[i];
 
-            const pointsOnThatPath = thatPath.getPoints().flat(1);
+            const pointsOnThatPath = thatPath.getPoints();
             // Check if paths' bounding boxes overlap, if not paths cannot overlap, so return null.
             if (!BoundingBox.checkIfBoundingBoxesOverlap(pointsOnThisPath, pointsOnThatPath)) {
                 continue;
@@ -77,9 +77,10 @@ export class PathIntersection {
     private static _findIntersectionOfLineSegmentAndPath = (thisLineSeg: LineSegment, path: PatternPath): IIntersection | null => {
         // Threshold for checking if a point is on a line. Range from 0 to 1, with 0 being the tightest and 1 being the loosest.
         const THRESHOLD = .01;
-        const points = path.getPoints();
-        for (let segmentIndex = 0; segmentIndex < points.length; segmentIndex++) {
-            const segmentPoints = points[segmentIndex];
+        const segments = path.getSegments();
+        for (let segmentIndex = 0; segmentIndex < segments.length; segmentIndex++) {
+            const segment = segments[segmentIndex];
+            const segmentPoints = segment.getPoints();
             for (let j = 1; j < segmentPoints.length; j++ ) {
                 const thatLineSeg = new LineSegment(segmentPoints[j], segmentPoints[j - 1]);
                 const intersectionPoint = LineSegment.findIntersectionPointOfTwoLines(thisLineSeg, thatLineSeg, true, THRESHOLD);

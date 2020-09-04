@@ -3,7 +3,9 @@ import { Point } from 'canvas/Geometry/Point';
 
 export class StraightLinePath extends TracingPath {
     protected _addPoint = (point: Point): void => {
-        this._points[1] = point;
+        if (!point.equals(this._points[0])) {
+            this._points[1] = point;
+        }
     };
 
     protected _updatePath2D = (): void => {

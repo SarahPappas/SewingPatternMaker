@@ -30,7 +30,8 @@ export abstract class Segment {
      * the parameter t.
      * 
      * @param t Describes the position on the curve where we want the tangent vector.
-     *          t should be equal to 0 or 1, 0 for the start of the curve, 1 for the end
+     *          t should be between 0 and 1 inclusively, 0 for the start of the curve,
+     *          1 for the end
      */
     abstract getTangent(t: number): Vector;
 

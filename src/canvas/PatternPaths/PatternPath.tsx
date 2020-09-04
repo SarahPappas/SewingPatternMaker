@@ -58,60 +58,68 @@ export class PatternPath implements IPatternPath {
         return this._segments;
     };
 
-    splitAtPoint = (intersection: Point, segmentIndex: number): PatternPath[] => {
-        const segmentToSplit = this._segments[segmentIndex];
-        const splitSegments = segmentToSplit.split(intersection);
-        if (splitSegments.length !== 2) {
-            throw new Error("Split did not return correct number of segments");
-        }
-
-        const segmentsOfFirstPath = [];
-        for (let i = 0; i < segmentIndex; i++) {
-            segmentsOfFirstPath.push(this._segments[i]);
-        }
-        segmentsOfFirstPath.push(splitSegments[0]);
-
-        const segmentsOfSecondPath = [splitSegments[1]];
-        for (let i = segmentIndex + 1; i < this._segments.length; i++) {
-            segmentsOfSecondPath.push(this._segments[i]);
-        }
+    /**
+     * Returns an array of 2 new PatternPaths, one of the path from start to 
+     * the inputted point, the second from the inputted point to the end.
+     * 
+     * Precondition: the input point is on the path
+     * 
+     * @param point the point on the path where we split the path
+     * @param segmentIndex the index of the path's segment that contains the point
+     */
+    splitAtPoint = (point: Point, segmentIndex: number): PatternPath[] => {
+        const splitSegments = this._splitSegments(point, segmentIndex);
+        return [new PatternPath(this._type, splitSegments[0]),
+                new PatternPath(this._type, splitSegments[1])];    
         
-        return [new PatternPath(this._type, segmentsOfFirstPath), 
-                new PatternPath(this._type, segmentsOfSecondPath)];
     };
 
-    trimAfterPoint = (intersection: Point, segmentIndex: number): void => {
-        const segmentToSplit = this._segments[segmentIndex];
-        const splitSegments = segmentToSplit.split(intersection);
-        if (splitSegments.length !== 2) {
-            throw new Error("Split did not return correct number of segments");
-        }
-
-        const newSegments = [];
-        for (let i = 0; i < segmentIndex; i++) {
-            newSegments.push(this._segments[i]);
-        }
-        newSegments.push(splitSegments[0]);
-
-        this._segments = newSegments;
+    /**
+     * Shortens the current path by removing the part that is after the inputted point.
+     * 
+     * Precondition: the input point is on the path
+     * 
+     * @param point the point on the path where we split the path
+     * @param segmentIndex the index of the path's segment that contains the point
+     */
+    trimAfterPoint = (point: Point, segmentIndex: number): void => {
+        this._segments = this._splitSegments(point, segmentIndex)[0];
         this._points = this._computePoints();
         this._path2D = this._computePath2D();
     };
 
-    trimBeforePoint = (intersection: Point, segmentIndex: number): void => {
+    /**
+     * Shortens the current path by removing the part that is before the inputted point.
+     * 
+     * Precondition: the input point is on the path
+     * 
+     * @param point the point on the path where we split the path
+     * @param segmentIndex the index of the path's segment that contains the point
+     */
+    trimBeforePoint = (point: Point, segmentIndex: number): void => {
+        this._segments = this._splitSegments(point, segmentIndex)[1];
+        this._points = this._computePoints();
+        this._path2D = this._computePath2D();
+    };
+
+    private _splitSegments = (point: Point, segmentIndex: number): Segment[][] => {
         const segmentToSplit = this._segments[segmentIndex];
-        const splitSegments = segmentToSplit.split(intersection);
+        const splitSegments = segmentToSplit.split(point);
         if (splitSegments.length !== 2) {
             throw new Error("Split did not return correct number of segments");
         }
-        const newSegments = [splitSegments[1]];
+        const segmentsBeforePoint = [];
+        for (let i = 0; i < segmentIndex; i++) {
+            segmentsBeforePoint.push(this._segments[i]);
+        }
+        segmentsBeforePoint.push(splitSegments[0]);
+
+        const segmentsAfterPoint = [splitSegments[1]];
         for (let i = segmentIndex + 1; i < this._segments.length; i++) {
-            newSegments.push(this._segments[i]);
+            segmentsAfterPoint.push(this._segments[i]);
         }
         
-        this._segments = newSegments;
-        this._points = this._computePoints();
-        this._path2D = this._computePath2D();
+        return [segmentsBeforePoint, segmentsAfterPoint];
     };
 
     addSegment = (newSegment: Segment): void => {

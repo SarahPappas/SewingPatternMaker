@@ -9,8 +9,9 @@ export class Document implements IDocument {
     private _patternPaths: PatternPath[];
     private _patternPathsTrash: IPatternPathTrash[];
     private _sizeRatio: null | number; // in pixels per inch
-    private _allowanceSizes: Map<PatternPathType, number> | null; // allowance sizes in pixels
     private _patternPieces: PatternPiece[] | null;
+    private _allowanceSizes: Map<PatternPathType, number> | null; // allowance sizes in pixels
+    
 
     constructor () {
         this._patternPaths = new Array<PatternPath>();

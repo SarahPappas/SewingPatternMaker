@@ -172,7 +172,7 @@ export class Document implements IDocument {
     prepPatternPieces = (): void => {
         const patternPieces: PatternPiece[] = this._findPatternPieces();
         patternPieces.forEach(piece => {
-            piece.addAllowances();
+            piece.computeAllowancePaths();
         });
 
         // Temporary step to inspect pattern pieces and allowances on final review page while developping.

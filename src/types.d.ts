@@ -46,8 +46,8 @@ type IPatternPath = {
     getType: () => PatternPathType;
     getPath2D: () => Path2D;
     getLengthInPixels: () => number;
-    getSegment: () => Segment;
-    splitAtPoint: (intersection: Point) => PatternPath[];
+    getSegments: () => Segment[];
+    splitAtPoint: (intersection: Point, segmentIndex: number) => PatternPath[];
 };
 
 type IPatternPathType = {
@@ -81,6 +81,7 @@ type IRenderer = {
 type IIntersection = {
     point: Point; 
     pathCrossed: PatternPath;
+    indexOfSegmentCrossed: number;
 };
 
 type IPatternPathTrash = {

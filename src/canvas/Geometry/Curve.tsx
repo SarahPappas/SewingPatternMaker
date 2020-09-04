@@ -10,14 +10,14 @@ export abstract class Curve extends Segment {
         this.control = control.clone();
     }
 
-    protected abstract computePoint(t: number): Point;
+    protected abstract _computePoint(t: number): Point;
 
     computePoints = (numPoints?: number): Point[] => {
         numPoints = numPoints || 100;
         const resultingPoints = new Array<Point>();
         for (let i = 0; i < numPoints; i++) {
             const t = i / (numPoints - 1);
-            resultingPoints[i] = this.computePoint(t);
+            resultingPoints[i] = this._computePoint(t);
         }
         return resultingPoints;
     };

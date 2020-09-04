@@ -1,34 +1,41 @@
 import { Point } from '../Geometry/Point';
 import { PatternPathType } from '../Enums';
 import { Segment } from 'canvas/Geometry/Segment';
+import { Vector } from 'canvas/Geometry/Vector';
 
 export class PatternPath implements IPatternPath {
     protected _type: PatternPathType;
     protected _path2D: Path2D;
-    protected _segment: Segment;
+    protected _segments: Segment[];
     protected _points: Point[];
 
-    constructor (pathType: PatternPathType, segment: Segment) {
+    constructor (pathType: PatternPathType, segments: Segment[]) {
         this._type = pathType;
-        this._segment = segment;
-        this._points = segment.computePoints();
-        this._path2D = new Path2D();
-        this._updatePath2D();
+        this._segments = segments;
+        this._points = this._computePoints();
+        this._path2D = this._computePath2D();
     }
 
-    // Returns clones of the points for protection
     getPoints = (): Point[] => {
-        return this._points.map(point => point.clone());
+        return this._points;
     };
 
     // Returns a clone of the start point of the path for protection
     getStart = (): Point => {
-        return this._segment.getStart().clone();
+        return this._segments[0].getStart().clone();
     };
 
     // Returns a clone of the end point of the path for protection
     getEnd = (): Point => {
-        return this._segment.getEnd().clone();
+        return this._segments[this._segments.length - 1].getEnd().clone();
+    };
+
+    getTangentAtStart = (): Vector => {
+        return this._segments[0].getTangent(0);
+    };
+
+    getTangentAtEnd = (): Vector => {
+        return this._segments[this._segments.length - 1].getTangent(1);
     };
 
     getType = (): PatternPathType => {
@@ -40,36 +47,52 @@ export class PatternPath implements IPatternPath {
     };
 
     getLengthInPixels = (): number => {
-        return this._segment.getLength();
+        return this._segments.reduce((runningTotal, segment) => {
+            return runningTotal + segment.getLength();
+        }, 0);
     };
 
-    getSegment = (): Segment => {
-        return this._segment;
+    getSegments = (): Segment[] => {
+        return this._segments;
     };
 
-    splitAtPoint = (intersection: Point): PatternPath[] => {
-        const originalSegment = this.getSegment();
-        const splitSegments = originalSegment.split(intersection);
+    splitAtPoint = (intersection: Point, segmentIndex: number): PatternPath[] => {
+        const segmentToSplit = this._segments[segmentIndex];
+        const splitSegments = segmentToSplit.split(intersection);
         if (splitSegments.length !== 2) {
             throw new Error("Split did not return correct number of segments");
         }
 
-        return this._createPatternPathsFromSegments(splitSegments);
+        const segmentsOfFirstPath = [];
+        for (let i = 0; i < segmentIndex; i++) {
+            segmentsOfFirstPath.push(this._segments[i]);
+        }
+        segmentsOfFirstPath.push(splitSegments[0]);
+
+        const segmentsOfSecondPath = [splitSegments[1]];
+        for (let i = segmentIndex + 1; i < this._segments.length; i++) {
+            segmentsOfSecondPath.push(this._segments[i]);
+        }
+        
+        return [new PatternPath(this._type, segmentsOfFirstPath), 
+                new PatternPath(this._type, segmentsOfSecondPath)];
     };
 
-    protected _createPatternPathsFromSegments = (segments: Segment[]): PatternPath[] => {
-        const paths: PatternPath[] = [];
-        segments.forEach(segment => {
-            paths.push(new PatternPath(this._type, segment));
+    private _computePoints = (): Point[] => {
+        let points: Point[] = [];
+        this._segments.forEach(segment => {
+            points = points.concat(segment.getPoints());
         });
+        return points;
+    };
 
-        return paths;
-    };   
-    
-    protected _updatePath2D = (): void => {
-        this._path2D = new Path2D();
-        const start = this._segment.getStart();
-        this._path2D.moveTo(start.x, start.y);
-        this._segment.drawTo(this._path2D);
+    private _computePath2D = (): Path2D => {
+        const path2D = new Path2D();
+        const start = this.getStart();
+        path2D.moveTo(start.x, start.y);
+        this._segments.forEach(segment => {
+            segment.drawTo(path2D);
+        });
+        return path2D; 
     };
 }

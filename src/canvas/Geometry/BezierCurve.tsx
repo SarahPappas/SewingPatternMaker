@@ -6,7 +6,7 @@ export class BezierCurve extends Curve {
     split = (point: Point): BezierCurve[] => {
         const curves:  BezierCurve[] = [];
         const t = this._findT(point);
-        const pointOnCurve = this.computePoint(t);
+        const pointOnCurve = this._computePoint(t);
 
         let controlPointX = this.lerp(this.start.x, this.control.x, t);
         let controlPointY = this.lerp(this.start.y, this.control.y, t);
@@ -43,7 +43,7 @@ export class BezierCurve extends Curve {
     // it returns the end point.
     // Overrides abstract method in parent
     // Precondition: t is a number between 0 and 1
-    protected computePoint = (t: number): Point => {
+    protected _computePoint = (t: number): Point => {
         // Using De Casteljau's algorithm instead of the parametric equation.
         // This method is slower but more stable.
         const startToControlX = this.lerp(this.start.x, this.control.x, t);

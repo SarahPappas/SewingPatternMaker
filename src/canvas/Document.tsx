@@ -11,7 +11,7 @@ export class Document implements IDocument {
 
     constructor () {
         this._patternPaths = new Array<PatternPath>();
-        this._patternPathsTrash =[];
+        this._patternPathsTrash = [];
         this._sizeRatio = null;
         this._patternPieces = [];
     }
@@ -135,8 +135,7 @@ export class Document implements IDocument {
     
     // Precondition: arePatternPiecesEnclosed returned true 
     findPatternPieces = (): void => {
-        const segments = this._patternPaths.map(path => path.getSegment());
-        const faces = FaceFinder.FindFaces(segments);
+        const faces = FaceFinder.FindFaces(this._patternPaths);
         this._patternPieces = faces.map(face => face.map(i => this._patternPaths[i]));
         
         // Logging the pattern pieces for debugging

@@ -114,22 +114,28 @@ export class PatternPath implements IPatternPath {
         this._path2D = this._computePath2D();
     };
 
+    addSegment = (newSegment: Segment): void => {
+        this._segments.push(newSegment);
+        this._points = this._computePoints();
+        this._path2D = this._computePath2D();
+    };
+
     getAllowance = (): PatternPath => {
         // Get the path that is offset from this one
         const offsetSegments = this._getOffsetSegments();
-        const lengthOfLineProlongations = 200;
+        const lengthOfLineSegmentProlongations = 200;
 
         // Add a line segment at the beginning of the offset path,
         // following the tangent of the offset at that point  
         const firstSegment = offsetSegments[0];      
         const p1 = firstSegment.getStart();
-        const p2 = Point.translate(p1, firstSegment.getTangent(0).normalize().multiplyByScalar(-1 * lengthOfLineProlongations));
+        const p2 = Point.translate(p1, firstSegment.getTangent(0).normalize().multiplyByScalar(-1 * lengthOfLineSegmentProlongations));
         
         // Add a line segment at the end of the offset path,
         // following the tangent of the offset at that point
         const lastSegment = offsetSegments[offsetSegments.length - 1];
         const q1 = lastSegment.getEnd();
-        const q2 = Point.translate(q1, lastSegment.getTangent(1).normalize().multiplyByScalar(lengthOfLineProlongations));
+        const q2 = Point.translate(q1, lastSegment.getTangent(1).normalize().multiplyByScalar(lengthOfLineSegmentProlongations));
         
         let result: Segment[] = [new LineSegment(p2, p1)];
         result = result.concat(offsetSegments);

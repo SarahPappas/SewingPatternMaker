@@ -55,13 +55,20 @@ export class PatternPiece {
         const numAllowances = allowances.length;
         for (let i = 0; i < numAllowances; i++) {
             const intersections = this._findIntersectionBetweenPaths(allowances[i], allowances[(i + 1) % numAllowances]);
-            allowances[i].trimAfterPoint(intersections[0].point, intersections[0].indexOfSegmentCrossed);
-            allowances[(i + 1) % numAllowances].trimBeforePoint(intersections[1].point, intersections[1].indexOfSegmentCrossed);
+            if (intersections) {
+                allowances[i].trimAfterPoint(intersections[0].point, intersections[0].indexOfSegmentCrossed);
+                allowances[(i + 1) % numAllowances].trimBeforePoint(intersections[1].point, intersections[1].indexOfSegmentCrossed);
+            } else {
+                // If no intersection was found, join the two allowance paths by adding a line segment at the end of the
+                // first allowance
+                allowances[i].addSegment(new LineSegment(allowances[i].getEnd(), allowances[(i + 1) % numAllowances].getStart()));
+            }
+            
         }
         this._allowancePaths = allowances;
     };
 
-    private _findIntersectionBetweenPaths = (path1: PatternPath, path2: PatternPath): IIntersection[] => {
+    private _findIntersectionBetweenPaths = (path1: PatternPath, path2: PatternPath): IIntersection[] | null=> {
         // find first encountered intersection of paths, exploring path1 in reverse direction and path2 in regular direction
         
         const reversedPath1 = path1.reversedClone();
@@ -74,7 +81,7 @@ export class PatternPiece {
                 const intersectionOnPath2 = PathIntersection.findIntersectionOfLineSegmentAndPath(lineSeg, path2);
                 if (intersectionOnPath2) {
                     return [
-                        // Intersection on path 1 (not reversed)
+                        // Intersection on original path 1 (not reversed)
                         {
                             point: intersectionOnPath2.point,
                             pathCrossed: path1,
@@ -85,6 +92,6 @@ export class PatternPiece {
                 }
             }
         }      
-        throw new Error("Could not find any intersection between 2 consecutive allowances");
+        return null;
     };
 }

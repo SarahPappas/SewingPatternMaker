@@ -15,7 +15,10 @@ export class Exporter {
 
     save = () => {
         this._patternPieces = this._documentModel.getPatternPieces();
+        const sizeRatio = this._documentModel.getSizeRatio();
         const ctx = this.doc.context2d;
+        ctx.save();
+        ctx.scale(sizeRatio, sizeRatio);
         ctx.strokeStyle = '#e605c4';
         this._patternPieces.forEach(patternPiece => {
             patternPiece.forEach(patternPath => {
@@ -27,6 +30,8 @@ export class Exporter {
                 });
              });
         });
+
+        ctx.restore();
 
         ctx.stroke();
 

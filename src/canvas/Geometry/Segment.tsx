@@ -27,7 +27,7 @@ export abstract class Segment {
     
     abstract getTangent(t: number): Vector;
 
-    abstract computePoints(numPoints?: number): Point[];
+    abstract computePoints(numOfPoints?: number): Point[];
 
     // returns an array of 100 pts on the segment if it's a Curve,
     // 2 points if it's a LineSegment.

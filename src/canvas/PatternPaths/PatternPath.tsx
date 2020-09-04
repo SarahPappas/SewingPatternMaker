@@ -52,7 +52,6 @@ export class PatternPath implements IPatternPath {
         }, 0);
     };
 
-    // Unprotected
     getSegments = (): Segment[] => {
         return this._segments;
     };

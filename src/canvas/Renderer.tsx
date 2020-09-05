@@ -69,7 +69,7 @@ export class Renderer implements IRenderer {
             const snapStartPoint = this._currPath?.snapStartPoint(this._document.getPatternPaths());
             // If we were unable to snap to other endpoints, we will try to snap along other paths.
             if (!snapStartPoint) {
-                const snappedPosition = this._checkPathStartIntersectionAndSplit(position, this._document.getPatternPaths());
+                const snappedPosition = this._checkPointIntersectionAndSplit(position, this._document.getPatternPaths());
                 this._currPath.snapStartPointTo(snappedPosition);
             }
         };
@@ -183,13 +183,13 @@ export class Renderer implements IRenderer {
      * intersected path is bisected at the intersection point and the original path is replaced with
      * the two new paths in the document. 
      */
-    private _checkPathStartIntersectionAndSplit = (startPoint: Point, paths: PatternPath[]): Point => {
-        const intersection = PathIntersection.findPointIntersectAlongPatternPaths(startPoint, paths);
+    private _checkPointIntersectionAndSplit = (point: Point, paths: PatternPath[]): Point => {
+        const intersection = PathIntersection.findPointIntersectAlongPatternPaths(point, paths);
         if (intersection) {
             this._splitPathAtIntersection(intersection);
             return intersection.point;
         }
-        return startPoint;
+        return point;
     };
 
     private _draw = (): void => {

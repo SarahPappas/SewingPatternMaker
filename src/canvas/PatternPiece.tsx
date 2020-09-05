@@ -57,7 +57,7 @@ export class PatternPiece {
             allowances.push(path.getAllowance(allowanceSize));
         });
 
-        // Then, edge by edge, find the intersection between the alloance of 
+        // Then, edge by edge, find the intersection between the allowance of 
         // an edge and the allowance of the next and shorten the allowances
         // accordingly
         const numAllowances = allowances.length;

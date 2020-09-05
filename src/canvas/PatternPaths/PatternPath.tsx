@@ -147,7 +147,7 @@ export class PatternPath implements IPatternPath {
             reversedSegments.push(this._segments[i].reversedClone());
         }
         return new PatternPath(this._type, reversedSegments);
-    }
+    };
 
     private _getOffsetSegments = (): Segment[] => {
         // Set the allowance size according to the type of pattern path

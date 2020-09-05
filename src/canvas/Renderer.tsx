@@ -61,12 +61,14 @@ export class Renderer implements IRenderer {
                 case(ToolType.Freeline):
                     this._currPath = new FreeLinePath();
                     break;
+                default:
+                    throw new Error("Could not identify the tool type");
             }
 
             const position = new Point(e.offsetX, e.offsetY);
             this._currPath.addPoint(position);
             // Try to snap to other endpoints
-            const snapStartPoint = this._currPath?.snapStartPoint(this._document.getPatternPaths());
+            const snapStartPoint = this._currPath.snapStartPoint(this._document.getPatternPaths());
             // If we were unable to snap to other endpoints, we will try to snap along other paths.
             if (!snapStartPoint) {
                 const snappedPosition = this._checkPointIntersectionAndSplit(position, this._document.getPatternPaths());
@@ -238,7 +240,7 @@ export class Renderer implements IRenderer {
         if (this._currPath) {
             this._currPath.addPoint(position);
             // Try to snap to other endpoints
-            const snapEndPoint = this._currPath?.snapEndPoint(this._document.getPatternPaths());
+            const snapEndPoint = this._currPath.snapEndPoint(this._document.getPatternPaths());
             // If we were unable to snap to other endpoints, we will try to snap along other paths.
             if (!snapEndPoint) {
                 const snappedPosition = this._checkPointIntersectionAndSplit(position, this._document.getPatternPaths());

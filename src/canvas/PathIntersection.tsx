@@ -44,8 +44,6 @@ export class PathIntersection {
 
     /**
      * Finds if a point intersects with any path, and if so, returns that intersection point.
-     * 
-     * Precondition: the point has been determined not close enough to endpoints to snap to them.
      */ 
     static findPointIntersectAlongPatternPaths = (point: Point, paths: PatternPath[]): IIntersection | null => {
         for (let i = 0; i < paths.length; i++) {

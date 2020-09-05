@@ -26,21 +26,15 @@ export class PathIntersection {
             const thatPath = paths[i];
 
             const pointsOnThatPath = thatPath.getPoints();
-            // Check if paths' bounding boxes overlap, if not paths cannot overlap, so return null.
+            // Check if paths' bounding boxes overlap. If not, paths cannot intersect, so skip to next path.
             if (!BoundingBox.checkIfBoundingBoxesOverlap(pointsOnThisPath, pointsOnThatPath)) {
                 continue;
             }
 
-            /* 
-             * If the intersection we find is within a 10 pt raidus of the first point of this path, 
-             * keep looking for intersections. 
-             */
+            // If the intersection we find is within a 10 pt raidus of the first point of this path, 
+            // keep looking for intersections. 
             const intersection = PathIntersection._findIntersectionOfLineSegmentAndPath(thisLineSeg, thatPath);
-            if (intersection && intersection.point.isWithinRadius(pointsOnThisPath[0], 10)) {
-                continue;
-            }
-
-            if (intersection) {
+            if (intersection && !intersection.point.isWithinRadius(pointsOnThisPath[0], 10)) {
                 return intersection;
             }
         }
@@ -48,7 +42,11 @@ export class PathIntersection {
         return null;
     };
 
-    /* Finds if a point intersects with any path, and if so, returns that intersection point.*/
+    /**
+     * Finds if a point intersects with any path, and if so, returns that intersection point.
+     * 
+     * Precondition: the point has been determined not close enough to endpoints to snap to them.
+     */ 
     static findPointIntersectAlongPatternPaths = (point: Point, paths: PatternPath[]): IIntersection | null => {
         for (let i = 0; i < paths.length; i++) {
             const thatPath = paths[i];
@@ -58,22 +56,23 @@ export class PathIntersection {
             for (segmentIndex = 0; !intersectionPoint && segmentIndex < thatPathSegments.length; segmentIndex++) {
                 intersectionPoint = thatPathSegments[segmentIndex].isPointNearSegment(point, 10);
             }
-            
-            if (intersectionPoint?.equals(thatPath.getStart()) || intersectionPoint?.equals(thatPath.getEnd())) {
-                continue;
-            }
 
             if (intersectionPoint) {
                 // cancel the last increment so the segmentIndex is the index of the intersection
                 const indexOfSegmentCrossed = segmentIndex - 1;
-                return {point: intersectionPoint, pathCrossed: thatPath, indexOfSegmentCrossed: indexOfSegmentCrossed};
+                return { point: intersectionPoint, pathCrossed: thatPath, indexOfSegmentCrossed: indexOfSegmentCrossed };
             }
         }
         return null;
     };
 
-    /* Finds the intersection between a lineSegment and a path by taking each pair of consecutive points
-       and creating a line segment to check for an intersection on. */
+    /**
+     * Finds the intersection between a lineSegment and a path by taking each pair 
+     * of consecutive points on the path and creating a line segment between them 
+     * to check for an intersection on.
+     * 
+     * Ignores intersection points that are on the endpoints of the path.
+     */
     private static _findIntersectionOfLineSegmentAndPath = (thisLineSeg: LineSegment, path: PatternPath): IIntersection | null => {
         // Threshold for checking if a point is on a line. Range from 0 to 1, with 0 being the tightest and 1 being the loosest.
         const THRESHOLD = .01;
@@ -84,8 +83,8 @@ export class PathIntersection {
             for (let j = 1; j < segmentPoints.length; j++ ) {
                 const thatLineSeg = new LineSegment(segmentPoints[j], segmentPoints[j - 1]);
                 const intersectionPoint = LineSegment.findIntersectionPointOfTwoLines(thisLineSeg, thatLineSeg, true, THRESHOLD);
-                if (intersectionPoint ) {
-                    return {point: intersectionPoint, pathCrossed: path, indexOfSegmentCrossed: segmentIndex};
+                if (intersectionPoint && !intersectionPoint.equals(path.getStart()) && !intersectionPoint.equals(path.getEnd())) {
+                    return { point: intersectionPoint, pathCrossed: path, indexOfSegmentCrossed: segmentIndex };
                 }
             }
         }

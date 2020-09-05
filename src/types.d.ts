@@ -75,7 +75,6 @@ type IVector = {
 type IRenderer = {
     init: () => HTMLCanvasElement;
     measurementInit: () => void;
-    finalReviewInit: () => void;
 };
 
 type IIntersection = {

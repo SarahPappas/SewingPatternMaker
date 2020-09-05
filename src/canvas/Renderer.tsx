@@ -167,13 +167,6 @@ export class Renderer implements IRenderer {
         this._canvas.onmouseout = null;
     };
 
-    finalReviewInit = (): void => {
-        this._pathSelection.clear();
-
-        this._canvas.onmousedown = null;
-        this._canvas.onmousemove = null;
-    };
-
     /**
      * Checks if the point intersects another path. If it doesn't, it returns the point 
      * itself. If it does and the intersection is close to an endpoint of the path, we 

@@ -237,8 +237,14 @@ export class Renderer implements IRenderer {
     private _endTracing = (position: Point): void => {
         if (this._currPath) {
             this._currPath.addPoint(position);
-            this._currPath.snapEndPoint(this._document.getPatternPaths());
-            
+            // Try to snap to other endpoints
+            const snapEndPoint = this._currPath?.snapEndPoint(this._document.getPatternPaths());
+            // If we were unable to snap to other endpoints, we will try to snap along other paths.
+            if (!snapEndPoint) {
+                const snappedPosition = this._checkPointIntersectionAndSplit(position, this._document.getPatternPaths());
+                this._currPath.snapEndPointTo(snappedPosition);
+            }
+
             let newPatternPath;
             const points = this._currPath.getPoints();
             switch (this._toolType) {

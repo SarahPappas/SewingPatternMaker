@@ -236,10 +236,10 @@ export class Renderer implements IRenderer {
         });
     };
 
-    private _endTracing = (position: Point, needToSnapEndPoint: boolean): void => {
+    private _endTracing = (position: Point, snapEndPoint: boolean): void => {
         if (this._currPath) {
             this._currPath.addPoint(position);
-            if (needToSnapEndPoint) {
+            if (snapEndPoint) {
                 // Try to snap to other endpoints
                 const snapEndPoint = this._currPath.snapEndPoint(this._document.getPatternPaths());
                 // If we were unable to snap to other endpoints, we will try to snap along other paths.

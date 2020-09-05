@@ -163,7 +163,7 @@ export class Document implements IDocument {
      */
     setAllowanceSizes = (edgeAllowance?: number, seamAllowance?: number): void => {
         if (!this._sizeRatio) {
-            throw new Error("the size ratio was not yet defined for this pattern.");
+            throw new Error("The size ratio was not yet defined for this pattern.");
         }
 
         this._allowanceSizes = new Map();
@@ -174,6 +174,11 @@ export class Document implements IDocument {
 
     // Precondition: arePatternPiecesEnclosed returned true 
     findPatternPieces = (): void => {
+        const allowanceSizes = this._allowanceSizes;
+        if (allowanceSizes === null) {
+            throw new Error("The allowance sizes were not defined yet for this pattern");
+        }
+        
         const faces = FaceFinder.FindFaces(this._patternPaths);
         
         this._patternPieces = faces.map(face => (
@@ -183,7 +188,7 @@ export class Document implements IDocument {
                 } else {
                     return this._patternPaths[edge.index].clone();
                 }
-            }))
+            }), allowanceSizes)
         ));
 
         // Temporary step to inspect pattern pieces and allowances on final review page while developping.

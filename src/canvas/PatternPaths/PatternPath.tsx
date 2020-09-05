@@ -3,7 +3,6 @@ import { PatternPathType } from '../Enums';
 import { Segment } from 'canvas/Geometry/Segment';
 import { Vector } from 'canvas/Geometry/Vector';
 import { LineSegment } from 'canvas/Geometry/LineSegment';
-import { App } from 'canvas/AppController';
 
 export class PatternPath implements IPatternPath {
     protected _type: PatternPathType;
@@ -103,9 +102,9 @@ export class PatternPath implements IPatternPath {
         this._path2D = this._computePath2D();
     };
 
-    getAllowance = (): PatternPath => {
+    getAllowance = (allowanceSize: number): PatternPath => {
         // Get the path that is offset from this one
-        const offsetSegments = this._getOffsetSegments();
+        const offsetSegments = this._getOffsetSegments(allowanceSize);
         const lengthOfLineSegmentProlongations = 200;
 
         // Add a line segment at the beginning of the offset path,
@@ -149,13 +148,7 @@ export class PatternPath implements IPatternPath {
         return new PatternPath(this._type, reversedSegments);
     };
 
-    private _getOffsetSegments = (): Segment[] => {
-        // Set the allowance size according to the type of pattern path
-        const allowanceSize = App.document.getAllowanceSize(this._type);
-        if (allowanceSize === undefined) {
-            throw new Error("an allowance size was not defined for this type of path");
-        }
-
+    private _getOffsetSegments = (allowanceSize: number): Segment[] => {
         // Find the array of segments that form the offset of the current
         // path. 
         let offsetSegments: Segment[] = [];

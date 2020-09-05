@@ -2,6 +2,7 @@ import { PatternPath } from './PatternPaths/PatternPath';
 import { Vector } from 'canvas/Geometry/Vector';
 import { LineSegment } from './Geometry/LineSegment';
 import { PathIntersection } from './PathIntersection';
+import { PatternPathType } from './Enums';
 
 export class PatternPiece {
     private _paths: PatternPath[];
@@ -16,9 +17,9 @@ export class PatternPiece {
      *              be the exact same point as the start of the
      *              following path
      */
-    constructor(paths: PatternPath[]) {
+    constructor(paths: PatternPath[], allowanceSizes: Map<PatternPathType, number>) {
         this._paths = paths;
-        this._allowancePaths = this._computeAllowancePaths();
+        this._allowancePaths = this._computeAllowancePaths(allowanceSizes);
     }
     
     /**
@@ -44,10 +45,17 @@ export class PatternPiece {
         });
     };
 
-    private _computeAllowancePaths = (): PatternPath[] => {
+    private _computeAllowancePaths = (allowanceSizes: Map<PatternPathType, number>): PatternPath[] => {
         // First, compute the allowance paths.
         // These are prolonged paths that run parallel to the edges.
-        const allowances = this._paths.map(path => path.getAllowance());
+        const allowances: PatternPath[] = [];
+        this._paths.forEach((path) => {
+            const allowanceSize = allowanceSizes.get(path.getType());
+            if (allowanceSize === undefined) {
+                throw new Error("Could not determine the allowance size for the path type " + path.getType());
+            }
+            allowances.push(path.getAllowance(allowanceSize));
+        });
 
         // Then, edge by edge, find the intersection between the alloance of 
         // an edge and the allowance of the next and shorten the allowances

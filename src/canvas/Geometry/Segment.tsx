@@ -72,5 +72,6 @@ export abstract class Segment {
     abstract translate(displacement: Vector): void;
 
     abstract clone(): Segment;
+    
     abstract reversedClone(): Segment;
 }

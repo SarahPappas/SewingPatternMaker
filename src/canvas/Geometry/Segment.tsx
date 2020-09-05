@@ -26,7 +26,7 @@ export abstract class Segment {
     abstract getLength(): number;
     
     /**
-     * Returns a vector that is tangent to the curve at the position indicated by
+     * Returns a vector that is tangent to the segment at the position indicated by
      * the parameter t.
      * 
      * @param t Describes the position on the curve where we want the tangent vector.

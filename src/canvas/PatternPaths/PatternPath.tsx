@@ -97,27 +97,6 @@ export class PatternPath implements IPatternPath {
         this._path2D = this._computePath2D();
     };
 
-    private _splitSegments = (point: Point, segmentIndex: number): Segment[][] => {
-        const segmentToSplit = this._segments[segmentIndex];
-        const splitSegments = segmentToSplit.split(point);
-        if (splitSegments.length !== 2) {
-            throw new Error("Split did not return correct number of segments");
-        }
-        
-        const segmentsBeforePoint = [];
-        for (let i = 0; i < segmentIndex; i++) {
-            segmentsBeforePoint.push(this._segments[i]);
-        }
-        segmentsBeforePoint.push(splitSegments[0]);
-
-        const segmentsAfterPoint = [splitSegments[1]];
-        for (let i = segmentIndex + 1; i < this._segments.length; i++) {
-            segmentsAfterPoint.push(this._segments[i]);
-        }
-        
-        return [segmentsBeforePoint, segmentsAfterPoint];
-    };
-
     addSegment = (newSegment: Segment): void => {
         this._segments.push(newSegment);
         this._points = this._computePoints();
@@ -203,5 +182,26 @@ export class PatternPath implements IPatternPath {
             segment.drawTo(path2D);
         });
         return path2D; 
+    };
+
+    private _splitSegments = (point: Point, segmentIndex: number): Segment[][] => {
+        const segmentToSplit = this._segments[segmentIndex];
+        const splitSegments = segmentToSplit.split(point);
+        if (splitSegments.length !== 2) {
+            throw new Error("Split did not return correct number of segments");
+        }
+        
+        const segmentsBeforePoint = [];
+        for (let i = 0; i < segmentIndex; i++) {
+            segmentsBeforePoint.push(this._segments[i]);
+        }
+        segmentsBeforePoint.push(splitSegments[0]);
+
+        const segmentsAfterPoint = [splitSegments[1]];
+        for (let i = segmentIndex + 1; i < this._segments.length; i++) {
+            segmentsAfterPoint.push(this._segments[i]);
+        }
+        
+        return [segmentsBeforePoint, segmentsAfterPoint];
     };
 }

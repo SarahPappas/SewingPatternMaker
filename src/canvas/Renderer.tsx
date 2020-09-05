@@ -92,15 +92,15 @@ export class Renderer implements IRenderer {
                     const pathCrossedStartPoint = intersection.pathCrossed.getStart();
                     const pathCrossedEndpoint = intersection.pathCrossed.getEnd();
                     if (intersection.point.isWithinRadius(pathCrossedEndpoint, 10)) {
-                        this._endTracing(pathCrossedEndpoint);
+                        this._endTracing(pathCrossedEndpoint, false);
                         return;
                     } else if (intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
-                        this._endTracing(pathCrossedStartPoint);
+                        this._endTracing(pathCrossedStartPoint, false);
                         return;
                     }
 
                     this._splitPathAtIntersection(intersection);
-                    this._endTracing(intersection.point);
+                    this._endTracing(intersection.point, false);
                 }
             }
         };
@@ -111,7 +111,7 @@ export class Renderer implements IRenderer {
                 // Moved this._isTracing = false out of _resetTracing beecause onmouseup and onmouseout are both fired.
                 // This means that _endTracing was called multiple times.
                 this._isTracing = false;
-                this._endTracing(position);
+                this._endTracing(position, true);
             }
         };
 
@@ -120,7 +120,7 @@ export class Renderer implements IRenderer {
             const position = new Point(e.offsetX, e.offsetY);
             if(this._isTracing) {
                 this._isTracing = false;
-                this._endTracing(position);
+                this._endTracing(position, true);
             }
         };
 
@@ -236,15 +236,17 @@ export class Renderer implements IRenderer {
         });
     };
 
-    private _endTracing = (position: Point): void => {
+    private _endTracing = (position: Point, needToSnapEndPoint: boolean): void => {
         if (this._currPath) {
             this._currPath.addPoint(position);
-            // Try to snap to other endpoints
-            const snapEndPoint = this._currPath.snapEndPoint(this._document.getPatternPaths());
-            // If we were unable to snap to other endpoints, we will try to snap along other paths.
-            if (!snapEndPoint) {
-                const snappedPosition = this._checkPointIntersectionAndSplit(position, this._document.getPatternPaths());
-                this._currPath.snapEndPointTo(snappedPosition);
+            if (needToSnapEndPoint) {
+                // Try to snap to other endpoints
+                const snapEndPoint = this._currPath.snapEndPoint(this._document.getPatternPaths());
+                // If we were unable to snap to other endpoints, we will try to snap along other paths.
+                if (!snapEndPoint) {
+                    const snappedPosition = this._checkPointIntersectionAndSplit(position, this._document.getPatternPaths());
+                    this._currPath.snapEndPointTo(snappedPosition);
+                }
             }
 
             let newPatternPath;

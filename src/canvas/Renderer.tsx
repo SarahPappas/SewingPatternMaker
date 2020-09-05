@@ -176,20 +176,25 @@ export class Renderer implements IRenderer {
     };
 
     /**
-     * Checks if the path starts by intersecting another path. If it does, and that intersection is 
-     * near the start of the intersected path, then the path start is snapped to the start of the 
-     * intersected path. If that intersection is near the end of the intersecte path, then the path start
-     * is snapped to the end of the intersected path. If the path starts near a point along the 
-     * intersected path, then the path start is snapped to that point along the intersected path. 
-     * If the intersected path is crossed at a point along the path and not an endpoint, the
-     * intersected path is bisected at the intersection point and the original path is replaced with
-     * the two new paths in the document. 
+     * Checks if the point intersects another path. If it doesn't, it returns the point 
+     * itself. If it does and the intersection is close to an endpoint of the path, we 
+     * return the endpoint. Otherwise, the intersected path is bisected at the intersection 
+     * point and the original path is replaced with the two new paths in the document, 
+     * and the point that bisects the path is returned.
      */
     private _checkPointIntersectionAndSplit = (point: Point, paths: PatternPath[]): Point => {
         const intersection = PathIntersection.findPointIntersectAlongPatternPaths(point, paths);
+        
         if (intersection) {
-            this._splitPathAtIntersection(intersection);
-            return intersection.point;
+            if (intersection.pathCrossed.getStart().isWithinRadius(intersection.point, 10)) {
+                return intersection.pathCrossed.getStart();
+            } else if (intersection.pathCrossed.getEnd().isWithinRadius(intersection.point, 10)) {
+                return intersection.pathCrossed.getEnd();                
+            } else { // the intersection is along the path, not close to the  
+                     // endpoints, so we can split safely
+                this._splitPathAtIntersection(intersection);
+                return intersection.point;
+            }
         }
         return point;
     };

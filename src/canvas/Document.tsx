@@ -190,7 +190,9 @@ export class Document implements IDocument {
         this._patternPaths = this._spreadPatternPieces(this._patternPieces);
     };
 
-    // Temporary method to inspect pattern pieces and allowances on final review page while developping.
+    /**
+     * Method for debugging. Allows us to inspect pattern pieces an allowances visually.
+     */ 
     private _spreadPatternPieces = (patternPieces: PatternPiece[]): PatternPath[] => {
         let result: PatternPath[] = [];
 

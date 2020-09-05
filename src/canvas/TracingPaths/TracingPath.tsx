@@ -103,6 +103,15 @@ export abstract class TracingPath implements ITracingPath {
         return updatedEndPoint;
     };
 
+    /**
+     * Sets the end point of the tracing path to the given point.
+     * 
+     * @param point A point where the tracing path should end.
+     */
+    snapEndPointTo = (point: Point): void => {
+        this._points[this._points.length - 1] = point;    
+    };
+
     private _snapEndPoints = (patternPaths: PatternPath[], index: number): boolean => {
         const point = this._points[index];
         // Radius to check within to see if we should snap to point.

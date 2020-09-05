@@ -61,15 +61,17 @@ export class Renderer implements IRenderer {
                 case(ToolType.Freeline):
                     this._currPath = new FreeLinePath();
                     break;
+                default:
+                    throw new Error("Could not identify the tool type");
             }
 
             const position = new Point(e.offsetX, e.offsetY);
             this._currPath.addPoint(position);
             // Try to snap to other endpoints
-            const snapStartPoint = this._currPath?.snapStartPoint(this._document.getPatternPaths());
+            const snapStartPoint = this._currPath.snapStartPoint(this._document.getPatternPaths());
             // If we were unable to snap to other endpoints, we will try to snap along other paths.
             if (!snapStartPoint) {
-                const snappedPosition = this._checkPathStartIntersectionAndSplit(position, this._document.getPatternPaths());
+                const snappedPosition = this._checkPointIntersectionAndSplit(position, this._document.getPatternPaths());
                 this._currPath.snapStartPointTo(snappedPosition);
             }
         };
@@ -183,13 +185,13 @@ export class Renderer implements IRenderer {
      * intersected path is bisected at the intersection point and the original path is replaced with
      * the two new paths in the document. 
      */
-    private _checkPathStartIntersectionAndSplit = (startPoint: Point, paths: PatternPath[]): Point => {
-        const intersection = PathIntersection.findPointIntersectAlongPatternPaths(startPoint, paths);
+    private _checkPointIntersectionAndSplit = (point: Point, paths: PatternPath[]): Point => {
+        const intersection = PathIntersection.findPointIntersectAlongPatternPaths(point, paths);
         if (intersection) {
             this._splitPathAtIntersection(intersection);
             return intersection.point;
         }
-        return startPoint;
+        return point;
     };
 
     private _draw = (): void => {
@@ -237,8 +239,14 @@ export class Renderer implements IRenderer {
     private _endTracing = (position: Point): void => {
         if (this._currPath) {
             this._currPath.addPoint(position);
-            this._currPath.snapEndPoint(this._document.getPatternPaths());
-            
+            // Try to snap to other endpoints
+            const snapEndPoint = this._currPath.snapEndPoint(this._document.getPatternPaths());
+            // If we were unable to snap to other endpoints, we will try to snap along other paths.
+            if (!snapEndPoint) {
+                const snappedPosition = this._checkPointIntersectionAndSplit(position, this._document.getPatternPaths());
+                this._currPath.snapEndPointTo(snappedPosition);
+            }
+
             let newPatternPath;
             const points = this._currPath.getPoints();
             switch (this._toolType) {

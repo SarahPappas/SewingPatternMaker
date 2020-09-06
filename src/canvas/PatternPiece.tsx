@@ -45,6 +45,14 @@ export class PatternPiece {
         });
     };
 
+    /**
+     * Computes and returns an array of PatternPaths that represent the allowance lines
+     * of all the pattern lines of this pattern piece, spacing them outwards of the pattern 
+     * piece at a distance specified by the inputted map and the PatternPaths' types.
+     * 
+     * @param allowanceSizes The map indicating the width of the allowance that each type 
+     *                       of PatternPath should have.
+     */
     private _computeAllowancePaths = (allowanceSizes: Map<PatternPathType, number>): PatternPath[] => {
         // First, compute the allowance paths.
         // These are prolonged paths that run parallel to the edges.
@@ -76,7 +84,19 @@ export class PatternPiece {
         return allowances;
     };
 
-    private _findIntersectionBetweenPaths = (path1: PatternPath, path2: PatternPath): IIntersection[] | null=> {
+    /**
+     * If the two inputted paths have no intersection, returns null. Otherwise, returns
+     * an array containing two intersections, both containing the same intersections point,
+     * each describing which path is being intersected and on which segment the
+     * intersection happens.
+     * 
+     * If path1 and path2 have more than 1 intersection, the method will only find and return the
+     * intersection that is closest to the end of path1 and the start of path 2.
+     * 
+     * @param path1 The first PatternPath
+     * @param path2 The second PatternPath
+     */
+    private _findIntersectionBetweenPaths = (path1: PatternPath, path2: PatternPath): IIntersection[] | null => {
         // find first encountered intersection of paths, exploring path1 in reverse direction and path2 in regular direction
         
         const reversedPath1 = path1.reversedClone();

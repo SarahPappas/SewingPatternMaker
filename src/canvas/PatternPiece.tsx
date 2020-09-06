@@ -97,7 +97,9 @@ export class PatternPiece {
      * @param path2 The second PatternPath
      */
     private _findIntersectionBetweenPaths = (path1: PatternPath, path2: PatternPath): IIntersection[] | null => {
-        // find first encountered intersection of paths, exploring path1 in reverse direction and path2 in regular direction
+        // In order to trim the allowances correctly, we need to find the intersection 
+        // between path1 and path2 that is closest to the end of path1 and to the start of path 2.
+        // In order to do that, we explore path1 in reverse direction and path2 in regular direction
         
         const reversedPath1 = path1.reversedClone();
         const reversedPath1Segments = reversedPath1.getSegments();

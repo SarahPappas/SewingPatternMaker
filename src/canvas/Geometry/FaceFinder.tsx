@@ -2,18 +2,7 @@ import { Point } from 'canvas/Geometry/Point';
 import { Vector } from 'canvas/Geometry/Vector';
 import { PatternPath } from 'canvas/PatternPaths/PatternPath';
 
-interface Edge {
-    origin: Point;
-    destination: Point;
-    tangentAtOrigin: Vector;
-    tangentAtDestination: Vector;
-    index: number; // the index of the segment
-    isReversed: boolean; // true if the edge is in the same direction
-                         // as the segment, false otherwise
-}
-
 export class FaceFinder {
-    
     /**
      * Precondition: the graph formed by the segments is planar, all faces are 
      *               of finite area, and when taken individually, all faces have
@@ -23,7 +12,7 @@ export class FaceFinder {
      * face in the inputted segments array. The inner array's order indicates
      * how to go around the face in the negative direction.
      */
-    static FindFaces = (paths: PatternPath[]): { index: number; isReversed: boolean }[][] => {
+    static FindFaces = (paths: PatternPath[]): IEdge[][] => {
         const vertices = FaceFinder._findVertices(paths);
         const edges = FaceFinder._findEdges(paths, vertices);
 
@@ -31,7 +20,7 @@ export class FaceFinder {
         // outgoing edges, ordered by angle of departure from the vertex
         const leavingEdgesMap = FaceFinder._createLeavingEdgesMap(vertices, edges);
 
-        const faces: { index: number; isReversed: boolean }[][] = [];
+        const faces: IEdge[][] = [];
 
         /**
          * Starting from each edge, find the face to its left by cycling 
@@ -55,7 +44,7 @@ export class FaceFinder {
             // totalAngle of -2PI).
             let totalAngle = 0;
             do {
-                face.push({ index: current.index, isReversed: current.isReversed });
+                face.push(current);
                 totalAngle += Vector.changeInAngle(current.tangentAtOrigin, current.tangentAtDestination);
 
                 const leavingEdges = leavingEdgesMap.get(current.destination);
@@ -66,7 +55,7 @@ export class FaceFinder {
                 // Find the index of the edge that follows the same path as 
                 // current but in the reverse direction in leavingEdges
                 const currentIndex = current.index;
-                const indexOfReverse = leavingEdges.findIndex((edge: Edge) => 
+                const indexOfReverse = leavingEdges.findIndex((edge: IEdge) => 
                     edge.index === currentIndex
                 );
 
@@ -132,8 +121,8 @@ export class FaceFinder {
         return vertices;
     };
 
-    private static _findEdges = (paths: PatternPath[], vertices: Point[]): Edge[] => {
-        const edges: Edge[] = [];
+    private static _findEdges = (paths: PatternPath[], vertices: Point[]): IEdge[] => {
+        const edges: IEdge[] = [];
         for (let i = 0; i < paths.length; i++) {
             const path = paths[i];
             const startVertex = vertices.find((vertex) => vertex.equals(path.getStart()));
@@ -170,10 +159,10 @@ export class FaceFinder {
      * @param vertices A set of Points.
      * @param edges An array of Edges.
      */
-    private static _createLeavingEdgesMap = (vertices: Point[], edges: Edge[]): Map<Point, Edge[]> => {
+    private static _createLeavingEdgesMap = (vertices: Point[], edges: IEdge[]): Map<Point, IEdge[]> => {
         const leavingEdgesMap = new Map();
         vertices.forEach(vertex => {
-            const leavingEdges: Array<Edge> = [];
+            const leavingEdges: Array<IEdge> = [];
             edges.forEach(edge => {
                 if (edge.origin.equals(vertex)) {
                     leavingEdges.push(edge);

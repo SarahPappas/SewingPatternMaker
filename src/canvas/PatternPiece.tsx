@@ -3,6 +3,7 @@ import { Vector } from 'canvas/Geometry/Vector';
 import { LineSegment } from './Geometry/LineSegment';
 import { PathIntersection } from './PathIntersection';
 import { PatternPathType } from './Enums';
+import { AllowanceFinder } from './PatternPaths/AllowanceFinder';
 
 export class PatternPiece {
     private _paths: PatternPath[];
@@ -62,7 +63,7 @@ export class PatternPiece {
             if (allowanceSize === undefined) {
                 throw new Error("Could not determine the allowance size for the path type " + path.getType());
             }
-            allowances.push(path.getAllowance(allowanceSize));
+            allowances.push(AllowanceFinder.FindAllowance(path, allowanceSize));
         });
 
         // Then, edge by edge, find the intersection between the allowance of 

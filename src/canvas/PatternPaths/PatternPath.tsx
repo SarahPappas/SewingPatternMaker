@@ -2,7 +2,6 @@ import { Point } from '../Geometry/Point';
 import { PatternPathType } from '../Enums';
 import { Segment } from 'canvas/Geometry/Segment';
 import { Vector } from 'canvas/Geometry/Vector';
-import { LineSegment } from 'canvas/Geometry/LineSegment';
 
 export class PatternPath implements IPatternPath {
     protected _type: PatternPathType;
@@ -102,29 +101,6 @@ export class PatternPath implements IPatternPath {
         this._path2D = this._computePath2D();
     };
 
-    getAllowance = (allowanceSize: number): PatternPath => {
-        // Get the path that is offset from this one
-        const offsetSegments = this._getOffsetSegments(allowanceSize);
-        const lengthOfLineSegmentProlongations = 200;
-
-        // Add a line segment at the beginning of the offset path,
-        // following the tangent of the offset at that point  
-        const firstSegment = offsetSegments[0];      
-        const p1 = firstSegment.getStart();
-        const p2 = Point.translate(p1, firstSegment.getTangent(0).normalize().multiplyByScalar(-1 * lengthOfLineSegmentProlongations));
-        
-        // Add a line segment at the end of the offset path,
-        // following the tangent of the offset at that point
-        const lastSegment = offsetSegments[offsetSegments.length - 1];
-        const q1 = lastSegment.getEnd();
-        const q2 = Point.translate(q1, lastSegment.getTangent(1).normalize().multiplyByScalar(lengthOfLineSegmentProlongations));
-        
-        let result: Segment[] = [new LineSegment(p2, p1)];
-        result = result.concat(offsetSegments);
-        result.push(new LineSegment(q1, q2));
-        return new PatternPath(PatternPathType.Allowance, result);
-    };
-
     translate = (displacement: Vector): void => {
         this._segments.forEach(segment => {
             segment.translate(displacement);
@@ -167,17 +143,6 @@ export class PatternPath implements IPatternPath {
             }
         }
         return true;        
-    };
-
-    private _getOffsetSegments = (allowanceSize: number): Segment[] => {
-        // Find the array of segments that form the offset of the current
-        // path. 
-        let offsetSegments: Segment[] = [];
-        this._segments.forEach(segment => {
-            offsetSegments = offsetSegments.concat(segment.getOffsetSegments(allowanceSize));
-        });
-
-        return offsetSegments;
     };
 
     private _computePoints = (): Point[] => {

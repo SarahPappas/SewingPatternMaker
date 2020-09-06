@@ -34,6 +34,24 @@ export class ArcCurve extends Curve {
         }
     }
 
+    // Overrides the abstract method in the parent class.
+    drawTo = (path: Path2D | Context2d): void => {
+        path.arcTo(this.control.x, this.control.y, 
+                    this.end.x, this.end.y, 
+                    this.radius);
+    };
+
+    // Overrides the approximation algorithm in the parent class.
+    getLength = (): number => {
+        return Math.abs(this.startAngle - this.endAngle) * this.radius;
+    };
+
+    scale = (scaler: number): void => {
+        this.start = this.start.scale(scaler);
+        this.control = this.control.scale(scaler);
+        this.end = this.end.scale(scaler);
+    };
+
     /* 
     * Splits an arc into two arcs.
     * Precondition: point given must be a point on the arc.
@@ -122,17 +140,5 @@ export class ArcCurve extends Curve {
         const y = this.center.y + 
                   this.radius * Math.sin(this.lerp(this.startAngle, this.endAngle, t));
         return new Point(x, y);
-    };
-
-    // Overrides the abstract method in the parent class.
-    drawTo = (path: Path2D | Context2d): void => {
-        path.arcTo(this.control.x, this.control.y, 
-                   this.end.x, this.end.y, 
-                   this.radius);
-    };
-
-    // Overrides the approximation algorithm in the parent class.
-    getLength = (): number => {
-        return Math.abs(this.startAngle - this.endAngle) * this.radius;
     };
 }

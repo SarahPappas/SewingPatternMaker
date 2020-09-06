@@ -2,6 +2,7 @@ import { Point } from '../Geometry/Point';
 import { PatternPathType } from '../Enums';
 import { Segment } from 'canvas/Geometry/Segment';
 import { Vector } from 'canvas/Geometry/Vector';
+import { Context2d } from 'jspdf';
 
 export class PatternPath implements IPatternPath {
     protected _type: PatternPathType;
@@ -14,6 +15,12 @@ export class PatternPath implements IPatternPath {
         this._segments = segments;
         this._points = this._computePoints();
         this._path2D = this._computePath2D();
+    }
+
+    draw = (path: Path2D | Context2d): void => {
+        this._segments.forEach(segment => {
+            segment.drawTo(path);
+        });
     }
 
     getPoints = (): Point[] => {
@@ -56,6 +63,13 @@ export class PatternPath implements IPatternPath {
         return this._segments;
     };
 
+    scale = (scaler: number): void => {
+        this._segments.forEach(segment => {
+            segment.scale(scaler);
+        });
+        this._path2D = this._computePath2D();
+    };
+
     splitAtPoint = (intersection: Point, segmentIndex: number): PatternPath[] => {
         const segmentToSplit = this._segments[segmentIndex];
         const splitSegments = segmentToSplit.split(intersection);
@@ -90,9 +104,7 @@ export class PatternPath implements IPatternPath {
         const path2D = new Path2D();
         const start = this.getStart();
         path2D.moveTo(start.x, start.y);
-        this._segments.forEach(segment => {
-            segment.drawTo(path2D);
-        });
+        this.draw(path2D);
         return path2D; 
     };
 }

@@ -4,6 +4,17 @@ import { Point } from './Point';
 import { Context2d } from 'jspdf';
 
 export class LineSegment extends Segment {
+    computePoints = (): Point[] => {
+        const points = [];
+        points.push(this.getStart().clone());
+        points.push(this.getEnd().clone());
+        return points;
+    };
+
+    drawTo = (path: Path2D | Context2d): void => {
+        path.lineTo(this.end.x, this.end.y);
+    };
+    
     getLength = (): number => {
         return this.start.distanceTo(this.end);
     };
@@ -15,6 +26,11 @@ export class LineSegment extends Segment {
         return Vector.vectorBetweenPoints(this.start, this.end);
     };
 
+    scale = (scaler: number): void => {
+        this.start = this.start.scale(scaler);
+        this.end = this.end.scale(scaler);
+    };
+
     // Precondition: point must be on the line. 
     split = (point: Point): LineSegment[] => {
         const lines = [];
@@ -22,13 +38,6 @@ export class LineSegment extends Segment {
         lines.push(new LineSegment(point, this.end));
         return lines;
 
-    };
-
-    computePoints = (): Point[] => {
-        const points = [];
-        points.push(this.getStart().clone());
-        points.push(this.getEnd().clone());
-        return points;
     };
 
     /**
@@ -71,10 +80,6 @@ export class LineSegment extends Segment {
         }
         
         return iPoint;
-    };
-
-    drawTo = (path: Path2D | Context2d): void => {
-        path.lineTo(this.end.x, this.end.y);
     };
 
     /**

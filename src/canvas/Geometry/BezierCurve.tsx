@@ -3,6 +3,17 @@ import { Curve } from './Curve';
 import { Context2d } from 'jspdf';
 
 export class BezierCurve extends Curve {
+    // Overrides the abstract method in parent class.
+    drawTo = (path: Path2D | Context2d): void => {
+        path.quadraticCurveTo(this.control.x, this.control.y, this.end.x, this.end.y);   
+    };
+
+    scale = (scaler: number): void => {
+        this.start = this.start.scale(scaler);
+        this.control = this.control.scale(scaler);
+        this.end = this.end.scale(scaler);
+    };
+
     // Precondition: split is a point on the curve.
     split = (point: Point): BezierCurve[] => {
         const curves:  BezierCurve[] = [];
@@ -19,25 +30,6 @@ export class BezierCurve extends Curve {
 
         return curves;
     }; 
-
-    private _findT = (point: Point): number => {
-        // TODO: we tried finding t using direct calculation methods
-        // (solving for t in a pair of parametric equations from 
-        // P = (1-t2)S + 2t(1-t)C + t2E) but that leads to many different
-        // cases. Need more thought to make this method fail safe.
-
-        // TODO: this method may fail if the bezier curve is too long:
-        // the tested point might slip in between 2 of the computed points        
-        const NUMPOINTS = 100;
-        const pointsOnCurve = this.computePoints(NUMPOINTS);
-        const indexOfClosestPoint = this._indexOfClosestPointOnCurve(point, pointsOnCurve);
-
-        if (!point.isWithinRadius(pointsOnCurve[indexOfClosestPoint], 10)){
-            throw new Error("the point is not on the curve");
-        } 
-        
-        return indexOfClosestPoint / NUMPOINTS;
-    };
 
     // Returns a point on the Bezier curve between its start point and
     // its end point. If t=0, it returns the starting point. If t=1, 
@@ -57,8 +49,22 @@ export class BezierCurve extends Curve {
                     this.lerp(startToControlY, controlToEndY, t));
     };
 
-    // Overrides the abstract method in parent class.
-    drawTo = (path: Path2D | Context2d): void => {
-        path.quadraticCurveTo(this.control.x, this.control.y, this.end.x, this.end.y);   
+    private _findT = (point: Point): number => {
+        // TODO: we tried finding t using direct calculation methods
+        // (solving for t in a pair of parametric equations from 
+        // P = (1-t2)S + 2t(1-t)C + t2E) but that leads to many different
+        // cases. Need more thought to make this method fail safe.
+
+        // TODO: this method may fail if the bezier curve is too long:
+        // the tested point might slip in between 2 of the computed points        
+        const NUMPOINTS = 100;
+        const pointsOnCurve = this.computePoints(NUMPOINTS);
+        const indexOfClosestPoint = this._indexOfClosestPointOnCurve(point, pointsOnCurve);
+
+        if (!point.isWithinRadius(pointsOnCurve[indexOfClosestPoint], 10)){
+            throw new Error("the point is not on the curve");
+        } 
+        
+        return indexOfClosestPoint / NUMPOINTS;
     };
 }

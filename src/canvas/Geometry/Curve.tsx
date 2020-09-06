@@ -10,8 +10,6 @@ export abstract class Curve extends Segment {
         this.control = control.clone();
     }
 
-    protected abstract _computePoint(t: number): Point;
-
     computePoints = (numPoints?: number): Point[] => {
         numPoints = numPoints || 100;
         const resultingPoints = new Array<Point>();
@@ -101,4 +99,6 @@ export abstract class Curve extends Segment {
     protected lerp = (start: number, end: number, t: number): number => {
         return start + t * (end - start);
     };
+
+    protected abstract _computePoint(t: number): Point;
 }

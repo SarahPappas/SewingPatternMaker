@@ -59,4 +59,6 @@ export abstract class Segment {
     abstract isPointNearSegment (point: Point, threshold: number): Point | null;
 
     abstract drawTo(path: Path2D | Context2d): void;
+
+    abstract scale(scaler: number): void;
 }

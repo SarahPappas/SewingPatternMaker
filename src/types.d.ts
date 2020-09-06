@@ -89,11 +89,8 @@ type IPatternPathTrash = {
 };
 
 type IEdge = {
-    origin: Point;
-    destination: Point;
-    tangentAtOrigin: Vector;
-    tangentAtDestination: Vector;
-    index: number; // the index of the segment
-    isReversed: boolean; // true if the edge is in the same direction
-                         // as the segment, false otherwise
+    path: PatternPath;
+    startVertex: Point;
+    endVertex: Point;
+    id: number;
 };

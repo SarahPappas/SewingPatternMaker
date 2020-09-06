@@ -4,16 +4,19 @@ import { PatternPath } from 'canvas/PatternPaths/PatternPath';
 
 export class FaceFinder {
     /**
-     * Precondition: the graph formed by the segments is planar, all faces are 
+     * Precondition: the graph formed by the PatternPaths is planar, all faces are 
      *               of finite area, and when taken individually, all faces have
-     *               exactly 2 segments meeting at each vertex.
-     * Returns an array of arrays of indices, each inner array representing one face. 
-     * Each inner array contains the indices of the segments forming the
-     * face in the inputted segments array. The inner array's order indicates
-     * how to go around the face in the negative direction.
+     *               exactly 2 PatternPaths meeting at each vertex.
+     * Returns an array of arrays of PatternPaths, each inner array representing one face. 
+     * Each inner array contains ordered end-to-start consecutive paths that go around
+     * the face in the positive rotation direction.
      */
-    static FindFaces = (paths: PatternPath[]): IEdge[][] => {
+    static FindFaces = (paths: PatternPath[]): PatternPath[][] => {
+        // Vertices are unique for the whole graph.
         const vertices = FaceFinder._findVertices(paths);
+
+        // Edges are objects that package paths with their start and end vertex and an id.
+        // Each path generates 2 edges running in opposite direction, with the same id.
         const edges = FaceFinder._findEdges(paths, vertices);
 
         // Create a map between vertices and an ordered array of all its
@@ -22,11 +25,10 @@ export class FaceFinder {
 
         const faces: IEdge[][] = [];
 
-        /**
-         * Starting from each edge, find the face to its left by cycling 
-         * back to the same edge, always choosing the path that curves 
-         * the most in the positive rotation direction at intersections.
-         */
+        // Starting from each edge, find the face to its right by traveling
+        // along consecutive end-to-start edges, always choosing to leave a vertex
+        // through the path that curves the most in the positive rotation 
+        // direction.
         edges.forEach(startingEdge => {
             const face = [];
             let current = startingEdge;
@@ -36,8 +38,8 @@ export class FaceFinder {
             // In order to keep one unique representation per face, we 
             // only keep edge lists that have the smallest index in the 
             // first position in the list.
-            const indexOfFirst = current.index;
-            let faceHasSmallestIndexFirst = true;
+            const idOfFirst = current.id;
+            let faceHasSmallestIdFirst = true;
             // Only keep the face if the total angle while going around is 
             // 2PI. This means we have found an interior face, not the face
             // that is the exterior of the graph (which will have a 
@@ -45,36 +47,36 @@ export class FaceFinder {
             let totalAngle = 0;
             do {
                 face.push(current);
-                totalAngle += Vector.changeInAngle(current.tangentAtOrigin, current.tangentAtDestination);
+                totalAngle += Vector.changeInAngle(current.path.getTangentAtStart(), current.path.getTangentAtEnd());
 
-                const leavingEdges = leavingEdgesMap.get(current.destination);
+                const leavingEdges = leavingEdgesMap.get(current.endVertex);
                 if (!leavingEdges) {
                     throw new Error("Could not retreive the destination point of this edge in the vertex keys of the map");
                 }
 
-                // Find the index of the edge that follows the same path as 
+                // Find the id of the edge that follows the same path as 
                 // current but in the reverse direction in leavingEdges
-                const currentIndex = current.index;
+                const currentId = current.id;
                 const indexOfReverse = leavingEdges.findIndex((edge: IEdge) => 
-                    edge.index === currentIndex
+                    edge.id === currentId
                 );
 
                 // Choose the leaving edge next to the reverse in the list, 
                 // going around in the negative direction
                 next = leavingEdges[(indexOfReverse - 1 + leavingEdges.length) % leavingEdges.length];
-                if (next.index < indexOfFirst) {
-                    faceHasSmallestIndexFirst = false;
+                if (next.id < idOfFirst) {
+                    faceHasSmallestIdFirst = false;
                     break;
                 }
                 
-                totalAngle += Vector.changeInAngle(current.tangentAtDestination, next.tangentAtOrigin);
+                totalAngle += Vector.changeInAngle(current.path.getTangentAtEnd(), next.path.getTangentAtStart());
                 
                 current = next;
-            } while (current.index !== startingEdge.index);
+            } while (current.id !== startingEdge.id);
 
             // In order to allow small rounding errors, we test for a small difference instead of equality.
             const epsilon = 1e-10;
-            if (faceHasSmallestIndexFirst && Math.abs(totalAngle - (2 * Math.PI)) < epsilon) {
+            if (faceHasSmallestIdFirst && Math.abs(totalAngle - (2 * Math.PI)) < epsilon) {
                 faces.push(face);
             }
         });
@@ -89,9 +91,13 @@ export class FaceFinder {
             throw new Error("The number of faces found by the findFaces algorithm is too high");
         }
 
-        return faces;
+        return faces.map(face => face.map(edge => edge.path));
     };   
 
+    /**
+     * Generate an array of unique endpoint among all of the inputted PatternPaths.
+     * @param paths 
+     */
     private static _findVertices = (paths: PatternPath[]): Point[] => {
         const vertices = [];
         for (let i = 0; i < paths.length; i++) {
@@ -121,6 +127,14 @@ export class FaceFinder {
         return vertices;
     };
 
+    /**
+     * Package all paths and their opposite in an IEdge type object with their 
+     * start and end vertices in the vertices array and an id which will be the
+     * same for a path and its reverse
+     * 
+     * @param paths 
+     * @param vertices 
+     */
     private static _findEdges = (paths: PatternPath[], vertices: Point[]): IEdge[] => {
         const edges: IEdge[] = [];
         for (let i = 0; i < paths.length; i++) {
@@ -132,20 +146,16 @@ export class FaceFinder {
             }
 
             edges.push({
-                origin: startVertex, 
-                destination: endVertex, 
-                tangentAtOrigin: path.getTangentAtStart(), 
-                tangentAtDestination: path.getTangentAtEnd(), 
-                index: i,
-                isReversed: false
+                path: path.clone(),
+                startVertex: startVertex, 
+                endVertex: endVertex, 
+                id: i
             });
             edges.push({
-                origin: endVertex, 
-                destination: startVertex, 
-                tangentAtOrigin: Vector.findOpposite(path.getTangentAtEnd()), 
-                tangentAtDestination: Vector.findOpposite(path.getTangentAtStart()), 
-                index: i,
-                isReversed: true
+                path: path.reversedClone(),
+                startVertex: endVertex, 
+                endVertex: startVertex,
+                id: i
             });
         }
         return edges;
@@ -153,7 +163,7 @@ export class FaceFinder {
 
     /**
      * Returns a map between each vertex in vertices and an array of all the edges in the 
-     * input edges array that have that particular vertex as an origin 
+     * input edges array that have that particular vertex as a startVertex 
      * (they are "leaving" the vertex). 
      * 
      * @param vertices A set of Points.
@@ -164,11 +174,11 @@ export class FaceFinder {
         vertices.forEach(vertex => {
             const leavingEdges: Array<IEdge> = [];
             edges.forEach(edge => {
-                if (edge.origin.equals(vertex)) {
+                if (edge.startVertex === vertex) {
                     leavingEdges.push(edge);
                 }
             });
-            leavingEdges.sort((a, b) => a.tangentAtOrigin.getAngle() - b.tangentAtOrigin.getAngle());
+            leavingEdges.sort((a, b) => a.path.getTangentAtStart().getAngle() - b.path.getTangentAtStart().getAngle());
             leavingEdgesMap.set(vertex, leavingEdges);
         });  
         return leavingEdgesMap;

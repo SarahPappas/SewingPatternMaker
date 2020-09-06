@@ -182,13 +182,7 @@ export class Document implements IDocument {
         const faces = FaceFinder.FindFaces(this._patternPaths);
         
         this._patternPieces = faces.map(face => (
-            new PatternPiece(face.map((edge) => {
-                if (edge.isReversed) {
-                    return this._patternPaths[edge.index].reversedClone();
-                } else {
-                    return this._patternPaths[edge.index].clone();
-                }
-            }), allowanceSizes)
+            new PatternPiece(face, allowanceSizes)
         ));
 
         // Temporary step to inspect pattern pieces and allowances on final review page while developping.

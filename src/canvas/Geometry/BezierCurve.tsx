@@ -106,4 +106,8 @@ export class BezierCurve extends Curve {
     reversedClone = (): BezierCurve => {
         return new BezierCurve(this.end, this.start, this.control);
     };
+
+    protected _equals = (other: Segment): boolean => {
+        return (other instanceof BezierCurve) && this.control.equals(other.control);
+    };
 }

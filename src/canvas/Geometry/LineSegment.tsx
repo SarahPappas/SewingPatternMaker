@@ -156,4 +156,8 @@ export class LineSegment extends Segment {
     reversedClone = (): LineSegment => {
         return new LineSegment(this.end, this.start);
     };
+
+    protected _equals = (other: Segment): boolean => {
+        return (other instanceof LineSegment);
+    };
 }

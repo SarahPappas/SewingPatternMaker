@@ -148,6 +148,27 @@ export class PatternPath implements IPatternPath {
         return new PatternPath(this._type, reversedSegments);
     };
 
+    equals = (other: PatternPath): boolean => {
+        if (this === other) {
+            return true;
+        }
+        
+        if (this._type !== other._type) {
+            return false;
+        }
+
+        if (this._segments.length !== other._segments.length) {
+            return false;
+        }
+
+        for (let i = 0; i < this._segments.length; i++) {
+            if (!this._segments[i].equals(other._segments[i])) {
+                return false;
+            }
+        }
+        return true;        
+    };
+
     private _getOffsetSegments = (allowanceSize: number): Segment[] => {
         // Find the array of segments that form the offset of the current
         // path. 

@@ -172,4 +172,8 @@ export class ArcCurve extends Curve {
     reversedClone = (): ArcCurve => {
         return new ArcCurve(this.end, this.start, this.control);
     };
+
+    protected _equals = (other: Segment): boolean => {
+        return (other instanceof ArcCurve) && this.control.equals(other.control);
+    };
 }

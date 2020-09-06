@@ -74,4 +74,22 @@ export abstract class Segment {
     abstract clone(): Segment;
     
     abstract reversedClone(): Segment;
+
+    equals = (other: Segment): boolean => {
+        if (this === other) {
+            return true;
+        }
+
+        if (!this.start.equals(other.start)) {
+            return false;
+        }
+
+        if (!this.end.equals(other.end)) {
+            return false;
+        }
+
+        return this._equals(other);
+    };
+
+    protected abstract _equals(other: Segment): boolean;
 }

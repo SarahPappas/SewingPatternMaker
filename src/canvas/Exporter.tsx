@@ -13,11 +13,13 @@ export class Exporter {
     protected _documentModel: Document;
     protected _patternPieces: PatternPiece[] | null;
     protected _testPieces: PatternPiece[];
+    protected _isTransformed: boolean;
 
     constructor (documentModel: Document) {
         this.doc = null;
         this._documentModel = documentModel;
         this._patternPieces = [];
+        this._isTransformed = false; //TODO transforms should be able to be undone by save transform stack to undo and redo.
         
         const allowanceMapTest =  new Map<PatternPathType, number>();
         allowanceMapTest.set(3, 36.073113689422485);
@@ -34,7 +36,7 @@ export class Exporter {
         this._testPieces = [testPiece];
     }
 
-    save = () => {
+    save = (): void => {
         this.doc = new jsPDF('p', 'pt', 'letter');
         // this._patternPieces = this._documentModel.getPatternPieces();
         console.log(this._patternPieces);
@@ -48,13 +50,10 @@ export class Exporter {
         let poinstOnCanvas: Point[] = new Array<Point>();
     
         this._testPieces?.forEach(patternPiece => {
-
-            const translationVector =  new Vector(-sizeRatio, -sizeRatio);
+            patternPiece = patternPiece.clone();
+            this._transform(patternPiece, sizeRatio);
 
             patternPiece.getAllPaths().forEach(patternPath => {
-                // TODO clone then scale after merging with Audrey's code
-                patternPath.scale(sizeRatio);
-                patternPath.translate(translationVector);
                 const pathStart = patternPath.getStart();
                 ctx.beginPath();
                 ctx.moveTo(pathStart.x, pathStart.y);
@@ -63,13 +62,22 @@ export class Exporter {
 
                 poinstOnCanvas = poinstOnCanvas.concat(patternPath.getPoints());
              });
+
         });
 
-        const boundBox = new BoundingBox(poinstOnCanvas);
-        
+        this._isTransformed = true;
+
         // TODO use cliping to add pages.
 
-
         this.doc.save("test.pdf");
+    };
+
+    private _transform = (patternPiece: PatternPiece, sizeRatio: number): void => {
+        const boundBox = patternPiece.getBoundingBox();
+        const translateToTopLeftVector = Vector.findOpposite(Vector.vectorBetweenPoints(new Point(0, 0), new Point(boundBox.minX  * sizeRatio /2, boundBox.minY * sizeRatio/2)));
+        console.log(translateToTopLeftVector);
+        patternPiece.translate(translateToTopLeftVector);
+
+        patternPiece.scale(sizeRatio);
     };
 }

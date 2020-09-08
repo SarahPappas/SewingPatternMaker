@@ -4,10 +4,13 @@ import { LineSegment } from './Geometry/LineSegment';
 import { PathIntersection } from './PathIntersection';
 import { PatternPathType } from './Enums';
 import { AllowanceFinder } from './PatternPaths/AllowanceFinder';
+import { Point } from './Geometry/Point';
+import { BoundingBox } from './Geometry/BoundingBox';
 
 export class PatternPiece {
     private _paths: PatternPath[];
     private _allowancePaths: PatternPath[];
+    private _allowanceSizes: Map<PatternPathType, number>;
 
     /**
      * Constructs a PatternPiece object from the provided 
@@ -21,6 +24,14 @@ export class PatternPiece {
     constructor(paths: PatternPath[], allowanceSizes: Map<PatternPathType, number>) {
         this._paths = paths;
         this._allowancePaths = this._computeAllowancePaths(allowanceSizes);
+        this._allowanceSizes = allowanceSizes;
+    }
+
+    /**
+     * Returns a copy of the PatternPiece.
+     */
+    clone = (): PatternPiece => {
+        return new PatternPiece(this._paths.map(path => path.clone()), this._allowanceSizes);
     }
     
     /**
@@ -29,6 +40,32 @@ export class PatternPiece {
      */
     getAllPaths = (): PatternPath[] => {
         return [...this._paths, ...this._allowancePaths];
+    };
+
+    /**
+     * Returns the bounding box for the pattern piece.
+     */
+    getBoundingBox = (): BoundingBox => {
+        let points: Point[] = [];
+        this._allowancePaths.forEach(path => {
+            points = points.concat(path.getPoints());
+        });
+
+        return new BoundingBox(points);
+    }
+
+    /**
+     * Scales the patternPiece by the provided scaler.
+     * 
+     * @param scaler 
+     */
+    scale = (scaler: number): void => {
+        this._paths.forEach(path => {
+            path.scale(scaler);
+        });
+        this._allowancePaths.forEach(path => {
+            path.scale(scaler);
+        });
     };
 
     /**

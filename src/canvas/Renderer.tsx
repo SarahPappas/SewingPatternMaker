@@ -136,7 +136,6 @@ export class Renderer implements IRenderer {
             const pathsRemovedThisTracingSession = this._document.getPatternPathsTrash();
             this._document.removePatternPath();
             this._undoPathReplacementsInTracingSession(pathsRemovedThisTracingSession);
-            console.log("paths", this._document.getPatternPaths());
         }) as EventListener);
 
         return this._canvas;
@@ -166,13 +165,6 @@ export class Renderer implements IRenderer {
 
         this._canvas.onmouseup = null;
         this._canvas.onmouseout = null;
-    };
-
-    finalReviewInit = (): void => {
-        this._pathSelection.clear();
-
-        this._canvas.onmousedown = null;
-        this._canvas.onmousemove = null;
     };
 
     /**
@@ -264,8 +256,6 @@ export class Renderer implements IRenderer {
                     newPatternPath = new PatternPath(this._pathType, [CurveFitter.Fit(points)]);
             }
             this._document.addPatternPath(newPatternPath);
-
-            console.log("paths", this._document.getPatternPaths());
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }
 

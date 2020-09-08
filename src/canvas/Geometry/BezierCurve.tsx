@@ -1,5 +1,7 @@
 import { Point } from './Point';
 import { Curve } from './Curve';
+import { Segment } from './Segment';
+import { Vector } from './Vector';
 
 export class BezierCurve extends Curve {
     // Precondition: split is a point on the curve.
@@ -59,5 +61,53 @@ export class BezierCurve extends Curve {
     // Overrides the abstract method in parent class.
     drawTo = (path: Path2D): void => {
         path.quadraticCurveTo(this.control.x, this.control.y, this.end.x, this.end.y);   
+    };
+    
+    getTangent = (t: number): Vector => {
+        const x = -2 * (1 - t) * this.start.x + (2 - 4 * t) * this.control.x + 2 * t * this.end.x;
+        const y = -2 * (1 - t) * this.start.y + (2 - 4 * t) * this.control.y + 2 * t * this.end.y;
+        return new Vector(x, y);
+    };
+
+    getOffsetSegments = (distance: number): Segment[] => {
+        // Compute offset points
+        const offsetPoints: Point[] = [];
+        const NUMPOINTS = 20;
+        const numSegments = NUMPOINTS - 1;
+        for (let t = 0; t <= 1; t += (1 / numSegments)) {
+            const pointOnBezier = this._computePoint(t);
+            const displacement = Vector.findOpposite(Vector.findPerpVector(this.getTangent(t))).normalize().multiplyByScalar(distance);
+            offsetPoints.push(Point.translate(pointOnBezier, displacement));
+        }
+
+        // Construct an array of BezierCurves that link the offset points
+        const result: Segment[] = [];
+        let middle = Point.computeMiddlePoint(offsetPoints[1], offsetPoints[2]);
+        result.push(new BezierCurve(offsetPoints[0], middle, offsetPoints[1]));
+        for (let i = 1; i < NUMPOINTS - 3; i++) {
+            const prevMiddle = middle;
+            middle = Point.computeMiddlePoint(offsetPoints[i + 1], offsetPoints[i + 2]);
+            result.push(new BezierCurve(prevMiddle, middle, offsetPoints[i + 1]));
+        }
+        result.push(new BezierCurve(middle, offsetPoints[NUMPOINTS - 1], offsetPoints[NUMPOINTS - 2]));
+        return result;
+    };
+
+    translate = (displacement: Vector): void => {
+        this.start = Point.translate(this.start, displacement);
+        this.control = Point.translate(this.control, displacement);
+        this.end = Point.translate(this.end, displacement);
+    };
+
+    clone = (): BezierCurve => {
+        return new BezierCurve(this.start, this.end, this.control);
+    };
+
+    reversedClone = (): BezierCurve => {
+        return new BezierCurve(this.end, this.start, this.control);
+    };
+
+    protected _equals = (other: Segment): boolean => {
+        return (other instanceof BezierCurve) && this.control.equals(other.control);
     };
 }

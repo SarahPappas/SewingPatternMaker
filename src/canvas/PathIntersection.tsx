@@ -33,7 +33,7 @@ export class PathIntersection {
 
             // If the intersection we find is within a 10 pt raidus of the first point of this path, 
             // keep looking for intersections. 
-            const intersection = PathIntersection._findIntersectionOfLineSegmentAndPath(thisLineSeg, thatPath);
+            const intersection = PathIntersection.findIntersectionOfLineSegmentAndPath(thisLineSeg, thatPath);
             if (intersection && !intersection.point.isWithinRadius(pointsOnThisPath[0], 10)) {
                 return intersection;
             }
@@ -71,14 +71,14 @@ export class PathIntersection {
      * 
      * Ignores intersection points that are on the endpoints of the path.
      */
-    private static _findIntersectionOfLineSegmentAndPath = (thisLineSeg: LineSegment, path: PatternPath): IIntersection | null => {
+    static findIntersectionOfLineSegmentAndPath = (thisLineSeg: LineSegment, path: PatternPath): IIntersection | null => {
         // Threshold for checking if a point is on a line. Range from 0 to 1, with 0 being the tightest and 1 being the loosest.
         const THRESHOLD = .01;
         const segments = path.getSegments();
         for (let segmentIndex = 0; segmentIndex < segments.length; segmentIndex++) {
             const segment = segments[segmentIndex];
             const segmentPoints = segment.getPoints();
-            for (let j = 1; j < segmentPoints.length; j++ ) {
+            for (let j = 1; j < segmentPoints.length; j++) {
                 const thatLineSeg = new LineSegment(segmentPoints[j], segmentPoints[j - 1]);
                 const intersectionPoint = LineSegment.findIntersectionPointOfTwoLines(thisLineSeg, thatLineSeg, true, THRESHOLD);
                 if (intersectionPoint && !intersectionPoint.equals(path.getStart()) && !intersectionPoint.equals(path.getEnd())) {

@@ -111,6 +111,7 @@ export class PatternPath implements IPatternPath {
             segment.scale(scaler);
         });
         this._path2D = this._computePath2D();
+        this._points = this._computePoints();
     };
 
     /**
@@ -157,6 +158,7 @@ export class PatternPath implements IPatternPath {
             segment.translate(displacement);
         });
         this._path2D = this._computePath2D();
+        this._points = this._computePoints();
     };
 
     private _computePoints = (): Point[] => {

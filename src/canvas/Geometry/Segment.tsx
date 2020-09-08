@@ -16,6 +16,22 @@ export abstract class Segment {
         this.points = null;
     }
 
+    equals = (other: Segment): boolean => {
+        if (this === other) {
+            return true;
+        }
+
+        if (!this.start.equals(other.start)) {
+            return false;
+        }
+
+        if (!this.end.equals(other.end)) {
+            return false;
+        }
+
+        return this._equals(other);
+    };
+
     getStart = (): Point => {
         return this.start;
     };
@@ -23,21 +39,6 @@ export abstract class Segment {
     getEnd = (): Point => {
         return this.end;
     };
-
-    abstract getLength(): number;
-    
-    abstract getTangent(t: number): Vector;
-
-    /**
-     * Returns an array of numOfPoints pts (defaults to 100) on the 
-     * segment if it's aCurve, 2 points if it's a LineSegment. If 
-     * called repeatedly, will recompute the points every time.
-     * Does not expose this segment's endpoints data fields 
-     * (clones are made where necessary).
-     * 
-     * @param numOfPoints number of points in the returned array. Optional.
-     */
-    abstract computePoints(numOfPoints?: number): Point[];
 
     /**
      * Returns an array of 100 pts on the segment if it's a Curve, 
@@ -52,6 +53,29 @@ export abstract class Segment {
         return this.points;
     };
 
+    abstract getLength(): number;
+    
+    /**
+     * Returns a vector that is tangent to the segment at the position indicated by
+     * the parameter t.
+     * 
+     * @param t Describes the position on the curve where we want the tangent vector.
+     *          t should be between 0 and 1 inclusively, 0 for the start of the curve,
+     *          1 for the end
+     */
+    abstract getTangent(t: number): Vector;
+
+    /**
+     * Returns an array of numOfPoints pts (defaults to 100) on the 
+     * segment if it's aCurve, 2 points if it's a LineSegment. If 
+     * called repeatedly, will recompute the points every time.
+     * Does not expose this segment's endpoints data fields 
+     * (clones are made where necessary).
+     * 
+     * @param numOfPoints number of points in the returned array. Optional.
+     */
+    abstract computePoints(numOfPoints?: number): Point[];
+
     abstract split(point: Point): Segment[];
 
     /* Returns null if the point is not within the threshold of the segment.
@@ -61,4 +85,14 @@ export abstract class Segment {
     abstract drawTo(path: Path2D | Context2d): void;
 
     abstract scale(scaler: number): void;
+
+    abstract getOffsetSegments(distance: number): Segment[];
+
+    abstract translate(displacement: Vector): void;
+
+    abstract clone(): Segment;
+    
+    abstract reversedClone(): Segment;
+
+    protected abstract _equals(other: Segment): boolean;
 }

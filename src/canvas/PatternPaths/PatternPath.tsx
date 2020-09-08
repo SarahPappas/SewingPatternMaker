@@ -17,11 +17,46 @@ export class PatternPath implements IPatternPath {
         this._path2D = this._computePath2D();
     }
 
+    addSegment = (newSegment: Segment): void => {
+        this._segments.push(newSegment);
+        this._points = this._computePoints();
+        this._path2D = this._computePath2D();
+    };
+
+    clone = (): PatternPath => {
+        const segments: Segment[] = [];
+        for (let i = 0; i < this._segments.length; i++) {
+            segments.push(this._segments[i].clone());
+        }
+        return new PatternPath(this._type, segments);
+    };
+
     draw = (path: Path2D | Context2d): void => {
         this._segments.forEach(segment => {
             segment.drawTo(path);
         });
-    }
+    };
+
+    equals = (other: PatternPath): boolean => {
+        if (this === other) {
+            return true;
+        }
+        
+        if (this._type !== other._type) {
+            return false;
+        }
+
+        if (this._segments.length !== other._segments.length) {
+            return false;
+        }
+
+        for (let i = 0; i < this._segments.length; i++) {
+            if (!this._segments[i].equals(other._segments[i])) {
+                return false;
+            }
+        }
+        return true;        
+    };
 
     getPoints = (): Point[] => {
         return this._points;
@@ -63,6 +98,14 @@ export class PatternPath implements IPatternPath {
         return this._segments;
     };
 
+    reversedClone = (): PatternPath => {
+        const reversedSegments: Segment[] = [];
+        for (let i = this._segments.length - 1; i >= 0; i--) {
+            reversedSegments.push(this._segments[i].reversedClone());
+        }
+        return new PatternPath(this._type, reversedSegments);
+    };
+
     scale = (scaler: number): void => {
         this._segments.forEach(segment => {
             segment.scale(scaler);
@@ -70,26 +113,50 @@ export class PatternPath implements IPatternPath {
         this._path2D = this._computePath2D();
     };
 
-    splitAtPoint = (intersection: Point, segmentIndex: number): PatternPath[] => {
-        const segmentToSplit = this._segments[segmentIndex];
-        const splitSegments = segmentToSplit.split(intersection);
-        if (splitSegments.length !== 2) {
-            throw new Error("Split did not return correct number of segments");
+    /**
+     * Returns an array of 2 new PatternPaths, one of the path from start to 
+     * the inputted point, the second from the inputted point to the end.
+     * 
+     * Precondition: the input point is on the path
+     * 
+     * @param point the point on the path where we split the path
+     * @param segmentIndex the index of the path's segment that contains the point
+     */
+    splitAtPoint = (point: Point, segmentIndex: number): PatternPath[] => {
+        const splitSegments = this._splitSegments(point, segmentIndex);
+        return [new PatternPath(this._type, splitSegments[0]),
+                new PatternPath(this._type, splitSegments[1])];
+    };
+
+    /**
+     * Shortens the current path by removing the part that is before or after the inputted point. 
+     * If trimBeforePoint is true, will remove the part of the path that is 
+     * before the point. Otherwise it will remove the part of the path that is after the point.
+     * 
+     * Precondition: the input point is on the path
+     * 
+     * @param point the point on the path where we split the path
+     * @param segmentIndex the index of the path's segment that contains the point
+     */
+    trimAtPoint = (point: Point, segmentIndex: number, trimBeforePoint: boolean): void => {
+        let index;
+        if (trimBeforePoint) {
+            index = 1;
+        } else {
+            index = 0;
         }
 
-        const segmentsOfFirstPath = [];
-        for (let i = 0; i < segmentIndex; i++) {
-            segmentsOfFirstPath.push(this._segments[i]);
-        }
-        segmentsOfFirstPath.push(splitSegments[0]);
+        this._segments = this._splitSegments(point, segmentIndex)[index];
+        // Update data fields
+        this._points = this._computePoints();
+        this._path2D = this._computePath2D();
+    };
 
-        const segmentsOfSecondPath = [splitSegments[1]];
-        for (let i = segmentIndex + 1; i < this._segments.length; i++) {
-            segmentsOfSecondPath.push(this._segments[i]);
-        }
-        
-        return [new PatternPath(this._type, segmentsOfFirstPath), 
-                new PatternPath(this._type, segmentsOfSecondPath)];
+    translate = (displacement: Vector): void => {
+        this._segments.forEach(segment => {
+            segment.translate(displacement);
+        });
+        this._path2D = this._computePath2D();
     };
 
     private _computePoints = (): Point[] => {
@@ -106,5 +173,26 @@ export class PatternPath implements IPatternPath {
         path2D.moveTo(start.x, start.y);
         this.draw(path2D);
         return path2D; 
+    };
+
+    private _splitSegments = (point: Point, segmentIndex: number): Segment[][] => {
+        const segmentToSplit = this._segments[segmentIndex];
+        const splitSegments = segmentToSplit.split(point);
+        if (splitSegments.length !== 2) {
+            throw new Error("Split did not return correct number of segments");
+        }
+        
+        const segmentsBeforePoint = [];
+        for (let i = 0; i < segmentIndex; i++) {
+            segmentsBeforePoint.push(this._segments[i]);
+        }
+        segmentsBeforePoint.push(splitSegments[0]);
+
+        const segmentsAfterPoint = [splitSegments[1]];
+        for (let i = segmentIndex + 1; i < this._segments.length; i++) {
+            segmentsAfterPoint.push(this._segments[i]);
+        }
+        
+        return [segmentsBeforePoint, segmentsAfterPoint];
     };
 }

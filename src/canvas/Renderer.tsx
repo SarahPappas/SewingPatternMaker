@@ -61,15 +61,17 @@ export class Renderer implements IRenderer {
                 case(ToolType.Freeline):
                     this._currPath = new FreeLinePath();
                     break;
+                default:
+                    throw new Error("Could not identify the tool type");
             }
 
             const position = new Point(e.offsetX, e.offsetY);
             this._currPath.addPoint(position);
             // Try to snap to other endpoints
-            const snapStartPoint = this._currPath?.snapStartPoint(this._document.getPatternPaths());
+            const snapStartPoint = this._currPath.snapStartPoint(this._document.getPatternPaths());
             // If we were unable to snap to other endpoints, we will try to snap along other paths.
             if (!snapStartPoint) {
-                const snappedPosition = this._checkPathStartIntersectionAndSplit(position, this._document.getPatternPaths());
+                const snappedPosition = this._checkPointIntersectionAndSplit(position, this._document.getPatternPaths());
                 this._currPath.snapStartPointTo(snappedPosition);
             }
         };
@@ -90,15 +92,15 @@ export class Renderer implements IRenderer {
                     const pathCrossedStartPoint = intersection.pathCrossed.getStart();
                     const pathCrossedEndpoint = intersection.pathCrossed.getEnd();
                     if (intersection.point.isWithinRadius(pathCrossedEndpoint, 10)) {
-                        this._endTracing(pathCrossedEndpoint);
+                        this._endTracing(pathCrossedEndpoint, false);
                         return;
                     } else if (intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
-                        this._endTracing(pathCrossedStartPoint);
+                        this._endTracing(pathCrossedStartPoint, false);
                         return;
                     }
 
                     this._splitPathAtIntersection(intersection);
-                    this._endTracing(intersection.point);
+                    this._endTracing(intersection.point, false);
                 }
             }
         };
@@ -109,7 +111,7 @@ export class Renderer implements IRenderer {
                 // Moved this._isTracing = false out of _resetTracing beecause onmouseup and onmouseout are both fired.
                 // This means that _endTracing was called multiple times.
                 this._isTracing = false;
-                this._endTracing(position);
+                this._endTracing(position, true);
             }
         };
 
@@ -118,7 +120,7 @@ export class Renderer implements IRenderer {
             const position = new Point(e.offsetX, e.offsetY);
             if(this._isTracing) {
                 this._isTracing = false;
-                this._endTracing(position);
+                this._endTracing(position, true);
             }
         };
 
@@ -134,7 +136,6 @@ export class Renderer implements IRenderer {
             const pathsRemovedThisTracingSession = this._document.getPatternPathsTrash();
             this._document.removePatternPath();
             this._undoPathReplacementsInTracingSession(pathsRemovedThisTracingSession);
-            console.log("paths", this._document.getPatternPaths());
         }) as EventListener);
 
         return this._canvas;
@@ -166,30 +167,28 @@ export class Renderer implements IRenderer {
         this._canvas.onmouseout = null;
     };
 
-    finalReviewInit = (): void => {
-        this._pathSelection.clear();
-
-        this._canvas.onmousedown = null;
-        this._canvas.onmousemove = null;
-    };
-
     /**
-     * Checks if the path starts by intersecting another path. If it does, and that intersection is 
-     * near the start of the intersected path, then the path start is snapped to the start of the 
-     * intersected path. If that intersection is near the end of the intersecte path, then the path start
-     * is snapped to the end of the intersected path. If the path starts near a point along the 
-     * intersected path, then the path start is snapped to that point along the intersected path. 
-     * If the intersected path is crossed at a point along the path and not an endpoint, the
-     * intersected path is bisected at the intersection point and the original path is replaced with
-     * the two new paths in the document. 
+     * Checks if the point intersects another path. If it doesn't, it returns the point 
+     * itself. If it does and the intersection is close to an endpoint of the path, we 
+     * return the endpoint. Otherwise, the intersected path is bisected at the intersection 
+     * point and the original path is replaced with the two new paths in the document, 
+     * and the point that bisects the path is returned.
      */
-    private _checkPathStartIntersectionAndSplit = (startPoint: Point, paths: PatternPath[]): Point => {
-        const intersection = PathIntersection.findPointIntersectAlongPatternPaths(startPoint, paths);
+    private _checkPointIntersectionAndSplit = (point: Point, paths: PatternPath[]): Point => {
+        const intersection = PathIntersection.findPointIntersectAlongPatternPaths(point, paths);
+        
         if (intersection) {
-            this._splitPathAtIntersection(intersection);
-            return intersection.point;
+            if (intersection.pathCrossed.getStart().isWithinRadius(intersection.point, 10)) {
+                return intersection.pathCrossed.getStart();
+            } else if (intersection.pathCrossed.getEnd().isWithinRadius(intersection.point, 10)) {
+                return intersection.pathCrossed.getEnd();                
+            } else { // the intersection is along the path, not close to the  
+                     // endpoints, so we can split safely
+                this._splitPathAtIntersection(intersection);
+                return intersection.point;
+            }
         }
-        return startPoint;
+        return point;
     };
 
     private _draw = (): void => {
@@ -234,11 +233,19 @@ export class Renderer implements IRenderer {
         });
     };
 
-    private _endTracing = (position: Point): void => {
+    private _endTracing = (position: Point, snapEndPoint: boolean): void => {
         if (this._currPath) {
             this._currPath.addPoint(position);
-            this._currPath.snapEndPoint(this._document.getPatternPaths());
-            
+            if (snapEndPoint) {
+                // Try to snap to other endpoints
+                const snapEndPoint = this._currPath.snapEndPoint(this._document.getPatternPaths());
+                // If we were unable to snap to other endpoints, we will try to snap along other paths.
+                if (!snapEndPoint) {
+                    const snappedPosition = this._checkPointIntersectionAndSplit(position, this._document.getPatternPaths());
+                    this._currPath.snapEndPointTo(snappedPosition);
+                }
+            }
+
             let newPatternPath;
             const points = this._currPath.getPoints();
             switch (this._toolType) {
@@ -249,8 +256,6 @@ export class Renderer implements IRenderer {
                     newPatternPath = new PatternPath(this._pathType, [CurveFitter.Fit(points)]);
             }
             this._document.addPatternPath(newPatternPath);
-
-            console.log("paths", this._document.getPatternPaths());
             this._canvas.dispatchEvent(new Event('endTracing'));     
         }
 

@@ -3,10 +3,6 @@ import { App } from "canvas/AppController";
 import { ActionButton } from "components/ActionButton/ActionButton";
 
 export const FinalReview: React.FC = () => {
-    useEffect(() => {
-        App.renderer.finalReviewInit();
-    }, []);
-    
     const handleExport = (): void => {
         App.exporter.save();
     };

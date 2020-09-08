@@ -1,19 +1,24 @@
 import { PatternPath } from './PatternPaths/PatternPath';
 import { Point } from './Geometry/Point';
 import { FaceFinder } from './Geometry/FaceFinder';
+import { PatternPathType } from './Enums';
+import { PatternPiece } from './PatternPiece';
+import { Vector } from './Geometry/Vector';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
     private _patternPathsTrash: IPatternPathTrash[];
     private _sizeRatio: null | number; // in pixels per inch
-    private _patternPieces: PatternPath[][]; // an array of patternpath arrays, 
-                                             // each representing one piece of the pattern
+    private _patternPieces: PatternPiece[] | null;
+    private _allowanceSizes: Map<PatternPathType, number> | null; // allowance sizes in pixels
+    
 
     constructor () {
         this._patternPaths = new Array<PatternPath>();
         this._patternPathsTrash = [];
         this._sizeRatio = null;
-        this._patternPieces = [];
+        this._patternPieces = null;
+        this._allowanceSizes = null;
     }
 
     getPatternPaths = (): PatternPath[] => {
@@ -132,22 +137,73 @@ export class Document implements IDocument {
         } 
         return this._sizeRatio;        
     };
-    
-    // Precondition: arePatternPiecesEnclosed returned true 
-    findPatternPieces = (): void => {
-        const faces = FaceFinder.FindFaces(this._patternPaths);
-        this._patternPieces = faces.map(face => face.map(i => this._patternPaths[i]));
-        
-        // Logging the pattern pieces for debugging
-        this._patternPieces.forEach(patternPiece => {
-            console.log("pattern piece: ");
-            patternPiece.forEach(patternPath => {
-                console.log("patternPath: type " + patternPath.getType().toString() + ", length " + patternPath.getLengthInPixels());
-            });
-        });
+
+    getAllowanceSize = (type: PatternPathType): number => {
+        if (!this._allowanceSizes) {
+            throw new Error("Allowance sizes were not set yet.");
+        }
+        const allowance = this._allowanceSizes.get(type);
+        if (allowance === undefined) {
+            throw new Error("Could not find allowance for this path type.");
+        }
+        return allowance;
     };
 
-    getPatternPieces = (): PatternPath[][] => {
+    /**
+     * Sets the allowance sizes to 0 inches for folds, the input edgeAllowance 
+     * for edges and the input seam allowance for seams. If parameters are
+     * omitted, the edge allowance will be set to a default of 5/8 inch 
+     * and the seam allowance to a default of 5/8 inch. The sizes are stored in
+     * pixels in the allowanceSizes map data field.
+     * 
+     * Warning: every time this method is called the old data is erased.
+     *
+     * @param edgeAllowance 
+     * @param seamAllowance 
+     */
+    setAllowanceSizes = (edgeAllowance?: number, seamAllowance?: number): void => {
+        if (!this._sizeRatio) {
+            throw new Error("The size ratio was not yet defined for this pattern.");
+        }
+
+        this._allowanceSizes = new Map();
+        this._allowanceSizes.set(PatternPathType.Edge, (edgeAllowance || 0.625) * this._sizeRatio);
+        this._allowanceSizes.set(PatternPathType.Fold, 0);
+        this._allowanceSizes.set(PatternPathType.Seam, (seamAllowance || 0.625) * this._sizeRatio);
+    };
+
+    // Precondition: arePatternPiecesEnclosed returned true 
+    findPatternPieces = (): void => {
+        const allowanceSizes = this._allowanceSizes;
+        if (allowanceSizes === null) {
+            throw new Error("The allowance sizes were not defined yet for this pattern");
+        }
+        
+        const faces = FaceFinder.FindFaces(this._patternPaths);
+        
+        this._patternPieces = faces.map(face => (
+            new PatternPiece(face, allowanceSizes)
+        ));
+
+        // Temporary step to inspect pattern pieces and allowances on final review page while developping.
+        this._patternPaths = this._spreadPatternPieces(this._patternPieces);
+    };
+
+    /**
+     * Method for debugging. Allows us to inspect pattern pieces an allowances visually.
+     */ 
+    private _spreadPatternPieces = (patternPieces: PatternPiece[]): PatternPath[] => {
+        let result: PatternPath[] = [];
+
+        for (let i = 0; i < patternPieces.length; i++) {
+            patternPieces[i].translate(new Vector(50 * i, 0));
+            result = result.concat(patternPieces[i].getAllPaths());
+        }
+
+        return result;
+    };
+
+    getPatternPieces = (): PatternPiece[] | null => {
         return this._patternPieces;
     }
 }

@@ -1,6 +1,5 @@
 import { Point } from './Point';
 import { Segment } from './Segment';
-import { Vector } from './Vector';
 
 export abstract class Curve extends Segment {
     protected control: Point;
@@ -46,26 +45,7 @@ export abstract class Curve extends Segment {
         //       the curve instead. This would allow us to bound our error on the total length. 
     };
 
-    /**
-     * Returns a vector that is tangent to the curve at the position indicated by
-     * the parameter t.
-     * 
-     * @param t Describes the position on the curve where we want the tangent vector.
-     *          t should be equal to 0 or 1, 0 for the start of the curve, 1 for the end
-     */
-    getTangent = (t: number): Vector => {
-        // TODO: for seam allowances, implement this for all values of t between 0 and 1
-        if (!(t === 0 || t === 1)) {
-            throw new Error();
-        }
-        if (t === 0) {
-            return Vector.vectorBetweenPoints(this.start, this.control);
-        } else { // t === 1
-            return Vector.vectorBetweenPoints(this.control, this.end);
-        }
-    };
-
-    /* 
+    /** 
      * Returns null if a point is not near the segement, otherwise it returns the closest
      * point on the segment. Checks if a point is near the curve by computing a number of 
      * points on that curve, finding the point among those that is closest to the inputted point,

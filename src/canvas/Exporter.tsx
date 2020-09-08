@@ -3,6 +3,7 @@ import { Document } from './Document';
 import { PatternPath } from './PatternPaths/PatternPath';
 import { LineSegment } from './Geometry/LineSegment';
 import { Point } from './Geometry/Point';
+import { BoundingBox } from './Geometry/BoundingBox';
 
 export class Exporter {
     doc: jsPDF | null;
@@ -27,27 +28,31 @@ export class Exporter {
         // this._patternPieces = this._documentModel.getPatternPieces();
         console.log(this._patternPieces);
         // TODO remove or, this is for testing.
-        const sizeRatio = this._documentModel.getSizeRatio() > 0 ? this._documentModel.getSizeRatio() : 2;
+        const sizeRatio = this._documentModel.getSizeRatio() > 0 ? this._documentModel.getSizeRatio() : 4;
         console.log("size ratio:", sizeRatio);
         const ctx = this.doc.context2d;
-        // ctx.save();
-        // ctx.scale(sizeRatio, sizeRatio);
         ctx.strokeStyle = '#e605c4';
+
+        let poinstOnCanvas: Point[] = new Array<Point> ();
         this._testPieces.forEach(patternPiece => {
             patternPiece.forEach(patternPath => {
-                // TODO clone then scale after merging with audrey's code
+                // TODO clone then scale after merging with Audrey's code
                 patternPath.scale(sizeRatio);
+                // TODO translate after merging with Audrey's code
                 const pathStart = patternPath.getStart();
                 ctx.beginPath();
                 ctx.moveTo(pathStart.x, pathStart.y);
                 patternPath.draw(ctx);
                 ctx.stroke();
+
+                poinstOnCanvas = poinstOnCanvas.concat(patternPath.getPoints());
              });
         });
 
-        ctx.restore();
+        const boundBox = new BoundingBox(poinstOnCanvas);
+        
+        // TODO use cliping to add pages.
 
-        ctx.stroke();
 
         this.doc.save("test.pdf");
     };

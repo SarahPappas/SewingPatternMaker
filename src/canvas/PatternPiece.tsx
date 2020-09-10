@@ -64,10 +64,9 @@ export class PatternPiece {
             path.scale(scalar);
         });
 
-        this._allowanceSizes.forEach((value, key) => {
-            this._allowanceSizes.set(key, value * scalar);
+        this._allowancePaths.forEach(path => {
+            path.scale(scalar);
         });
-        this._allowancePaths = this._computeAllowancePaths(this._allowanceSizes);
     };
 
     /**

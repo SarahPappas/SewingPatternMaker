@@ -10,6 +10,7 @@ export class ArcCurve extends Curve {
     private center: Point;
     private startAngle: number; // Angle from positive x axis to start 
     private endAngle: number;// Angle from positive x axis to end
+    private counterClockwise: boolean;
 
     // Precondition: control is equidistant from start and end
     // Precondition: control != middlePoint between start and end
@@ -33,6 +34,8 @@ export class ArcCurve extends Curve {
                 this.endAngle += 2 * Math.PI;
             }
         }
+
+        this.counterClockwise = this.startAngle > this.endAngle;
     }
 
     clone = (): ArcCurve => {
@@ -41,7 +44,7 @@ export class ArcCurve extends Curve {
 
     // Overrides the abstract method in the parent class.
     drawTo = (path: Path2D | Context2d): void => {
-        path.arc(this.center.x, this.center.y, this.radius, this.startAngle, this.endAngle, false);
+        path.arc(this.center.x, this.center.y, this.radius, this.startAngle, this.endAngle, this.counterClockwise);
     };
 
     // Overrides the approximation algorithm in the parent class.
@@ -80,9 +83,18 @@ export class ArcCurve extends Curve {
         this.start = this.start.scale(scalar);
         this.control = this.control.scale(scalar);
         this.end = this.end.scale(scalar);
+        this.center = this._computeCenter();
         this.radius = this.center.distanceTo(this.start);
         this.startAngle = Vector.vectorBetweenPoints(this.center, this.start).getAngle();
         this.endAngle = Vector.vectorBetweenPoints(this.center, this.end).getAngle();
+        if (Math.abs(this.endAngle - this.startAngle) > Math.PI) {
+            if (this.startAngle < this.endAngle) {
+                this.startAngle += 2 * Math.PI;
+            } else {
+                this.endAngle += 2 * Math.PI;
+            }
+        }
+        
         this.points = this.computePoints();
         console.log("arc post scale", this);
     };

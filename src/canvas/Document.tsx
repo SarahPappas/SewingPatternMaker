@@ -8,7 +8,7 @@ import { Vector } from './Geometry/Vector';
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
     private _patternPathsTrash: IPatternPathTrash[];
-    private _sizeRatio: null | number; // in pixels per inch
+    private _pixelsPerInch: null | number; // in pixels per inch
     private _patternPieces: PatternPiece[] | null;
     private _allowanceSizes: Map<PatternPathType, number> | null; // allowance sizes in pixels
     
@@ -16,7 +16,7 @@ export class Document implements IDocument {
     constructor () {
         this._patternPaths = new Array<PatternPath>();
         this._patternPathsTrash = [];
-        this._sizeRatio = null;
+        this._pixelsPerInch = null;
         this._patternPieces = null;
         this._allowanceSizes = null;
     }
@@ -127,15 +127,16 @@ export class Document implements IDocument {
  
     // Sets the pixels per inch ratio according to the input measurement.
     setSizeRatio = (inputMeasurementInInches: number, selectedPath: PatternPath): void => {
-        this._sizeRatio = selectedPath.getLengthInPixels() / inputMeasurementInInches;
+        // The size ratio is the # of pixels per inch.
+        this._pixelsPerInch = selectedPath.getLengthInPixels() / inputMeasurementInInches;
     };
 
     getSizeRatio = (): number => {
-        if (!this._sizeRatio) {
+        if (!this._pixelsPerInch) {
             console.log('error: the resizing ratio is not defined.');
             return -1;
         } 
-        return this._sizeRatio;        
+        return this._pixelsPerInch;        
     };
 
     getAllowanceSize = (type: PatternPathType): number => {
@@ -162,14 +163,14 @@ export class Document implements IDocument {
      * @param seamAllowance 
      */
     setAllowanceSizes = (edgeAllowance?: number, seamAllowance?: number): void => {
-        if (!this._sizeRatio) {
+        if (!this._pixelsPerInch) {
             throw new Error("The size ratio was not yet defined for this pattern.");
         }
 
         this._allowanceSizes = new Map();
-        this._allowanceSizes.set(PatternPathType.Edge, (edgeAllowance || 0.625) * this._sizeRatio);
+        this._allowanceSizes.set(PatternPathType.Edge, (edgeAllowance || 0.625) * this._pixelsPerInch);
         this._allowanceSizes.set(PatternPathType.Fold, 0);
-        this._allowanceSizes.set(PatternPathType.Seam, (seamAllowance || 0.625) * this._sizeRatio);
+        this._allowanceSizes.set(PatternPathType.Seam, (seamAllowance || 0.625) * this._pixelsPerInch);
     };
 
     // Precondition: arePatternPiecesEnclosed returned true 

@@ -3,7 +3,6 @@ import { Document } from './Document';
 import { PatternPath } from './PatternPaths/PatternPath';
 import { LineSegment } from './Geometry/LineSegment';
 import { Point } from './Geometry/Point';
-import { BoundingBox } from './Geometry/BoundingBox';
 import { Vector } from './Geometry/Vector';
 import { PatternPiece } from './PatternPiece';
 import { PatternPathType } from './Enums';
@@ -13,13 +12,11 @@ export class Exporter {
     protected _documentModel: Document;
     protected _patternPieces: PatternPiece[] | null;
     protected _testPieces: PatternPiece[];
-    protected _isTransformed: boolean;
 
     constructor (documentModel: Document) {
         this.doc = null;
         this._documentModel = documentModel;
         this._patternPieces = [];
-        this._isTransformed = false; //TODO transforms should be able to be undone by save transform stack to undo and redo.
         
         const allowanceMapTest =  new Map<PatternPathType, number>();
         allowanceMapTest.set(3, 36.073113689422485);
@@ -37,47 +34,51 @@ export class Exporter {
     }
 
     save = (): void => {
-        this.doc = new jsPDF('p', 'pt', 'letter');
-        // this._patternPieces = this._documentModel.getPatternPieces();
-        console.log(this._patternPieces);
+        this.doc = new jsPDF('p', 'in', 'letter');
+        this.doc.setLineWidth(1/16);
+        this._patternPieces = this._documentModel.getPatternPieces();
+        let patternPieces = this._patternPieces;
+        if (!patternPieces?.length) {
+            patternPieces = this._testPieces;
+        }
+        console.log("pattern pieces:", this._patternPieces);
         // TODO remove or, this is for testing.
-        const sizeRatio = this._documentModel.getSizeRatio() > 0 ? this._documentModel.getSizeRatio() : 2;
-        console.log("size ratio:", sizeRatio);
-        
+        // TODO rename size ratio.
+        // TODO fix scaler to scalar
+        const pixelsPerInch = this._documentModel.getSizeRatio() > 0 ? this._documentModel.getSizeRatio() : 36;
+        const inchesPerPixel = 1 / pixelsPerInch;
+        console.log("pixelsPerInch", pixelsPerInch);
+
         const ctx = this.doc.context2d;
         ctx.strokeStyle = '#e605c4';
 
         let poinstOnCanvas: Point[] = new Array<Point>();
-    
-        this._testPieces?.forEach(patternPiece => {
+        patternPieces?.forEach(patternPiece => {
+            // TODO: Add Page and clip for each peach
+            // this.doc?.addPage();
             patternPiece = patternPiece.clone();
-            this._transform(patternPiece, sizeRatio);
+            this._transform(patternPiece, inchesPerPixel);
 
             patternPiece.getAllPaths().forEach(patternPath => {
+                console.log(patternPath.getType);
                 const pathStart = patternPath.getStart();
                 ctx.beginPath();
                 ctx.moveTo(pathStart.x, pathStart.y);
                 patternPath.draw(ctx);
+
                 ctx.stroke();
 
                 poinstOnCanvas = poinstOnCanvas.concat(patternPath.getPoints());
              });
-
         });
-
-        this._isTransformed = true;
-
-        // TODO use cliping to add pages.
 
         this.doc.save("test.pdf");
     };
 
-    private _transform = (patternPiece: PatternPiece, sizeRatio: number): void => {
-        const boundBox = patternPiece.getBoundingBox();
-        const translateToTopLeftVector = Vector.findOpposite(Vector.vectorBetweenPoints(new Point(0, 0), new Point(boundBox.minX  * sizeRatio /2, boundBox.minY * sizeRatio/2)));
-        console.log(translateToTopLeftVector);
-        patternPiece.translate(translateToTopLeftVector);
+    private _transform = (patternPiece: PatternPiece, inchesPerPixel: number): void => {
+        patternPiece.scale(inchesPerPixel);
 
-        patternPiece.scale(sizeRatio);
+        const boundBox = patternPiece.getBoundingBox();
+        patternPiece.translate(new Vector(-boundBox.minX, -boundBox.minY));
     };
 }

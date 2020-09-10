@@ -106,9 +106,9 @@ export class PatternPath implements IPatternPath {
         return new PatternPath(this._type, reversedSegments);
     };
 
-    scale = (scaler: number): void => {
+    scale = (scalar: number): void => {
         this._segments.forEach(segment => {
-            segment.scale(scaler);
+            segment.scale(scalar);
         });
         this._path2D = this._computePath2D();
         this._points = this._computePoints();

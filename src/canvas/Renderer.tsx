@@ -279,7 +279,7 @@ export class Renderer implements IRenderer {
 
     /**
      *  Undoes any path splitting we might have done while drawing currPath and 
-     *  reset currPath
+     *  resets currPath
      */
     private _discardCurrPath = () => {
         const pathsRemovedThisTracingSession = this._document.getPatternPathsTrash();

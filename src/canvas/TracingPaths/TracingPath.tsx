@@ -18,6 +18,10 @@ export abstract class TracingPath implements ITracingPath {
         return this._points;
     };
 
+    isFirstPointEqualToLastPoint = (): boolean => {
+        return this._points[0].equals(this._points[this._points.length - 1]);
+    };
+
     getPath2D = (): Path2D => {
         // If the Path2D is already valid, return it.
         if (this._isPath2DValid) {
@@ -116,23 +120,22 @@ export abstract class TracingPath implements ITracingPath {
         const point = this._points[index];
         // Radius to check within to see if we should snap to point.
         const radius = 10;
-        let updatedPoint = false;
 
         for (let i = 0; i < patternPaths.length; i++) {
             const patternPath = patternPaths[i];
 
-            if(!updatedPoint && point.isWithinRadius(patternPath.getStart(), radius)) {
+            if(point.isWithinRadius(patternPath.getStart(), radius)) {
                 this._points[index] = patternPath.getStart();
-                updatedPoint = true;
+                return true;
             }
 
-            if(!updatedPoint && point.isWithinRadius(patternPath.getEnd(), radius)) {
+            if(point.isWithinRadius(patternPath.getEnd(), radius)) {
                 this._points[index] = patternPath.getEnd();
-                updatedPoint = true;
+                return true;
             }
         }
 
-        return updatedPoint;
+        return false;
     };
 
     protected abstract _updatePath2D(): void;

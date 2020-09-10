@@ -236,31 +236,48 @@ export class Renderer implements IRenderer {
     private _endTracing = (position: Point, snapEndPoint: boolean): void => {
         if (this._currPath) {
             this._currPath.addPoint(position);
-            if (snapEndPoint) {
-                // Try to snap to other endpoints
-                const snapEndPoint = this._currPath.snapEndPoint(this._document.getPatternPaths());
-                // If we were unable to snap to other endpoints, we will try to snap along other paths.
-                if (!snapEndPoint) {
-                    const snappedPosition = this._checkPointIntersectionAndSplit(position, this._document.getPatternPaths());
-                    this._currPath.snapEndPointTo(snappedPosition);
+
+            // Require a minimum of 2 points for lines and 3 points for curves
+            if ((this._toolType === ToolType.StraightLine && this._currPath.getPoints().length >= 2) ||
+                (this._toolType === ToolType.Freeline && this._currPath.getPoints().length >= 3)) {
+                if (snapEndPoint) {
+                    // Try to snap to other endpoints
+                    const snappedToEndPoint = this._currPath.snapEndPoint(this._document.getPatternPaths());
+                    
+                    // If we snapped the end to the same point as the start, undo 
+                    // any path splitting we might have done on mouse down and 
+                    // reset currPath but keep the same ToolType
+                    if (snappedToEndPoint && this._currPath.isFirstPointEqualToLastPoint()) {
+                        const pathsRemovedThisTracingSession = this._document.getPatternPathsTrash();
+                        this._undoPathReplacementsInTracingSession(pathsRemovedThisTracingSession);
+                        this._currPath = null;
+                        return;
+                    }
+
+                    // If we were unable to snap to other endpoints, we will try to snap along other paths.
+                    if (!snappedToEndPoint) {
+                        const snappedPosition = this._checkPointIntersectionAndSplit(position, this._document.getPatternPaths());
+                        this._currPath.snapEndPointTo(snappedPosition);
+                    }
                 }
-            }
 
-            let newPatternPath;
-            const points = this._currPath.getPoints();
-            switch (this._toolType) {
-                case ToolType.StraightLine:
-                    newPatternPath = new PatternPath(this._pathType, [new LineSegment(points[0], points[1])]);
-                    break;
-                case ToolType.Freeline:
-                    newPatternPath = new PatternPath(this._pathType, [CurveFitter.Fit(points)]);
-            }
-            this._document.addPatternPath(newPatternPath);
-            this._canvas.dispatchEvent(new Event('endTracing'));     
+                let newPatternPath;
+                const points = this._currPath.getPoints();
+                switch (this._toolType) {
+                    case ToolType.StraightLine:
+                        newPatternPath = new PatternPath(this._pathType, [new LineSegment(points[0], points[1])]);
+                        break;
+                    case ToolType.Freeline:
+                        newPatternPath = new PatternPath(this._pathType, [CurveFitter.Fit(points)]);
+                }
+                this._document.addPatternPath(newPatternPath);
+                this._canvas.dispatchEvent(new Event('endTracing'));
+                this._resetTracing();
+            } else { // If we don't have enough points, reset currPath but keep the same ToolType
+                this._currPath = null;
+            }            
         }
-
-        this._resetTracing();
-    };
+    }
 
     /**
      * Splits the path from the intersection in 2 paths at the point

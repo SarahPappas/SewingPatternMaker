@@ -18,8 +18,8 @@ export abstract class TracingPath implements ITracingPath {
         return this._points;
     };
 
-    isFirstPointEqualToLastPoint = (): boolean => {
-        return this._points[0].equals(this._points[this._points.length - 1]);
+    isFirstPointCloseToLastPoint = (radius: number): boolean => {
+        return this._points[0].isWithinRadius(this._points[this._points.length - 1], radius);
     };
 
     getPath2D = (): Path2D => {
@@ -124,12 +124,12 @@ export abstract class TracingPath implements ITracingPath {
         for (let i = 0; i < patternPaths.length; i++) {
             const patternPath = patternPaths[i];
 
-            if(point.isWithinRadius(patternPath.getStart(), radius)) {
+            if (point.isWithinRadius(patternPath.getStart(), radius)) {
                 this._points[index] = patternPath.getStart();
                 return true;
             }
 
-            if(point.isWithinRadius(patternPath.getEnd(), radius)) {
+            if (point.isWithinRadius(patternPath.getEnd(), radius)) {
                 this._points[index] = patternPath.getEnd();
                 return true;
             }

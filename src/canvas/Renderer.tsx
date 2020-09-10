@@ -325,9 +325,4 @@ export class Renderer implements IRenderer {
             this._document.addPatternPath(pathRemoved.path);
         });
     };
-
-    // private _update = (): void => {
-    //     console.log("update");
-    // }
-
 }

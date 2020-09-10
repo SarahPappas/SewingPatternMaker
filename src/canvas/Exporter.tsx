@@ -50,6 +50,9 @@ export class Exporter {
         console.log("pixelsPerInch", pixelsPerInch);
 
         const ctx = this.doc.context2d;
+        ctx.lineWidth = 1/16;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
         ctx.strokeStyle = '#e605c4';
 
         let poinstOnCanvas: Point[] = new Array<Point>();

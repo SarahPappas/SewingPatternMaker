@@ -55,17 +55,19 @@ export class PatternPiece {
     }
 
     /**
-     * Scales the patternPiece by the provided scaler.
+     * Scales the patternPiece by the provided scalar.
      * 
-     * @param scaler 
+     * @param scalar 
      */
-    scale = (scaler: number): void => {
+    scale = (scalar: number): void => {
         this._paths.forEach(path => {
-            path.scale(scaler);
+            path.scale(scalar);
         });
-        this._allowancePaths.forEach(path => {
-            path.scale(scaler);
+
+        this._allowanceSizes.forEach((value, key) => {
+            this._allowanceSizes.set(key, value * scalar);
         });
+        this._allowancePaths = this._computeAllowancePaths(this._allowanceSizes);
     };
 
     /**

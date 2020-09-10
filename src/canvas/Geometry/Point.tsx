@@ -50,8 +50,8 @@ export class Point implements IPoint {
         return "[" + this.x + ", " + this.y + "]";
     };
 
-    scale = (scaler: number): Point => {
-        return new Point(this.x * scaler, this.y * scaler);
+    scale = (scalar: number): Point => {
+        return new Point(this.x * scalar, this.y * scalar);
     };
 
     static computeMiddlePoint = (p1: Point, p2: Point): Point => {

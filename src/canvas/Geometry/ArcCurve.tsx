@@ -41,9 +41,7 @@ export class ArcCurve extends Curve {
 
     // Overrides the abstract method in the parent class.
     drawTo = (path: Path2D | Context2d): void => {
-        path.arcTo(this.control.x, this.control.y, 
-                    this.end.x, this.end.y, 
-                    this.radius);
+        path.arc(this.center.x, this.center.y, this.radius, this.startAngle, this.endAngle, false);
     };
 
     // Overrides the approximation algorithm in the parent class.
@@ -77,10 +75,16 @@ export class ArcCurve extends Curve {
         return new ArcCurve(this.end, this.start, this.control);
     };
 
-    scale = (scaler: number): void => {
-        this.start = this.start.scale(scaler);
-        this.control = this.control.scale(scaler);
-        this.end = this.end.scale(scaler);
+    scale = (scalar: number): void => {
+        console.log("arc pre scale", this);
+        this.start = this.start.scale(scalar);
+        this.control = this.control.scale(scalar);
+        this.end = this.end.scale(scalar);
+        this.radius = this.center.distanceTo(this.start);
+        this.startAngle = Vector.vectorBetweenPoints(this.center, this.start).getAngle();
+        this.endAngle = Vector.vectorBetweenPoints(this.center, this.end).getAngle();
+        this.points = this.computePoints();
+        console.log("arc post scale", this);
     };
 
     /* 
@@ -116,6 +120,7 @@ export class ArcCurve extends Curve {
         this.control = Point.translate(this.control, displacement);
         this.end = Point.translate(this.end, displacement);
         this.center = Point.translate(this.center, displacement);
+        this.points = this.computePoints();
     };
 
     private _computeCenter = (): Point => {

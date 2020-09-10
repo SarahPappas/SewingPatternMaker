@@ -26,9 +26,10 @@ export class LineSegment extends Segment {
         return Vector.vectorBetweenPoints(this.start, this.end);
     };
 
-    scale = (scaler: number): void => {
-        this.start = this.start.scale(scaler);
-        this.end = this.end.scale(scaler);
+    scale = (scalar: number): void => {
+        this.start = this.start.scale(scalar);
+        this.end = this.end.scale(scalar);
+        this.points = this.computePoints();
     };
 
     // Precondition: point must be on the line. 
@@ -153,6 +154,7 @@ export class LineSegment extends Segment {
     translate = (displacement: Vector): void => {
         this.start = Point.translate(this.start, displacement);
         this.end = Point.translate(this.end, displacement);
+        this.points = this.computePoints();
     };
 
     clone = (): LineSegment => {

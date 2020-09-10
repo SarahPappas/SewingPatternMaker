@@ -84,7 +84,7 @@ export abstract class Segment {
 
     abstract drawTo(path: Path2D | Context2d): void;
 
-    abstract scale(scaler: number): void;
+    abstract scale(scalar: number): void;
 
     abstract getOffsetSegments(distance: number): Segment[];
 

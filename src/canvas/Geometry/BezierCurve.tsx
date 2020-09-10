@@ -48,10 +48,11 @@ export class BezierCurve extends Curve {
         return new BezierCurve(this.end, this.start, this.control);
     };
 
-    scale = (scaler: number): void => {
-        this.start = this.start.scale(scaler);
-        this.control = this.control.scale(scaler);
-        this.end = this.end.scale(scaler);
+    scale = (scalar: number): void => {
+        this.start = this.start.scale(scalar);
+        this.control = this.control.scale(scalar);
+        this.end = this.end.scale(scalar);
+        this.points = this.computePoints();
     };
 
     // Precondition: split is a point on the curve.
@@ -75,6 +76,7 @@ export class BezierCurve extends Curve {
         this.start = Point.translate(this.start, displacement);
         this.control = Point.translate(this.control, displacement);
         this.end = Point.translate(this.end, displacement);
+        this.points = this.computePoints();
     };
 
     /** 

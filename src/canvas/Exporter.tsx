@@ -51,11 +51,11 @@ export class Exporter {
         this._patternPieces = this._documentModel.getPatternPieces();
         let patternPieces = this._patternPieces;
         if (!patternPieces?.length) {
-            patternPieces = this._testPiecesRect;
+            patternPieces = this._testPiecesBig;
         }
         console.log("pattern pieces:", this._patternPieces);
         // TODO remove or, this is for testing.
-        const pixelsPerInch = this._documentModel.getSizeRatio() > 0 ? this._documentModel.getSizeRatio() : 6.871842709362768;
+        const pixelsPerInch = this._documentModel.getSizeRatio() > 0 ? this._documentModel.getSizeRatio() : 36.073113689422485;
         const inchesPerPixel = 1 / pixelsPerInch;
         console.log("pixelsPerInch", pixelsPerInch);
 
@@ -72,47 +72,55 @@ export class Exporter {
 
         patternPieces?.forEach(patternPiece => {
             // TODO: Add Page and clip for each peach
-            patternPiece = patternPiece.clone();
-            this._transform(patternPiece, inchesPerPixel);
+            const originalPatternPiece = patternPiece.clone();
+            this._transform(originalPatternPiece, inchesPerPixel);
 
-            // patternPiece.getAllPaths().forEach(patternPath => {
-            //     console.log(patternPath.getType);
-            //     const pathStart = patternPath.getStart();
-            //     ctx.beginPath();
-            //     ctx.moveTo(pathStart.x, pathStart.y);
-            //     patternPath.draw(ctx);
-            //     ctx.stroke();
-            // });
-
+            const boundBox = originalPatternPiece.getBoundingBox();
+            let pageNum = 1;
+            
+            const pageSizeX = 8.5;
+            const pageSizeY = 11;
+            const epsilon = 0.01;
+            
+            const numPagesX = Math.ceil(boundBox.width / pageSizeX);
+            const numPagesY = Math.ceil(boundBox.height / pageSizeY);
+            
             let positionX = 0;
             let positionY = 0;
-            const boundBox = patternPiece.getBoundingBox();
-            let pageNum = 1;
-            for (let i = 0; i < Math.ceil(boundBox.maxY/11); i++) {
-                positionY += 11;
-                for (let j = 0; j < Math.ceil(boundBox.maxX/8.5); j++) {
-                    positionX += 8.5
+            
+            for (let x = 0; x < numPagesX; x++) {
+                positionX = x * pageSizeX;
+            
+                for (let y = 0; y < numPagesY; y++) {
+                    positionY = y * pageSizeY;
+            
                     if (pageNum == 1) {
-                        this.doc?.setPage(1)
+                        this.doc?.setPage(1);
                     } else {
                         this.doc?.addPage();
                     }
-
+            
+                    // Push a clip rect.
                     ctx.save();
-                    ctx.rect(0, 0, 8.49, 10.9);
+                    ctx.rect(0, 0, pageSizeX - epsilon, pageSizeY - epsilon);
                     ctx.clip();
-    
-                    patternPiece.getAllPaths().forEach(patternPath => {
+                    
+                    const translatedPatternPiece = originalPatternPiece.clone();
+                    translatedPatternPiece.translate(new Vector(-positionX, -positionY));
+            
+                    translatedPatternPiece.getAllPaths().forEach(patternPath => {
                         console.log(patternPath.getType);
+            
                         const pathStart = patternPath.getStart();
                         ctx.beginPath();
                         ctx.moveTo(pathStart.x, pathStart.y);
                         patternPath.draw(ctx);
                         ctx.stroke();
                     });
-
+            
+                    // Pop the clip rect.
                     ctx.restore();
-                    patternPiece.translate(new Vector(-positionX, -positionY));
+                    pageNum++;
                 }
             }
         });

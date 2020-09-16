@@ -51,11 +51,11 @@ export class Exporter {
         this._patternPieces = this._documentModel.getPatternPieces();
         let patternPieces = this._patternPieces;
         if (!patternPieces?.length) {
-            patternPieces = this._testPiecesBig;
+            patternPieces = this._testPiecesRect;
         }
         console.log("pattern pieces:", this._patternPieces);
         // TODO remove or, this is for testing.
-        const pixelsPerInch = this._documentModel.getSizeRatio() > 0 ? this._documentModel.getSizeRatio() : 36.073113689422485;
+        const pixelsPerInch = this._documentModel.getSizeRatio() > 0 ? this._documentModel.getSizeRatio() : 6.871842709362768;
         const inchesPerPixel = 1 / pixelsPerInch;
         console.log("pixelsPerInch", pixelsPerInch);
 
@@ -76,33 +76,26 @@ export class Exporter {
             this._transform(originalPatternPiece, inchesPerPixel);
 
             const boundBox = originalPatternPiece.getBoundingBox();
-            let pageNum = 1;
             
             const pageSizeX = 8.5;
             const pageSizeY = 11;
-            const epsilon = 0.01;
+            const epsilon = 1;
             
             const numPagesX = Math.ceil(boundBox.width / pageSizeX);
             const numPagesY = Math.ceil(boundBox.height / pageSizeY);
             
             let positionX = 0;
             let positionY = 0;
-            
+    
             for (let x = 0; x < numPagesX; x++) {
                 positionX = x * pageSizeX;
             
                 for (let y = 0; y < numPagesY; y++) {
                     positionY = y * pageSizeY;
             
-                    if (pageNum == 1) {
-                        this.doc?.setPage(1);
-                    } else {
-                        this.doc?.addPage();
-                    }
-            
                     // Push a clip rect.
                     ctx.save();
-                    ctx.rect(0, 0, pageSizeX - epsilon, pageSizeY - epsilon);
+                    ctx.rect(epsilon, epsilon, pageSizeX - epsilon, pageSizeY - epsilon);
                     ctx.clip();
                     
                     const translatedPatternPiece = originalPatternPiece.clone();
@@ -120,7 +113,8 @@ export class Exporter {
             
                     // Pop the clip rect.
                     ctx.restore();
-                    pageNum++;
+
+                    this.doc?.addPage();
                 }
             }
         });

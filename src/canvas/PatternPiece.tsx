@@ -64,6 +64,11 @@ export class PatternPiece {
             path.scale(scalar);
         });
 
+        // Allowance sizes must be scaled for cloning
+        this._allowanceSizes.forEach((value, key) => {
+            this._allowanceSizes.set(key, value * scalar);
+        });
+
         this._allowancePaths.forEach(path => {
             path.scale(scalar);
         });

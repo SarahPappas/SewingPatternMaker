@@ -107,6 +107,10 @@ export class Exporter {
 
                     ctx.clearRect(0, 0, pageSizeX, pageSizeY);
 
+                    // Draw white background
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, pageSizeX, pageSizeY);
+
                     // Push a clip rect.
                     ctx.save();
                     ctx.rect(epsilon, epsilon, pageSizeX - epsilon, pageSizeY - epsilon);
@@ -124,8 +128,8 @@ export class Exporter {
                     ctx.restore();
 
                     // Create an image from the canvas and add it to the pdf.
-                    const dataUrl = canvas.toDataURL('PNG');
-                    this.doc?.addImage(dataUrl, 'PNG', 0, 0, pageWidth, pageHeight);
+                    // Use JPEG intead of PNG because the JSPDF PNG encoder is slow and creates large documents.
+                    this.doc?.addImage(canvas, 'JPEG', 0, 0, pageWidth, pageHeight);
                     this._printFooter();
                 }
             }

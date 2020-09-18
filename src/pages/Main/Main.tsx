@@ -9,7 +9,7 @@ import { AddPath } from 'pages/Trace/AddPath/AddPath';
 import { PatternPathType } from 'canvas/Enums';
 import { Review } from 'pages/Trace/Review/Review';
 import { AddMeasurement } from 'pages/Trace/AddMeasurement/AddMeasurement';
-import { FinalReview } from 'pages/FinalReview/FinalReview';
+import { Export } from 'pages/Export/Export';
 
 export const Main: React.FC = () => {
     const [uploadedFileData, setUploadedFileData] = React.useState<string>("");
@@ -49,6 +49,6 @@ export const Main: React.FC = () => {
                 return <AddMeasurement setUploadedFileData={setUploadedFileData}/>;
             }}
         />
-        <Route exact path="/FinalReview" component={FinalReview} />
+        <Route exact path="/Export" component={Export} />
     </div></div>;
 };

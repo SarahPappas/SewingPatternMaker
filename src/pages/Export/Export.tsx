@@ -3,9 +3,9 @@ import { App } from 'canvas/AppController';
 import { ActionButton } from 'components/ActionButton/ActionButton';
 import { Modal } from 'components/Modal/Modal';
 import { ModalType } from 'canvas/Enums';
-import './FinalReview.css';
+import './Export.css';
 
-export const FinalReview: React.FC = () => {
+export const Export: React.FC = () => {
     const [loading, setLoading] = React.useState<boolean>(false);
     const [showExportButton, setExport] = React.useState<boolean>(true);
 

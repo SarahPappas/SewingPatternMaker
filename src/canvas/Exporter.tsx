@@ -65,15 +65,15 @@ export class Exporter {
         const DPI = 300;
         const pageWidth = 8.5;
         const pageHeight = 11;
-        const pageSizeX = pageWidth * DPI;
-        const pageSizeY = pageHeight * DPI;
-        const epsilon = .1;
+        const margin = .5;
+        const pageSizeX = (pageWidth - margin) * DPI;
+        const pageSizeY = (pageHeight - margin) * DPI;
 
         /* 
         * Create a canvas, which we will draw to. Then we will turn that canvas into a png 
         * and add it to the pdf.
         */
-        const canvas = this._createCanvas(DPI, pageWidth, pageHeight);
+        const canvas = this._createCanvas(DPI, pageWidth - margin, pageHeight - margin);
         const ctx = canvas.getContext('2d');
 
         // Calculate ratio to scale by.
@@ -107,18 +107,19 @@ export class Exporter {
 
                     ctx.clearRect(0, 0, pageSizeX, pageSizeY);
 
-                    // Draw white background
+                    // Draw white background and border
                     ctx.fillStyle = 'white';
                     ctx.fillRect(0, 0, pageSizeX, pageSizeY);
+                    ctx.strokeRect(0, 0, pageSizeX, pageSizeY);
 
                     // Push a clip rect.
                     ctx.save();
-                    ctx.rect(epsilon, epsilon, pageSizeX - epsilon, pageSizeY - epsilon);
+                    ctx.rect(0, 0, pageSizeX, pageSizeY);
                     ctx.clip();
                     
                     // Translate the piece, so that the correct section is drawn in the clip rect.
                     const translatedPatternPiece = originalPatternPiece.clone();
-                    translatedPatternPiece.translate(new Vector(-positionX + epsilon, -positionY  + epsilon));
+                    translatedPatternPiece.translate(new Vector(-positionX, -positionY));
 
                     translatedPatternPiece.getAllPaths().forEach(patternPath => {
                         ctx.stroke(patternPath.getPath2D());
@@ -129,8 +130,8 @@ export class Exporter {
 
                     // Create an image from the canvas and add it to the pdf.
                     // Use JPEG intead of PNG because the JSPDF PNG encoder is slow and creates large documents.
-                    this.doc?.addImage(canvas, 'JPEG', 0, 0, pageWidth, pageHeight);
-                    this._printFooter();
+                    this.doc?.addImage(canvas, 'JPEG', margin, margin, pageWidth - (2 * margin), pageHeight - (2 * margin));
+                    this._printFooter(x + 1, y + 1);
                 }
             }
         });
@@ -145,8 +146,8 @@ export class Exporter {
         patternPiece.translate(new Vector(-boundBox.minX, -boundBox.minY));
     };
 
-    private _printFooter = (): void => {
-        this.doc?.text('page ' + this.doc?.getCurrentPageInfo().pageNumber, 1, 10.5);
+    private _printFooter = (x: number, y: number): void => {
+        this.doc?.text('Page (' + x + ', ' + y +')', .6, 10.35);
     };
 
     private _createCanvas = (dpi: number, pageWidth: number, pageHeight: number): HTMLCanvasElement => {
@@ -163,7 +164,7 @@ export class Exporter {
         ctx.lineWidth = 1/16 * dpi;
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
-        ctx.strokeStyle = '#e605c4';
+        ctx.strokeStyle = '#000';
 
         return canvas;
     }

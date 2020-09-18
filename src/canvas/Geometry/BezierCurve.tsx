@@ -1,6 +1,5 @@
 import { Point } from './Point';
 import { Curve } from './Curve';
-import { Context2d } from 'jspdf';
 import { Segment } from './Segment';
 import { Vector } from './Vector';
 
@@ -10,7 +9,7 @@ export class BezierCurve extends Curve {
     };
     
     // Overrides the abstract method in parent class.
-    drawTo = (path: Path2D | Context2d): void => {
+    drawTo = (path: Path2D): void => {
         path.quadraticCurveTo(this.control.x, this.control.y, this.end.x, this.end.y);   
     };
 

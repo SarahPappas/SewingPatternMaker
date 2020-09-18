@@ -15,7 +15,7 @@ export class AllowanceFinder {
         path.getSegments().forEach(segment => {
             offsetSegments = offsetSegments.concat(segment.getOffsetSegments(allowanceSize));
         });
-        const lengthOfLineSegmentProlongations = 200;
+        const lengthOfLineSegmentProlongations = 600;
     
         // Add a line segment at the beginning of the offset path,
         // following the tangent of the offset at that point  

@@ -236,14 +236,29 @@ export class Renderer implements IRenderer {
     private _endTracing = (position: Point, snapEndPoint: boolean): void => {
         if (this._currPath) {
             this._currPath.addPoint(position);
+
+            // Require a minimum of 2 points for lines and 3 points for curves
+            if ((this._toolType === ToolType.StraightLine && this._currPath.getPoints().length < 2) ||
+                (this._toolType === ToolType.Freeline && this._currPath.getPoints().length < 3)) {
+                this._discardCurrPath();
+                return;
+            } 
+            
             if (snapEndPoint) {
                 // Try to snap to other endpoints
-                const snapEndPoint = this._currPath.snapEndPoint(this._document.getPatternPaths());
+                const snappedToEndPoint = this._currPath.snapEndPoint(this._document.getPatternPaths());
+                
                 // If we were unable to snap to other endpoints, we will try to snap along other paths.
-                if (!snapEndPoint) {
+                if (!snappedToEndPoint) {
                     const snappedPosition = this._checkPointIntersectionAndSplit(position, this._document.getPatternPaths());
                     this._currPath.snapEndPointTo(snappedPosition);
                 }
+            }
+            
+            // If the start is too close to the end, discard currPath
+            if (this._currPath.isFirstPointCloseToLastPoint(10)) {
+                this._discardCurrPath();
+                return;
             }
 
             let newPatternPath;
@@ -256,10 +271,20 @@ export class Renderer implements IRenderer {
                     newPatternPath = new PatternPath(this._pathType, [CurveFitter.Fit(points)]);
             }
             this._document.addPatternPath(newPatternPath);
-            this._canvas.dispatchEvent(new Event('endTracing'));     
+            this._canvas.dispatchEvent(new Event('endTracing'));
         }
-
+        
         this._resetTracing();
+    };
+
+    /**
+     *  Undoes any path splitting we might have done while drawing currPath and 
+     *  resets currPath
+     */
+    private _discardCurrPath = () => {
+        const pathsRemovedThisTracingSession = this._document.getPatternPathsTrash();
+        this._undoPathReplacementsInTracingSession(pathsRemovedThisTracingSession);
+        this._currPath = null;
     };
 
     /**
@@ -305,9 +330,4 @@ export class Renderer implements IRenderer {
             this._document.addPatternPath(pathRemoved.path);
         });
     };
-
-    // private _update = (): void => {
-    //     console.log("update");
-    // }
-
 }

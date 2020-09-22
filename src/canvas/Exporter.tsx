@@ -60,7 +60,7 @@ export class Exporter {
 
         console.log("pattern pieces:", this._patternPieces);
 
-        // Set page lenght, width and DPI
+        // Set page height, width and DPI
         const DPI = 300;
         const pageWidth = 8.5;
         const pageHeight = 11;
@@ -83,7 +83,6 @@ export class Exporter {
         const dotsPerPixel = inchesPerPixel * DPI;
  
         patternPieces?.forEach(patternPiece => {
-            // TODO adjust length of lines before they are clipped.
             // Clone original piece and scale.
             const originalPatternPiece = patternPiece.clone();
             this._scale(originalPatternPiece, dotsPerPixel);
@@ -154,7 +153,6 @@ export class Exporter {
 
     private _createCanvas = (dpi: number, pageWidth: number, pageHeight: number): HTMLCanvasElement => {
         const canvas = document.createElement('canvas');
-        // TODO remove adding canvas to html for testing.
         canvas.width = dpi  * pageWidth;
         canvas.height = dpi * pageHeight;
         const ctx = canvas.getContext('2d');

@@ -79,13 +79,14 @@ export class Exporter {
 
         // Calculate ratio to scale by.
         const pixelsPerInch = this._documentModel.getSizeRatio() > 0 ? this._documentModel.getSizeRatio() : 6.871842709362768;
-        const inchesPerPixel = 1 / pixelsPerInch * DPI;
+        const inchesPerPixel = 1 / pixelsPerInch;
+        const dotsPerPixel = inchesPerPixel * DPI;
  
         patternPieces?.forEach(patternPiece => {
             // TODO adjust length of lines before they are clipped.
             // Clone original piece and scale.
             const originalPatternPiece = patternPiece.clone();
-            this._scale(originalPatternPiece, inchesPerPixel);
+            this._scale(originalPatternPiece, dotsPerPixel);
 
             // Calculate the number of pages in a row and in a column
             const boundBox = originalPatternPiece.getBoundingBox();

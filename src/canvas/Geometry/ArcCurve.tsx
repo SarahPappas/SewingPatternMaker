@@ -78,7 +78,6 @@ export class ArcCurve extends Curve {
     };
 
     scale = (scalar: number): void => {
-        console.log("arc pre scale", this);
         this.start = this.start.scale(scalar);
         this.control = this.control.scale(scalar);
         this.end = this.end.scale(scalar);
@@ -95,7 +94,6 @@ export class ArcCurve extends Curve {
         }
         
         this.points = this.computePoints();
-        console.log("arc post scale", this);
     };
 
     /* 

@@ -50,7 +50,6 @@ export class Exporter {
         // Delete the first page, which is automatically added when a new jsPDF is created.
         this.doc.deletePage(1);
 
-        // TODO add margins marginTop: .75, marginBottom: .75, marginLeft: .75, marginRight:.75
         this._patternPieces = this._documentModel.getPatternPieces();
         
         // TODO remove, this is for testing.
@@ -66,14 +65,16 @@ export class Exporter {
         const pageWidth = 8.5;
         const pageHeight = 11;
         const margin = .5;
-        const pageSizeX = (pageWidth - margin) * DPI;
-        const pageSizeY = (pageHeight - margin) * DPI;
+        const innerPageWidth = pageWidth - (2 * margin);
+        const innerPageHeight = pageHeight - (2 * margin);
+        const pageSizeX = innerPageWidth * DPI;
+        const pageSizeY = innerPageHeight * DPI;
 
         /* 
         * Create a canvas, which we will draw to. Then we will turn that canvas into a png 
         * and add it to the pdf.
         */
-        const canvas = this._createCanvas(DPI, pageWidth - margin, pageHeight - margin);
+        const canvas = this._createCanvas(DPI, innerPageWidth, innerPageHeight);
         const ctx = canvas.getContext('2d');
 
         // Calculate ratio to scale by.
@@ -130,7 +131,7 @@ export class Exporter {
 
                     // Create an image from the canvas and add it to the pdf.
                     // Use JPEG intead of PNG because the JSPDF PNG encoder is slow and creates large documents.
-                    this.doc?.addImage(canvas, 'JPEG', margin, margin, pageWidth - (2 * margin), pageHeight - (2 * margin));
+                    this.doc?.addImage(canvas, 'JPEG', margin, margin, innerPageWidth, innerPageHeight);
                     this._printFooter(x + 1, y + 1);
                 }
             }
@@ -153,7 +154,6 @@ export class Exporter {
     private _createCanvas = (dpi: number, pageWidth: number, pageHeight: number): HTMLCanvasElement => {
         const canvas = document.createElement('canvas');
         // TODO remove adding canvas to html for testing.
-        document.body.appendChild(canvas);
         canvas.width = dpi  * pageWidth;
         canvas.height = dpi * pageHeight;
         const ctx = canvas.getContext('2d');

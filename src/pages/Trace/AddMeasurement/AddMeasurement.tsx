@@ -81,7 +81,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
                         IN
                     </div>
 
-                    <NavButton button={navButton} to={'/FinalReview'}>
+                    <NavButton button={navButton} to={'/Export'}>
                         <ActionButton button={actionButton} action={handleSubmit}>
                             <img className='submitIcon' src={checkIcon} alt='submit'/>
                         </ActionButton>

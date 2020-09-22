@@ -12,8 +12,7 @@ export const Export: React.FC = () => {
     // Generating the pdf takes time, so we are using an async call to not block the main js thread.
     let loader;
     if (loading) {
-        loader = <div className={'lds-hourglass'}/>;
-        
+        loader = <div className={'lds-hourglass'}/>; 
     } else {
         loader = <div />;
     }

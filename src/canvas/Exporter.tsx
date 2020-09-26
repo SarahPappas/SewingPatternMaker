@@ -7,18 +7,17 @@ import { Vector } from './Geometry/Vector';
 import { PatternPiece } from './PatternPiece';
 import { PatternPathType } from './Enums';
 import { AllowanceFinder } from './PatternPaths/AllowanceFinder';
+import { BoundingBox } from './Geometry/BoundingBox';
 
 export class Exporter {
     doc: jsPDF | null;
     protected _documentModel: Document;
-    protected _patternPieces: PatternPiece[] | null;
     protected _testPiecesRect: PatternPiece[];
     protected _testPiecesBig: PatternPiece[];
 
     constructor (documentModel: Document) {
         this.doc = null;
         this._documentModel = documentModel;
-        this._patternPieces = [];
         
         const allowanceMapTestRect =  new Map<PatternPathType, number>();
         allowanceMapTestRect.set(3, 36.073113689422485);
@@ -53,15 +52,14 @@ export class Exporter {
         // Delete the first page, which is automatically added when a new jsPDF is created.
         this.doc.deletePage(1);
 
-        this._patternPieces = this._documentModel.getPatternPieces();
+        let patternPieces = this._documentModel.getPatternPieces();
         
         // TODO remove, this is for testing.
-        let patternPieces = this._patternPieces;
         if (!patternPieces?.length) {
             patternPieces = this._testPiecesBig;
         }
 
-        console.log("pattern pieces:", this._patternPieces);
+        console.log("pattern pieces:", patternPieces);
 
         // Set page height, width and DPI
         const DPI = 300;
@@ -88,10 +86,10 @@ export class Exporter {
         patternPieces?.forEach(patternPiece => {
             // Clone original piece and scale.
             const originalPatternPiece = patternPiece.clone();
-            this._scale(originalPatternPiece, dotsPerPixel);
+            const boundBox = originalPatternPiece.getBoundingBox();
+            this._scaleAndRealign(originalPatternPiece, boundBox, dotsPerPixel);
 
             // Calculate the number of pages in a row and in a column
-            const boundBox = originalPatternPiece.getBoundingBox();
             const numPagesX = Math.ceil(boundBox.width / pageSizeX);
             const numPagesY = Math.ceil(boundBox.height / pageSizeY);
             
@@ -144,10 +142,9 @@ export class Exporter {
         this.doc.save("test.pdf");
     };
 
-    private _scale = (patternPiece: PatternPiece, scalar: number): void => {
+    private _scaleAndRealign = (patternPiece: PatternPiece, boundBox: BoundingBox, scalar: number): void => {
         patternPiece.scale(scalar);
 
-        const boundBox = patternPiece.getBoundingBox();
         patternPiece.translate(new Vector(-boundBox.minX, -boundBox.minY));
     };
 

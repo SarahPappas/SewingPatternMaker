@@ -113,7 +113,8 @@ export class Exporter {
                     ctx.fillRect(0, 0, pageSizeX, pageSizeY);
                     ctx.strokeRect(0, 0, pageSizeX, pageSizeY);
 
-                    // Push a clip rect.
+                    // Push a clip rect. The clipping rect will ensure that we only display
+                    // the section of the canvas within the clip rect.
                     ctx.save();
                     ctx.rect(0, 0, pageSizeX, pageSizeY);
                     ctx.clip();

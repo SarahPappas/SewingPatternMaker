@@ -7,7 +7,6 @@ import { Vector } from './Geometry/Vector';
 import { PatternPiece } from './PatternPiece';
 import { PatternPathType } from './Enums';
 import { AllowanceFinder } from './PatternPaths/AllowanceFinder';
-import { BoundingBox } from './Geometry/BoundingBox';
 
 export class Exporter {
     doc: jsPDF | null;
@@ -86,10 +85,10 @@ export class Exporter {
         patternPieces?.forEach(patternPiece => {
             // Clone original piece and scale.
             const originalPatternPiece = patternPiece.clone();
-            const boundBox = originalPatternPiece.getBoundingBox();
-            this._scaleAndRealign(originalPatternPiece, boundBox, dotsPerPixel);
+            this._scaleAndRealign(originalPatternPiece, dotsPerPixel);
 
             // Calculate the number of pages in a row and in a column
+            const boundBox = originalPatternPiece.getBoundingBox();
             const numPagesX = Math.ceil(boundBox.width / pageSizeX);
             const numPagesY = Math.ceil(boundBox.height / pageSizeY);
             
@@ -142,9 +141,10 @@ export class Exporter {
         this.doc.save("test.pdf");
     };
 
-    private _scaleAndRealign = (patternPiece: PatternPiece, boundBox: BoundingBox, scalar: number): void => {
+    private _scaleAndRealign = (patternPiece: PatternPiece, scalar: number): void => {
         patternPiece.scale(scalar);
 
+        const boundBox = patternPiece.getBoundingBox();
         patternPiece.translate(new Vector(-boundBox.minX, -boundBox.minY));
     };
 

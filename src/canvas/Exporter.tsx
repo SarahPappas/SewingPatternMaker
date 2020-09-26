@@ -6,6 +6,7 @@ import { Point } from './Geometry/Point';
 import { Vector } from './Geometry/Vector';
 import { PatternPiece } from './PatternPiece';
 import { PatternPathType } from './Enums';
+import { AllowanceFinder } from './PatternPaths/AllowanceFinder';
 
 export class Exporter {
     doc: jsPDF | null;
@@ -24,12 +25,13 @@ export class Exporter {
         allowanceMapTestRect.set(2, 0);
         allowanceMapTestRect.set(1, 36.073113689422485);
 
-        let testPiece = new PatternPiece([
+        let paths = [
             new PatternPath(1, [new LineSegment(new Point(114, 271), new Point(114, 152))]),
             new PatternPath(1, [new LineSegment(new Point(114, 152), new Point(229, 142))]),
             new PatternPath(1, [new LineSegment(new Point(229, 142), new Point(229, 263))]),
             new PatternPath(1, [new LineSegment(new Point(229, 263), new Point(114, 271))])
-        ], allowanceMapTestRect);
+        ];
+        let testPiece = new PatternPiece(paths, AllowanceFinder.computeAllowancePaths(paths, allowanceMapTestRect));
 
         this._testPiecesRect = [testPiece];
 
@@ -37,11 +39,12 @@ export class Exporter {
         allowanceMapTestBig.set(3, 6.871842709362768);
         allowanceMapTestBig.set(2, 0);
         allowanceMapTestBig.set(1, 6.871842709362768);
-        testPiece = new PatternPiece([
+        paths = [
             new PatternPath(1, [new LineSegment(new Point(95, 326), new Point(142, 172))]),
             new PatternPath(1, [new LineSegment(new Point(142, 172), new Point(223, 222))]),
             new PatternPath(1, [new LineSegment(new Point(223, 222), new Point(95, 326))]),
-        ], allowanceMapTestBig);
+        ];
+        testPiece = new PatternPiece(paths, AllowanceFinder.computeAllowancePaths(paths, allowanceMapTestBig));
         this._testPiecesBig = [testPiece];
     }
 

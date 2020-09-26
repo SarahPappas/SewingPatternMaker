@@ -81,7 +81,7 @@ export class ArcCurve extends Curve {
         // We should not accet negative scalars because we do not want to flip
         // the arc
         if (scalar < 0 ) {
-            throw("Scale will not accept a negative scalar");
+            throw new Error("Scale will not accept a negative scalar");
         }
 
         this.start = this.start.scale(scalar);

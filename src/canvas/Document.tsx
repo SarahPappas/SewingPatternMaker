@@ -4,6 +4,7 @@ import { FaceFinder } from './Geometry/FaceFinder';
 import { PatternPathType } from './Enums';
 import { PatternPiece } from './PatternPiece';
 import { Vector } from './Geometry/Vector';
+import { AllowanceFinder } from './PatternPaths/AllowanceFinder';
 
 export class Document implements IDocument {
     private _patternPaths: PatternPath[];
@@ -183,7 +184,7 @@ export class Document implements IDocument {
         const faces = FaceFinder.FindFaces(this._patternPaths);
         
         this._patternPieces = faces.map(face => (
-            new PatternPiece(face, allowanceSizes)
+            new PatternPiece(face, AllowanceFinder.computeAllowancePaths(face, allowanceSizes))
         ));
 
         // Temporary step to inspect pattern pieces and allowances on final review page while developping.

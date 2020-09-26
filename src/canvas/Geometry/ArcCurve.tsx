@@ -77,21 +77,6 @@ export class ArcCurve extends Curve {
         return new ArcCurve(this.end, this.start, this.control);
     };
 
-    scale = (scalar: number): void => {
-        // We should not accet negative scalars because we do not want to flip
-        // the arc
-        if (scalar < 0 ) {
-            throw new Error("Scale will not accept a negative scalar");
-        }
-
-        this.start = this.start.scale(scalar);
-        this.control = this.control.scale(scalar);
-        this.end = this.end.scale(scalar);
-        this.center = this._computeCenter();
-        this.radius = this.center.distanceTo(this.start);
-        this.points = this.computePoints();
-    };
-
     /* 
     * Splits an arc into two arcs.
     * Precondition: point given must be a point on the arc.
@@ -192,5 +177,18 @@ export class ArcCurve extends Curve {
 
     protected _equals = (other: Segment): boolean => {
         return (other instanceof ArcCurve) && this.control.equals(other.control);
+    };
+
+    /* 
+     * Scales arcs. We will not scale by negative scalars, so we don't need to recompute
+     * the angles.
+     */
+    protected _scale = (scalar: number): void => {
+        this.start = this.start.scale(scalar);
+        this.control = this.control.scale(scalar);
+        this.end = this.end.scale(scalar);
+        this.center = this._computeCenter();
+        this.radius = this.center.distanceTo(this.start);
+        this.points = this.computePoints();
     };
 }

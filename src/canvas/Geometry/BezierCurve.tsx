@@ -47,13 +47,6 @@ export class BezierCurve extends Curve {
         return new BezierCurve(this.end, this.start, this.control);
     };
 
-    scale = (scalar: number): void => {
-        this.start = this.start.scale(scalar);
-        this.control = this.control.scale(scalar);
-        this.end = this.end.scale(scalar);
-        this.points = this.computePoints();
-    };
-
     // Precondition: split is a point on the curve.
     split = (point: Point): BezierCurve[] => {
         const curves:  BezierCurve[] = [];
@@ -119,5 +112,12 @@ export class BezierCurve extends Curve {
 
     protected _equals = (other: Segment): boolean => {
         return (other instanceof BezierCurve) && this.control.equals(other.control);
+    };
+
+    protected _scale = (scalar: number): void => {
+        this.start = this.start.scale(scalar);
+        this.control = this.control.scale(scalar);
+        this.end = this.end.scale(scalar);
+        this.points = this.computePoints();
     };
 }

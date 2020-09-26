@@ -52,6 +52,16 @@ export abstract class Segment {
         return this.points;
     };
 
+    scale = (scalar: number) => {
+        // We should not accept negative scalars because we do not want to flip
+        // the geometry.
+        if (scalar < 0 ) {
+            throw new Error("Scale will not accept a negative scalar");
+        }
+
+        this._scale(scalar);
+    }
+
     abstract getLength(): number;
     
     /**
@@ -83,8 +93,6 @@ export abstract class Segment {
 
     abstract drawTo(path: Path2D): void;
 
-    abstract scale(scalar: number): void;
-
     abstract getOffsetSegments(distance: number): Segment[];
 
     abstract translate(displacement: Vector): void;
@@ -94,4 +102,6 @@ export abstract class Segment {
     abstract reversedClone(): Segment;
 
     protected abstract _equals(other: Segment): boolean;
+
+    protected abstract _scale(scalar: number): void;
 }

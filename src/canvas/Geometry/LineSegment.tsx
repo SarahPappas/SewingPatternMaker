@@ -83,12 +83,6 @@ export class LineSegment extends Segment {
         return new LineSegment(this.end, this.start);
     };
 
-    scale = (scalar: number): void => {
-        this.start = this.start.scale(scalar);
-        this.end = this.end.scale(scalar);
-        this.points = this.computePoints();
-    };
-
     // Precondition: point must be on the line. 
     split = (point: Point): LineSegment[] => {
         const lines = [];
@@ -166,5 +160,11 @@ export class LineSegment extends Segment {
 
     protected _equals = (other: Segment): boolean => {
         return (other instanceof LineSegment);
+    };
+
+    protected _scale = (scalar: number): void => {
+        this.start = this.start.scale(scalar);
+        this.end = this.end.scale(scalar);
+        this.points = this.computePoints();
     };
 }

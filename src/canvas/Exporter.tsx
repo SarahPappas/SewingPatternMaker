@@ -166,5 +166,5 @@ export class Exporter {
         ctx.strokeStyle = '#000';
 
         return canvas;
-    }
+    };
 }

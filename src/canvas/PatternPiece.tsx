@@ -32,7 +32,7 @@ export class PatternPiece {
      */
     clone = (): PatternPiece => {
         return new PatternPiece(this._paths.map(path => path.clone()), this._allowanceSizes);
-    }
+    };
     
     /**
      * Returns all of the PatternPath edges and PatternPath 

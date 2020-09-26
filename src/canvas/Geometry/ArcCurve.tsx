@@ -78,21 +78,17 @@ export class ArcCurve extends Curve {
     };
 
     scale = (scalar: number): void => {
+        // We should not accet negative scalars because we do not want to flip
+        // the arc
+        if (scalar < 0 ) {
+            throw("Scale will not accept a negative scalar");
+        }
+
         this.start = this.start.scale(scalar);
         this.control = this.control.scale(scalar);
         this.end = this.end.scale(scalar);
         this.center = this._computeCenter();
         this.radius = this.center.distanceTo(this.start);
-        this.startAngle = Vector.vectorBetweenPoints(this.center, this.start).getAngle();
-        this.endAngle = Vector.vectorBetweenPoints(this.center, this.end).getAngle();
-        if (Math.abs(this.endAngle - this.startAngle) > Math.PI) {
-            if (this.startAngle < this.endAngle) {
-                this.startAngle += 2 * Math.PI;
-            } else {
-                this.endAngle += 2 * Math.PI;
-            }
-        }
-        
         this.points = this.computePoints();
     };
 

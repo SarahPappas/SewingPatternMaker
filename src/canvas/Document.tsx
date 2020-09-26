@@ -206,5 +206,5 @@ export class Document implements IDocument {
 
     getPatternPieces = (): PatternPiece[] | null => {
         return this._patternPieces;
-    }
+    };
 }

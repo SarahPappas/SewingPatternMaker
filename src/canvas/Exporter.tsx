@@ -151,7 +151,7 @@ export class Exporter {
     };
 
     private _printFooter = (x: number, y: number, pieceNum: number): void => {
-        this.doc?.text('piece ' + pieceNum + ', page (' + x + ', ' + y +')', .6, 10.35);
+        this.doc?.text('Piece ' + pieceNum + ', page (' + x + ', ' + y +')', .6, 10.35);
     };
 
     private _createCanvas = (dpi: number, pageWidth: number, pageHeight: number): HTMLCanvasElement => {

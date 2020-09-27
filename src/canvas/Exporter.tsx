@@ -76,6 +76,9 @@ export class Exporter {
         */
         const canvas = this._createCanvas(DPI, innerPageWidth, innerPageHeight);
         const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            throw new Error("Could not create 2D context for canvas.");
+        }
 
         // Calculate ratio to scale by.
         const pixelsPerInch = this._documentModel.getSizeRatio() > 0 ? this._documentModel.getSizeRatio() : 6.871842709362768;
@@ -103,11 +106,6 @@ export class Exporter {
                     positionY = y * pageSizeY;
                     this.doc?.addPage();
                     console.log("page num ", this.doc?.getNumberOfPages());
-
-                    if (!ctx) {
-                        throw new Error("Could not create 2D context for canvas.");
-                    }
-
                     ctx.clearRect(0, 0, pageSizeX, pageSizeY);
 
                     // Draw white background and border

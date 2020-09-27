@@ -82,7 +82,9 @@ export class Exporter {
         const inchesPerPixel = 1 / pixelsPerInch;
         const dotsPerPixel = inchesPerPixel * DPI;
  
+        let pieceNum = 0;
         patternPieces?.forEach(patternPiece => {
+            pieceNum++;
             // Clone original piece and scale.
             const originalPatternPiece = patternPiece.clone();
             this._scaleAndRealign(originalPatternPiece, dotsPerPixel);
@@ -133,7 +135,7 @@ export class Exporter {
                     // Create an image from the canvas and add it to the pdf.
                     // Use JPEG intead of PNG because the JSPDF PNG encoder is slow and creates large documents.
                     this.doc?.addImage(canvas, 'JPEG', margin, margin, innerPageWidth, innerPageHeight);
-                    this._printFooter(x + 1, y + 1);
+                    this._printFooter(x + 1, y + 1, pieceNum);
                 }
             }
         });
@@ -148,8 +150,8 @@ export class Exporter {
         patternPiece.translate(new Vector(-boundBox.minX, -boundBox.minY));
     };
 
-    private _printFooter = (x: number, y: number): void => {
-        this.doc?.text('Page (' + x + ', ' + y +')', .6, 10.35);
+    private _printFooter = (x: number, y: number, pieceNum: number): void => {
+        this.doc?.text('piece ' + pieceNum + ', page (' + x + ', ' + y +')', .6, 10.35);
     };
 
     private _createCanvas = (dpi: number, pageWidth: number, pageHeight: number): HTMLCanvasElement => {

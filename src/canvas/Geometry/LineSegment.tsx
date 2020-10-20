@@ -3,8 +3,31 @@ import { Vector } from './Vector';
 import { Point } from './Point';
 
 export class LineSegment extends Segment {
+    computePoints = (): Point[] => {
+        const points = [];
+        points.push(this.getStart().clone());
+        points.push(this.getEnd().clone());
+        return points;
+    };
+
+    clone = (): LineSegment => {
+        return new LineSegment(this.start, this.end);
+    };
+
+    drawTo = (path: Path2D): void => {
+        path.lineTo(this.end.x, this.end.y);
+    };
+    
     getLength = (): number => {
         return this.start.distanceTo(this.end);
+    };
+
+    getOffsetSegments = (distance: number): Segment[] => {
+        const displacement = Vector.findOpposite(Vector.findPerpVector(this.getTangent(0))).normalize().multiplyByScalar(distance);
+
+        const result = this.clone();
+        result.translate(displacement);
+        return [result];
     };
 
     getTangent = (t: number): Vector => {
@@ -12,22 +35,6 @@ export class LineSegment extends Segment {
             throw new Error();
         }
         return Vector.vectorBetweenPoints(this.start, this.end);
-    };
-
-    // Precondition: point must be on the line. 
-    split = (point: Point): LineSegment[] => {
-        const lines = [];
-        lines.push(new LineSegment(this.start, point));
-        lines.push(new LineSegment(point, this.end));
-        return lines;
-
-    };
-
-    computePoints = (): Point[] => {
-        const points = [];
-        points.push(this.getStart().clone());
-        points.push(this.getEnd().clone());
-        return points;
     };
 
     /**
@@ -72,8 +79,23 @@ export class LineSegment extends Segment {
         return iPoint;
     };
 
-    drawTo = (path: Path2D): void => {
-        path.lineTo(this.end.x, this.end.y);
+    reversedClone = (): LineSegment => {
+        return new LineSegment(this.end, this.start);
+    };
+
+    // Precondition: point must be on the line. 
+    split = (point: Point): LineSegment[] => {
+        const lines = [];
+        lines.push(new LineSegment(this.start, point));
+        lines.push(new LineSegment(point, this.end));
+        return lines;
+
+    };
+
+    translate = (displacement: Vector): void => {
+        this.start = Point.translate(this.start, displacement);
+        this.end = Point.translate(this.end, displacement);
+        this.points = this.computePoints();
     };
 
     /**
@@ -136,28 +158,13 @@ export class LineSegment extends Segment {
         return new Point(xIntersectionPoint, yIntersectionPoint);
     };
 
-    getOffsetSegments = (distance: number): Segment[] => {
-        const displacement = Vector.findOpposite(Vector.findPerpVector(this.getTangent(0))).normalize().multiplyByScalar(distance);
-
-        const result = this.clone();
-        result.translate(displacement);
-        return [result];
-    };
-
-    translate = (displacement: Vector): void => {
-        this.start = Point.translate(this.start, displacement);
-        this.end = Point.translate(this.end, displacement);
-    };
-
-    clone = (): LineSegment => {
-        return new LineSegment(this.start, this.end);
-    };
-
-    reversedClone = (): LineSegment => {
-        return new LineSegment(this.end, this.start);
-    };
-
     protected _equals = (other: Segment): boolean => {
         return (other instanceof LineSegment);
+    };
+
+    protected _scale = (scalar: number): void => {
+        this.start = this.start.scale(scalar);
+        this.end = this.end.scale(scalar);
+        this.points = this.computePoints();
     };
 }

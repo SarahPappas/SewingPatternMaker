@@ -9,6 +9,7 @@ export class ArcCurve extends Curve {
     private center: Point;
     private startAngle: number; // Angle from positive x axis to start 
     private endAngle: number;// Angle from positive x axis to end
+    private counterClockwise: boolean;
 
     // Precondition: control is equidistant from start and end
     // Precondition: control != middlePoint between start and end
@@ -32,7 +33,49 @@ export class ArcCurve extends Curve {
                 this.endAngle += 2 * Math.PI;
             }
         }
+
+        this.counterClockwise = this.startAngle > this.endAngle;
     }
+
+    clone = (): ArcCurve => {
+        return new ArcCurve(this.start, this.end, this.control);
+    };
+
+    // Overrides the abstract method in the parent class.
+    drawTo = (path: Path2D): void => {
+        path.arc(this.center.x, this.center.y, this.radius, this.startAngle, this.endAngle, this.counterClockwise);
+    };
+
+    // Overrides the approximation algorithm in the parent class.
+    getLength = (): number => {
+        return Math.abs(this.startAngle - this.endAngle) * this.radius;
+    };
+
+    getOffsetSegments = (distance: number): Segment[] => {
+        const tangentAtStart = this.getTangent(0);
+        const displacementOfStart = Vector.findOpposite(Vector.findPerpVector(tangentAtStart)).normalize().multiplyByScalar(distance);
+
+        const tangentAtEnd = this.getTangent(1);
+        const displacementOfEnd = Vector.findOpposite(Vector.findPerpVector(tangentAtEnd)).normalize().multiplyByScalar(distance);
+
+        const result = this.clone();
+        result.start = Point.translate(this.start, displacementOfStart);
+        result.end = Point.translate(this.end, displacementOfEnd);
+        result.radius = result.start.distanceTo(result.center);
+        result.control = Point.translate(Point.translate(this.control, displacementOfStart), displacementOfEnd); 
+        // result's center, startAngle and endAngle don't need to be updated.
+        return [result];
+    };
+
+    getTangent = (t: number): Vector => {
+        const x = -1 * (this.endAngle - this.startAngle) * this.radius * Math.sin(this.lerp(this.startAngle, this.endAngle, t));
+        const y = (this.endAngle - this.startAngle) * this.radius * Math.cos(this.lerp(this.startAngle, this.endAngle, t));
+        return new Vector(x, y);
+    };
+
+    reversedClone = (): ArcCurve => {
+        return new ArcCurve(this.end, this.start, this.control);
+    };
 
     /* 
     * Splits an arc into two arcs.
@@ -60,6 +103,14 @@ export class ArcCurve extends Curve {
         curves.push(new ArcCurve(point, this.end, control2));
 
         return curves;
+    };
+
+    translate = (displacement: Vector): void => {
+        this.start = Point.translate(this.start, displacement);
+        this.control = Point.translate(this.control, displacement);
+        this.end = Point.translate(this.end, displacement);
+        this.center = Point.translate(this.center, displacement);
+        this.points = this.computePoints();
     };
 
     private _computeCenter = (): Point => {
@@ -124,56 +175,20 @@ export class ArcCurve extends Curve {
         return new Point(x, y);
     };
 
-    // Overrides the abstract method in the parent class.
-    drawTo = (path: Path2D): void => {
-        path.arcTo(this.control.x, this.control.y, 
-                   this.end.x, this.end.y, 
-                   this.radius);
-    };
-
-    // Overrides the approximation algorithm in the parent class.
-    getLength = (): number => {
-        return Math.abs(this.startAngle - this.endAngle) * this.radius;
-    };
-
-    getTangent = (t: number): Vector => {
-        const x = -1 * (this.endAngle - this.startAngle) * this.radius * Math.sin(this.lerp(this.startAngle, this.endAngle, t));
-        const y = (this.endAngle - this.startAngle) * this.radius * Math.cos(this.lerp(this.startAngle, this.endAngle, t));
-        return new Vector(x, y);
-    };
-
-    getOffsetSegments = (distance: number): Segment[] => {
-        const tangentAtStart = this.getTangent(0);
-        const displacementOfStart = Vector.findOpposite(Vector.findPerpVector(tangentAtStart)).normalize().multiplyByScalar(distance);
-
-        const tangentAtEnd = this.getTangent(1);
-        const displacementOfEnd = Vector.findOpposite(Vector.findPerpVector(tangentAtEnd)).normalize().multiplyByScalar(distance);
-
-        const result = this.clone();
-        result.start = Point.translate(this.start, displacementOfStart);
-        result.end = Point.translate(this.end, displacementOfEnd);
-        result.radius = result.start.distanceTo(result.center);
-        result.control = Point.translate(Point.translate(this.control, displacementOfStart), displacementOfEnd); 
-        // result's center, startAngle and endAngle don't need to be updated.
-        return [result];
-    };
-
-    translate = (displacement: Vector): void => {
-        this.start = Point.translate(this.start, displacement);
-        this.control = Point.translate(this.control, displacement);
-        this.end = Point.translate(this.end, displacement);
-        this.center = Point.translate(this.center, displacement);
-    };
-
-    clone = (): ArcCurve => {
-        return new ArcCurve(this.start, this.end, this.control);
-    };
-    
-    reversedClone = (): ArcCurve => {
-        return new ArcCurve(this.end, this.start, this.control);
-    };
-
     protected _equals = (other: Segment): boolean => {
         return (other instanceof ArcCurve) && this.control.equals(other.control);
+    };
+
+    /* 
+     * Scales arcs. We will not scale by negative scalars, so we don't need to recompute
+     * the angles.
+     */
+    protected _scale = (scalar: number): void => {
+        this.start = this.start.scale(scalar);
+        this.control = this.control.scale(scalar);
+        this.end = this.end.scale(scalar);
+        this.center = this._computeCenter();
+        this.radius = this.center.distanceTo(this.start);
+        this.points = this.computePoints();
     };
 }

@@ -15,12 +15,51 @@ export abstract class Segment {
         this.points = null;
     }
 
+    equals = (other: Segment): boolean => {
+        if (this === other) {
+            return true;
+        }
+
+        if (!this.start.equals(other.start)) {
+            return false;
+        }
+
+        if (!this.end.equals(other.end)) {
+            return false;
+        }
+
+        return this._equals(other);
+    };
+
     getStart = (): Point => {
         return this.start;
     };
 
     getEnd = (): Point => {
         return this.end;
+    };
+
+    /**
+     * Returns an array of 100 pts on the segment if it's a Curve, 
+     * 2 points if it's a LineSegment. If called repeatedly, will 
+     * not re-compute the points. Does not expose this segment's 
+     * endpoints data fields (clones are made where necessary).
+     */
+    getPoints = (): Point[] => {
+        if (!this.points){
+            this.points = this.computePoints();
+        }
+        return this.points;
+    };
+
+    scale = (scalar: number) => {
+        // We should not accept negative scalars because we do not want to flip
+        // the geometry.
+        if (scalar < 0 ) {
+            throw new Error("Scale will not accept a negative scalar");
+        }
+
+        this._scale(scalar);
     };
 
     abstract getLength(): number;
@@ -46,19 +85,6 @@ export abstract class Segment {
      */
     abstract computePoints(numOfPoints?: number): Point[];
 
-    /**
-     * Returns an array of 100 pts on the segment if it's a Curve, 
-     * 2 points if it's a LineSegment. If called repeatedly, will 
-     * not re-compute the points. Does not expose this segment's 
-     * endpoints data fields (clones are made where necessary).
-     */
-    getPoints = (): Point[] => {
-        if (!this.points){
-            this.points = this.computePoints();
-        }
-        return this.points;
-    };
-
     abstract split(point: Point): Segment[];
 
     /* Returns null if the point is not within the threshold of the segment.
@@ -75,21 +101,7 @@ export abstract class Segment {
     
     abstract reversedClone(): Segment;
 
-    equals = (other: Segment): boolean => {
-        if (this === other) {
-            return true;
-        }
-
-        if (!this.start.equals(other.start)) {
-            return false;
-        }
-
-        if (!this.end.equals(other.end)) {
-            return false;
-        }
-
-        return this._equals(other);
-    };
-
     protected abstract _equals(other: Segment): boolean;
+
+    protected abstract _scale(scalar: number): void;
 }

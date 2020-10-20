@@ -9,8 +9,6 @@ export abstract class Curve extends Segment {
         this.control = control.clone();
     }
 
-    protected abstract _computePoint(t: number): Point;
-
     computePoints = (numPoints?: number): Point[] => {
         numPoints = numPoints || 100;
         const resultingPoints = new Array<Point>();
@@ -47,7 +45,7 @@ export abstract class Curve extends Segment {
         //       the curve instead. This would allow us to bound our error on the total length. 
     };
 
-    /* 
+    /** 
      * Returns null if a point is not near the segement, otherwise it returns the closest
      * point on the segment. Checks if a point is near the curve by computing a number of 
      * points on that curve, finding the point among those that is closest to the inputted point,
@@ -81,4 +79,6 @@ export abstract class Curve extends Segment {
     protected lerp = (start: number, end: number, t: number): number => {
         return start + t * (end - start);
     };
+
+    protected abstract _computePoint(t: number): Point;
 }

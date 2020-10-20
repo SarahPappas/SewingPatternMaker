@@ -16,6 +16,41 @@ export class PatternPath implements IPatternPath {
         this._path2D = this._computePath2D();
     }
 
+    addSegment = (newSegment: Segment): void => {
+        this._segments.push(newSegment);
+        this._points = this._computePoints();
+        this._path2D = this._computePath2D();
+    };
+
+    clone = (): PatternPath => {
+        const segments: Segment[] = [];
+        for (let i = 0; i < this._segments.length; i++) {
+            segments.push(this._segments[i].clone());
+        }
+        return new PatternPath(this._type, segments);
+    };
+
+    equals = (other: PatternPath): boolean => {
+        if (this === other) {
+            return true;
+        }
+        
+        if (this._type !== other._type) {
+            return false;
+        }
+
+        if (this._segments.length !== other._segments.length) {
+            return false;
+        }
+
+        for (let i = 0; i < this._segments.length; i++) {
+            if (!this._segments[i].equals(other._segments[i])) {
+                return false;
+            }
+        }
+        return true;        
+    };
+
     getPoints = (): Point[] => {
         return this._points;
     };
@@ -54,6 +89,22 @@ export class PatternPath implements IPatternPath {
 
     getSegments = (): Segment[] => {
         return this._segments;
+    };
+
+    reversedClone = (): PatternPath => {
+        const reversedSegments: Segment[] = [];
+        for (let i = this._segments.length - 1; i >= 0; i--) {
+            reversedSegments.push(this._segments[i].reversedClone());
+        }
+        return new PatternPath(this._type, reversedSegments);
+    };
+
+    scale = (scalar: number): void => {
+        this._segments.forEach(segment => {
+            segment.scale(scalar);
+        });
+        this._path2D = this._computePath2D();
+        this._points = this._computePoints();
     };
 
     /**
@@ -95,54 +146,12 @@ export class PatternPath implements IPatternPath {
         this._path2D = this._computePath2D();
     };
 
-    addSegment = (newSegment: Segment): void => {
-        this._segments.push(newSegment);
-        this._points = this._computePoints();
-        this._path2D = this._computePath2D();
-    };
-
     translate = (displacement: Vector): void => {
         this._segments.forEach(segment => {
             segment.translate(displacement);
         });
         this._path2D = this._computePath2D();
-    };
-
-    clone = (): PatternPath => {
-        const segments: Segment[] = [];
-        for (let i = 0; i < this._segments.length; i++) {
-            segments.push(this._segments[i].clone());
-        }
-        return new PatternPath(this._type, segments);
-    };
-
-    reversedClone = (): PatternPath => {
-        const reversedSegments: Segment[] = [];
-        for (let i = this._segments.length - 1; i >= 0; i--) {
-            reversedSegments.push(this._segments[i].reversedClone());
-        }
-        return new PatternPath(this._type, reversedSegments);
-    };
-
-    equals = (other: PatternPath): boolean => {
-        if (this === other) {
-            return true;
-        }
-        
-        if (this._type !== other._type) {
-            return false;
-        }
-
-        if (this._segments.length !== other._segments.length) {
-            return false;
-        }
-
-        for (let i = 0; i < this._segments.length; i++) {
-            if (!this._segments[i].equals(other._segments[i])) {
-                return false;
-            }
-        }
-        return true;        
+        this._points = this._computePoints();
     };
 
     private _computePoints = (): Point[] => {

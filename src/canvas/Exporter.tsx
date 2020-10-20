@@ -1,49 +1,15 @@
 import { jsPDF } from 'jspdf';
 import { Document } from './Document';
-import { PatternPath } from './PatternPaths/PatternPath';
-import { LineSegment } from './Geometry/LineSegment';
-import { Point } from './Geometry/Point';
 import { Vector } from './Geometry/Vector';
 import { PatternPiece } from './PatternPiece';
-import { PatternPathType } from './Enums';
-import { AllowanceFinder } from './PatternPaths/AllowanceFinder';
 
 export class Exporter {
     doc: jsPDF | null;
     protected _documentModel: Document;
-    protected _testPiecesRect: PatternPiece[];
-    protected _testPiecesBig: PatternPiece[];
 
     constructor (documentModel: Document) {
         this.doc = null;
         this._documentModel = documentModel;
-        
-        const allowanceMapTestRect =  new Map<PatternPathType, number>();
-        allowanceMapTestRect.set(3, 36.073113689422485);
-        allowanceMapTestRect.set(2, 0);
-        allowanceMapTestRect.set(1, 36.073113689422485);
-
-        let paths = [
-            new PatternPath(1, [new LineSegment(new Point(114, 271), new Point(114, 152))]),
-            new PatternPath(1, [new LineSegment(new Point(114, 152), new Point(229, 142))]),
-            new PatternPath(1, [new LineSegment(new Point(229, 142), new Point(229, 263))]),
-            new PatternPath(1, [new LineSegment(new Point(229, 263), new Point(114, 271))])
-        ];
-        let testPiece = new PatternPiece(paths, AllowanceFinder.computeAllowancePaths(paths, allowanceMapTestRect));
-
-        this._testPiecesRect = [testPiece];
-
-        const allowanceMapTestBig =  new Map<PatternPathType, number>();
-        allowanceMapTestBig.set(3, 6.871842709362768);
-        allowanceMapTestBig.set(2, 0);
-        allowanceMapTestBig.set(1, 6.871842709362768);
-        paths = [
-            new PatternPath(1, [new LineSegment(new Point(95, 326), new Point(142, 172))]),
-            new PatternPath(1, [new LineSegment(new Point(142, 172), new Point(223, 222))]),
-            new PatternPath(1, [new LineSegment(new Point(223, 222), new Point(95, 326))]),
-        ];
-        testPiece = new PatternPiece(paths, AllowanceFinder.computeAllowancePaths(paths, allowanceMapTestBig));
-        this._testPiecesBig = [testPiece];
     }
 
     save = (): void => {
@@ -51,14 +17,7 @@ export class Exporter {
         // Delete the first page, which is automatically added when a new jsPDF is created.
         this.doc.deletePage(1);
 
-        let patternPieces = this._documentModel.getPatternPieces();
-        
-        // TODO remove, this is for testing.
-        if (!patternPieces?.length) {
-            patternPieces = this._testPiecesBig;
-        }
-
-        console.log("pattern pieces:", patternPieces);
+        const patternPieces = this._documentModel.getPatternPieces();
 
         // Set page height, width and DPI
         const DPI = 300;
@@ -81,7 +40,7 @@ export class Exporter {
         }
 
         // Calculate ratio to scale by.
-        const pixelsPerInch = this._documentModel.getSizeRatio() > 0 ? this._documentModel.getSizeRatio() : 6.871842709362768;
+        const pixelsPerInch = this._documentModel.getSizeRatio();
         const inchesPerPixel = 1 / pixelsPerInch;
         const dotsPerPixel = inchesPerPixel * DPI;
  
@@ -105,7 +64,6 @@ export class Exporter {
                 for (let y = 0; y < numPagesY; y++) {
                     positionY = y * pageSizeY;
                     this.doc?.addPage();
-                    console.log("page num ", this.doc?.getNumberOfPages());
                     ctx.clearRect(0, 0, pageSizeX, pageSizeY);
 
                     // Draw white background and border

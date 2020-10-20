@@ -60,7 +60,7 @@ export abstract class Segment {
         }
 
         this._scale(scalar);
-    }
+    };
 
     abstract getLength(): number;
     

@@ -49,6 +49,8 @@ export class BezierCurve extends Curve {
 
     // Precondition: split is a point on the curve.
     split = (point: Point): BezierCurve[] => {
+        // Using de Casteljau's algorithm to find the control points
+        // of the 2 new curves.
         const curves:  BezierCurve[] = [];
         const t = this._findT(point);
         const pointOnCurve = this._computePoint(t);
@@ -91,23 +93,80 @@ export class BezierCurve extends Curve {
                     this.lerp(startToControlY, controlToEndY, t));
     };
 
-    private _findT = (point: Point): number => {
-        // TODO: we tried finding t using direct calculation methods
-        // (solving for t in a pair of parametric equations from 
-        // P = (1-t2)S + 2t(1-t)C + t2E) but that leads to many different
-        // cases. Need more thought to make this method fail safe.
-
-        // TODO: this method may fail if the bezier curve is too long:
-        // the tested point might slip in between 2 of the computed points        
-        const NUMPOINTS = 100;
-        const pointsOnCurve = this.computePoints(NUMPOINTS);
-        const indexOfClosestPoint = this._indexOfClosestPointOnCurve(point, pointsOnCurve);
-
-        if (!point.isWithinRadius(pointsOnCurve[indexOfClosestPoint], 10)){
+    /**
+     * Finds the solution(s) to the equation at^2 + bt + c = 0, where t is the
+     * unknown and a, b, and c are input as parameters.
+     * Throws if there are 0 solutions. Returns undefined if all values of t are solutions.
+     * Otherwise, will return an array containing one or two solutions.
+     * @param a coefficient of t^2
+     * @param b coefficient of t
+     * @param c constant term
+     */
+    private _solveQuadratic = (a: number, b: number, c: number): number[] | undefined => {
+        if (a === 0) {
+            if (b === 0) {
+                if (c === 0) {
+                    // if a = b = c = 0, there are infinitely many
+                    // solutions.
+                    return undefined;
+                } else { // if a = b = 0 but c != 0, 
+                         // this means the point is not on the curve.
+                    throw new Error("the point is not on the curve");
+                }
+            } else { // a = 0 and b != 0 means the equation is linear
+                return [-1 * c / b];
+            }            
+        }
+        // if a != 0 then the equation is quadratic
+        const result: number[] = [];
+        const d = b * b - 4 * a * c; // d is the discriminant
+        if (d === 0) {
+            result.push((-1 * b) / (2 * a));
+        } else if (d > 0) {
+            result.push(((-1 * b) + Math.sqrt(d)) / (2 * a));
+            result.push(((-1 * b) - Math.sqrt(d)) / (2 * a));
+        } else { // d < 0
             throw new Error("the point is not on the curve");
-        } 
-        
-        return indexOfClosestPoint / NUMPOINTS;
+        }
+        return result;
+    };
+
+    private _findT = (point: Point): number => {
+        const solx = this._solveQuadratic(this.start.x - 2 * this.control.x + this.end.x, 2 * (this.control.x - this.start.x), this.start.x - point.x);
+        if (solx === undefined) { // Any value of t will satisfy the x equation, 
+                                  // therefore we consider the y equation to find t 
+            const soly = this._solveQuadratic(this.start.y - 2 * this.control.y + this.end.y, 2 * (this.control.y - this.start.y), this.start.y - point.y);
+            if (soly === undefined) {
+                // If both the x and the y equations have infinitely many solutions, then the
+                // start, end, control and the tested point are all the same. This is prevented by the 
+                // constructor.
+                throw new Error("start, end, control and the point are all the same");
+            } else {
+                // No matter if the y equation has 1 or 2 solutions, any solution will do.
+                return soly[0];
+            }
+        } else if (solx.length === 1) {
+            return solx[0];
+        } else { // we have 2 possible values of t from the x equation, so we examine the y equation.
+            const soly = this._solveQuadratic(this.start.y - 2 * this.control.y + this.end.y, 2 * (this.control.y - this.start.y), this.start.y - point.y);
+            if (soly === undefined) {
+                // the y equation has infinitely many solutions,
+                // so any of the 2 solutions for x will do
+                return solx[0];
+            } else { // soly has one or two elements, solx has 2. return the solution in solx that is closest to one of the solutions in soly.
+                let firstElementOfClosestPair = solx[0];
+                let smallestDifference = Number.MAX_VALUE;
+                for (let i = 0; i < solx.length; i++) {
+                    for (let j = 0; j < soly.length; j++) {
+                        if (Math.abs(solx[i] - soly[j]) < smallestDifference){
+                            firstElementOfClosestPair = solx[i];
+                            smallestDifference = Math.abs(solx[i] - soly[j]);
+                        }
+                    }
+                }
+                return firstElementOfClosestPair;
+            }
+        }
     };
 
     protected _equals = (other: Segment): boolean => {

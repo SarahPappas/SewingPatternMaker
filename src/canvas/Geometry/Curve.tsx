@@ -79,6 +79,17 @@ export abstract class Curve extends Segment {
     protected lerp = (start: number, end: number, t: number): number => {
         return start + t * (end - start);
     };
-
+    
+    /**
+     * Returns the point on the parametric curve at the specified
+     * parameter t value. t must be between 0 and 1 inclusively.
+     * If t = 0, will return the starting point, and if t = 1, will
+     * return the end point. 
+     * 
+     * Overrides the abstract method in the parent class.
+     * 
+     * @param t number between 0 and 1 indicating the position on the 
+     *          curve, where 0 is the start and 1 the end
+     */
     protected abstract _computePoint(t: number): Point;
 }

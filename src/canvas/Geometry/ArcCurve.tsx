@@ -68,6 +68,8 @@ export class ArcCurve extends Curve {
     };
 
     getTangent = (t: number): Vector => {
+        // The tangent vector is found by calculating the derivative of the parametric equation of the circle arc:
+        // C'(t) = ( -(endAngle - startAngle)*r*\sin(startAngle + (endAngle - startAngle)t), (endAngle - startAngle)*r*\cos(startAngle + (endAngle - startAngle)t))
         const x = -1 * (this.endAngle - this.startAngle) * this.radius * Math.sin(this.lerp(this.startAngle, this.endAngle, t));
         const y = (this.endAngle - this.startAngle) * this.radius * Math.cos(this.lerp(this.startAngle, this.endAngle, t));
         return new Vector(x, y);

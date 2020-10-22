@@ -84,8 +84,8 @@ export class ArcCurve extends Curve {
     split = (point: Point): ArcCurve[] => {
         const curves:  ArcCurve[] = [];
         const originToSplitPoint = Vector.vectorBetweenPoints(this.center, point);
-        const tangetToArcAtPoint = Vector.findPerpVector(originToSplitPoint);
-        const pointOnTangentToArcAtPoint = Point.translate(point, tangetToArcAtPoint);
+        const tangentToArcAtPoint = Vector.findPerpVector(originToSplitPoint);
+        const pointOnTangentToArcAtPoint = Point.translate(point, tangentToArcAtPoint);
         const lineOnTangentToArcAtPoint = new LineSegment(point, pointOnTangentToArcAtPoint);
         const lineFromStartToOldControlPoint = new LineSegment(this.start, this.control);
 

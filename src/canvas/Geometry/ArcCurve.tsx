@@ -62,12 +62,17 @@ export class ArcCurve extends Curve {
         result.start = Point.translate(this.start, displacementOfStart);
         result.end = Point.translate(this.end, displacementOfEnd);
         result.radius = result.start.distanceTo(result.center);
-        result.control = Point.translate(Point.translate(this.control, displacementOfStart), displacementOfEnd); 
+
+        const lengthOfDisplacementOfControl = distance / Math.cos(Math.abs(this.endAngle - this.startAngle) / 2);
+        const displacementOfControl = Vector.vectorBetweenPoints(this.center, this.control).normalize().multiplyByScalar(lengthOfDisplacementOfControl);
+        result.control = Point.translate(this.control, displacementOfControl);
         // result's center, startAngle and endAngle don't need to be updated.
         return [result];
     };
 
     getTangent = (t: number): Vector => {
+        // The tangent vector is found by calculating the derivative of the parametric equation of the circle arc:
+        // C'(t) = ( -(endAngle - startAngle)*r*\sin(startAngle + (endAngle - startAngle)t), (endAngle - startAngle)*r*\cos(startAngle + (endAngle - startAngle)t))
         const x = -1 * (this.endAngle - this.startAngle) * this.radius * Math.sin(this.lerp(this.startAngle, this.endAngle, t));
         const y = (this.endAngle - this.startAngle) * this.radius * Math.cos(this.lerp(this.startAngle, this.endAngle, t));
         return new Vector(x, y);
@@ -84,8 +89,8 @@ export class ArcCurve extends Curve {
     split = (point: Point): ArcCurve[] => {
         const curves:  ArcCurve[] = [];
         const originToSplitPoint = Vector.vectorBetweenPoints(this.center, point);
-        const tangetToArcAtPoint = Vector.findPerpVector(originToSplitPoint);
-        const pointOnTangentToArcAtPoint = Point.translate(point, tangetToArcAtPoint);
+        const tangentToArcAtPoint = Vector.findPerpVector(originToSplitPoint);
+        const pointOnTangentToArcAtPoint = Point.translate(point, tangentToArcAtPoint);
         const lineOnTangentToArcAtPoint = new LineSegment(point, pointOnTangentToArcAtPoint);
         const lineFromStartToOldControlPoint = new LineSegment(this.start, this.control);
 
@@ -114,56 +119,26 @@ export class ArcCurve extends Curve {
     };
 
     private _computeCenter = (): Point => {
-        let centerX;
-        let centerY;
-        
+        // The center of the circle supporting the arc is the intersection 
+        // of two lines: the line through the start point and perpendicular
+        // to startToControl, and the line through the end point and
+        // perpendicular to endToControl
+
+        // Line 1: through start, perpendicular to startToControl
         const startToControl = Vector.vectorBetweenPoints(this.start, this.control);
-        const normalVector = Vector.findPerpVector(Vector.vectorBetweenPoints(this.start, this.end));
-        
-        if (normalVector.x === 0) { // Happens when start and end are horizontally aligned.
-            // The center is aligned vertically with the control point.
-            centerX = this.control.x;
+        const perpVector1 = Vector.findPerpVector(startToControl);
+        const line1 = new LineSegment(this.start, Point.translate(this.start, perpVector1));
 
-            // The center of the circle is such that startToControl vector is
-            // perpendicular to startToCenter vector. 
-            // Equation: startToControl dot startToCenter = 0
-            // Solving for centerY in that equation, and using the previous result, yields:
-            centerY = this.start.y - 
-                        ((startToControl.x * startToControl.x) 
-                            / (startToControl.y));
-                    // In the above, division by zero cannot happen: if startToControl.y
-                    // was equal to zero, then the control point would be aligned with
-                    // the start and end points, meaning that the control point is the 
-                    // middle point between start and end. That is a case that is rejected 
-                    // by the constructor. 
-        } else {
-            // The center of the circle is such that startToControl vector is
-            // perpendicular to startToCenter vector. This yields:
-            // Equation 1: startToControl dot startToCenter = 0
+        // Line 2: through end, perpendicular to endToControl
+        const endToControl = Vector.vectorBetweenPoints(this.end, this.control);
+        const perpVector2 = Vector.findPerpVector(endToControl);
+        const line2 = new LineSegment(this.end, Point.translate(this.end, perpVector2));
 
-            // The center of the circle is on the line that goes through the 
-            // control point and that is perpendicular to the vector between start and end.
-            // This yields:
-            // Equation 2: centerY = control.y + slope * (centerX - control.x) where:
-            const slope = normalVector.y / normalVector.x;
-                // In the above, division by zero is avoided because of the if check.
-
-            // We insert equation 2 in equation 1, then solve for centerX:
-            centerX = (this.start.x * startToControl.x 
-                        + (this.control.x * slope - startToControl.y) 
-                            * startToControl.y) 
-                      / (slope * startToControl.y + startToControl.x);
-                      // In the above, division by zero cannot happen: the denominator 
-                      // is equal to the dot product between startToControl and the 
-                      // normalVector. If it is zero, it means that startToControl
-                      // is perperdicular to the normal. That cannot happen, because
-                      // the control point is never aligned with start and end
-                      // per the constructor.
-            // Replacing centerX in equation 2 yields:
-            centerY = this.control.y + slope * (centerX - this.control.x);
+        const center = LineSegment.findIntersectionPointOfTwoLines(line1, line2, false);
+        if (!center) {
+            throw new Error("could not find the center of the arc");
         }
-
-        return new Point(centerX, centerY);
+        return center;
     };
 
     // Overrides the abstract method in the parent class.

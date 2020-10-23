@@ -62,7 +62,10 @@ export class ArcCurve extends Curve {
         result.start = Point.translate(this.start, displacementOfStart);
         result.end = Point.translate(this.end, displacementOfEnd);
         result.radius = result.start.distanceTo(result.center);
-        result.control = Point.translate(Point.translate(this.control, displacementOfStart), displacementOfEnd); 
+
+        const lengthOfDisplacementOfControl = distance / Math.cos(Math.abs(this.endAngle - this.startAngle) / 2);
+        const displacementOfControl = Vector.vectorBetweenPoints(this.center, this.control).normalize().multiplyByScalar(lengthOfDisplacementOfControl);
+        result.control = Point.translate(this.control, displacementOfControl);
         // result's center, startAngle and endAngle don't need to be updated.
         return [result];
     };

@@ -1,8 +1,8 @@
 # Sewing Pattern Maker
 
-Our web app allows users to create a sewing pattern for a garment from a simple photo!
+Our web app allows users to generate a sewing pattern from a  photo of an article of clothing.
 
-The user first takes a picture of a garment laying flat on a surface and uploads it to our app. Then, using our integrated drawing tools, the user can indicate the position of the seams, edges and folds on their picture, as well as providing one measurement. Finally, our app provides the user with a printable pdf pattern that will allow them to sew new copies of their favorite garment in the fabric and color of their choice!
+A user uploads a picture of a garment laying flat on a surface. Then, the user traces the seams, folds and borders of the garment using our integrated drawing tools, as well as providing a measurement. Finally, our app automatically generates a printable pdf pattern that will allow the user to sew a copy of the garment in the fabric of their choice!
 
 ## Screenshots
 
@@ -13,19 +13,20 @@ The user first takes a picture of a garment laying flat on a surface and uploads
 - Our simple user interface makes it possible to create a pattern in a few minutes!
 - Our intelligent drawing tools automatically match the endpoints of the strokes and smooth curves for a professional looking pattern
 - Our algorithm will automatically cut the drawn pattern into different fabric pieces and add 5/8" allowances to all seams and edges of each piece
-- Once the drawing is complete and a measurement has been provided, the app provides you with a ready-to-print pattern spread on multiple 8.5" by 11" pages.
+- Once the drawing is complete and a measurement has been provided, the app provides the user with a ready-to-print pattern spread on multiple 8.5" by 11" pages.
 
 ## Techs
 
 - React with Hooks
 - Typescript
-- HTML's <canvas> element
+- HTML's Canvas element
 - requestAnimationFrame
 - jsPDF library
 - Jest
 
 # Installation
 ## Installation for users
+Todo
 
 ## Installation for developers
 Clone the source locally:

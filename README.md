@@ -6,7 +6,7 @@ A user uploads a picture of a garment laying flat on a surface. Then, the user t
 
 ## Screenshots
 
-<img src="/sewingPatternMakerDemo.png">
+<img src="/sewingPatternMakerDemo.jpg">
 
 ## Features
 

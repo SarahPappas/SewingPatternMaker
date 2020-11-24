@@ -1,6 +1,6 @@
 # Sewing Pattern Maker
 
-Our web app allows users to generate a sewing pattern from a  photo of an article of clothing.
+Our web app allows users to generate a sewing pattern from a photo of an article of clothing.
 
 A user uploads a picture of a garment laying flat on a surface. Then, the user traces the seams, folds and borders of the garment using our integrated drawing tools, as well as providing a measurement. Finally, our app automatically generates a printable pdf pattern that will allow the user to sew a copy of the garment in the fabric of their choice!
 

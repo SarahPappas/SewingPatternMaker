@@ -25,8 +25,8 @@ A user uploads a picture of a garment laying flat on a surface. Then, the user t
 - Jest
 
 # Installation
-## Installation for users
-Todo
+<!--## Installation for users
+Todo -->
 
 ## Installation for developers
 Clone the source locally:

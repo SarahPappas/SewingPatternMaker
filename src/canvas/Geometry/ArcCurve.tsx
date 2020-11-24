@@ -64,7 +64,11 @@ export class ArcCurve extends Curve {
         result.radius = result.start.distanceTo(result.center);
 
         const lengthOfDisplacementOfControl = distance / Math.cos(Math.abs(this.endAngle - this.startAngle) / 2);
-        const displacementOfControl = Vector.vectorBetweenPoints(this.center, this.control).normalize().multiplyByScalar(lengthOfDisplacementOfControl);
+        let displacementOfControl = Vector.vectorBetweenPoints(this.center, this.control).normalize().multiplyByScalar(lengthOfDisplacementOfControl);
+        // If the new control point needs to get closer to the center of the circle, reverse the displacement vector
+        if (result.radius < this.radius) {
+            displacementOfControl = Vector.findOpposite(displacementOfControl);
+        }
         result.control = Point.translate(this.control, displacementOfControl);
         // result's center, startAngle and endAngle don't need to be updated.
         return [result];

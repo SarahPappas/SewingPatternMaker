@@ -1,6 +1,6 @@
 # [Bobbin Lab](http:\\bobbinlab.com)
 
-Our web app allows users to generate a basic sewing pattern from a photo of an article of clothing.
+Our [web app](http:\\bobbinlab.com) allows users to generate a basic sewing pattern from a photo of an article of clothing.
 
 A user uploads a picture of a garment laying flat on a surface. Then, the user traces the seams, folds and borders of the garment using our integrated drawing tools. Next, they provide a measurement for a single seam of the original garment. Finally, our app automatically generates a printable pdf pattern that will allow the user to sew a copy of the garment in the fabric of their choice!
 
@@ -13,7 +13,7 @@ A user uploads a picture of a garment laying flat on a surface. Then, the user t
 - Our simple user interface makes it possible to create a pattern in a few minutes!
 - Our intelligent drawing tools automatically match the endpoints of the strokes and smooth curves for a professional looking pattern
 - Our algorithm will automatically cut the drawn pattern into different fabric pieces and add 5/8" allowances to all seams and edges of each piece
-- Once the drawing is complete and a measurement has been provided, the app provides the user with a ready-to-print pattern spread on multiple 8.5" by 11" pages.
+- Once the drawing is complete and a measurement has been provided, the app provides the user with a ready-to-print pdf pattern spread on multiple 8.5" by 11" pages.
 
 ## Techs
 

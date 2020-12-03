@@ -1,4 +1,4 @@
-# Sewing Pattern Maker
+# [Bobbin Lab](http:\\bobbinlab.com)
 
 Our web app allows users to generate a basic sewing pattern from a photo of an article of clothing.
 

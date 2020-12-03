@@ -25,8 +25,8 @@ A user uploads a picture of a garment laying flat on a surface. Then, the user t
 - Jest
 
 # Installation
-<!--## Installation for users
-Todo -->
+## For users
+Our app is live on [bobbinlab.com](http:\\bobbinlab.com)!
 
 ## Installation for developers
 Clone the source locally:

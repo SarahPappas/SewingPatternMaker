@@ -44,7 +44,24 @@ export class Renderer implements IRenderer {
     init = (): HTMLCanvasElement => {
         this._tick();
 
-        this._canvas.onmousedown = (e) => {
+        this._canvas.onpointerdown = (e) => {
+            console.log(e.offsetX, e.offsetY);
+            console.log("down");
+            startInteraction(e.offsetX, e.offsetY);
+        };
+
+        // this._canvas.ontouchstart = (e) => {
+        //     console.log("e", e);
+        //     // const x = e.targetTouches[0].pageX;
+        //     // const y = e.targetTouches[0].pageY;
+        //     const x = e.targetTouches[0].clientX - e.getTouches.target.offsetLeft;
+        //     const y = e.targetTouches[0].clientY - e.target.offsetTop;
+        //     console.log("x: " + x + " y: " + y);
+        //     console.log(e.targetTouches[0].clientX, e.targetTouches[0].clientY);
+        //     startInteraction(x, y);
+        // };
+
+        const startInteraction = (x: number, y: number) => {
             if (!this._pathType) {
                 throw new Error("Path type not set");
             }
@@ -65,7 +82,7 @@ export class Renderer implements IRenderer {
                     throw new Error("Could not identify the tool type");
             }
 
-            const position = new Point(e.offsetX, e.offsetY);
+            const position = new Point(x, y);
             this._currPath.addPoint(position);
             // Try to snap to other endpoints
             const snapStartPoint = this._currPath.snapStartPoint(this._document.getPatternPaths());
@@ -76,9 +93,25 @@ export class Renderer implements IRenderer {
             }
         };
 
-        this._canvas.onmousemove = (e) => {
+        this._canvas.onpointermove = (e) => {
+            console.log(e.offsetX, e.offsetY);
+            console.log("move");
+            moveInteraction(e.offsetX, e.offsetY);
+        };
+
+        // this._canvas.ontouchmove = (e) => {
+        //     // const x = e.targetTouches[0].pageX;
+        //     // const y = e.targetTouches[0].pageY;
+        //     const x = e.targetTouches[0].clientX;
+        //     const y = e.targetTouches[0].clientY;
+        //     console.log("x: " + x + " y: " + y);
+        //     console.log(e.targetTouches[0].clientX, e.targetTouches[0].clientY);
+        //     moveInteraction(x, y);
+        // };
+
+        const moveInteraction = (x: number, y: number) => {
             if (this._isTracing && this._currPath) {
-                const position = new Point(e.offsetX, e.offsetY);
+                const position = new Point(x, y);
                 this._currPath.addPoint(position);
                 const patternPaths = this._document.getPatternPaths();
                 if (patternPaths.length < 1) {
@@ -105,20 +138,34 @@ export class Renderer implements IRenderer {
             }
         };
         
-        this._canvas.onmouseup = (e) => {
-            const position = new Point(e.offsetX, e.offsetY);
-            if (this._isTracing) {
-                // Moved this._isTracing = false out of _resetTracing beecause onmouseup and onmouseout are both fired.
-                // This means that _endTracing was called multiple times.
-                this._isTracing = false;
-                this._endTracing(position, true);
-            }
+        this._canvas.onpointerup = (e) => {
+            console.log("up");
+            console.log(e.offsetX, e.offsetY);
+            endInteraction(e.offsetX, e.offsetY);
         };
 
         // If the user draws off the canvas, we will stop adding to the path.
-        this._canvas.onmouseout = (e) => {
-            const position = new Point(e.offsetX, e.offsetY);
-            if(this._isTracing) {
+        this._canvas.onpointerleave = (e) => {
+            console.log("leave");
+            endInteraction(e.offsetX, e.offsetY);
+        };
+
+        // this._canvas.ontouchend = (e) => {
+        //     // var rect = e.target?.getBoundingClientRect();
+        //     // const x = e.targetTouches[0].pageX;
+        //     // const y = e.targetTouches[0].pageY;
+        //     const x = e.targetTouches[0].clientX;
+        //     const y = e.targetTouches[0].clientY;
+        //     console.log("x: " + x + " y: " + y);
+        //     console.log(e.targetTouches[0].clientX, e.targetTouches[0].clientY);
+        //     endInteraction(x, y);
+        // };
+
+        const endInteraction = (x: number, y: number) => {
+            const position = new Point(x, y);
+            if (this._isTracing) {
+                // Moved this._isTracing = false out of _resetTracing beecause onmouseup and onmouseout are both fired.
+                // This means that _endTracing was called multiple times.
                 this._isTracing = false;
                 this._endTracing(position, true);
             }

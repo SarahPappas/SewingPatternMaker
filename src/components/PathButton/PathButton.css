@@ -20,7 +20,9 @@
 
 .fold .pathButtonLabel {
     border-right: .5px;
-}.edge .colorBlock {
+}
+
+.edge .colorBlock {
     background-color: #F2E74B;
 }
 

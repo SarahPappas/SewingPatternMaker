@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import './PathButton.css';
 import { PatternPathType } from 'canvas/Enums';
- import { ActionButton } from 'components/ActionButton/ActionButton';
+import { ActionButton } from 'components/ActionButton/ActionButton';
 
 interface PathButtonProps {
     type: PatternPathType;
@@ -22,12 +22,11 @@ export const PathButton: React.FC<PathButtonProps> = ({type, isEnabled, curPathT
         canvasRef.current = document.querySelector('canvas');
     }, [canvasRef]);
     
-
     const handleSetPathType = () => {
         if (!isEnabled) {
             return;
         }
-        
+
         setPathType(type);
         canvasRef.current?.dispatchEvent(setCanvasPathType);
     };

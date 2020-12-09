@@ -51,11 +51,12 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
         // Put the Canvas in the background.
         canvasRef.current = document.getElementsByClassName('canvasContainer')[0];
         canvasRef.current.classList.add('canvasContainerBackground');
+    }, [canvasRef]);
 
+    useEffect(() => {
         // Reset the path type.
         setPathType(PatternPathType.UNDEFINED);
-
-    }, [canvasRef, curPathType, setPathType]);
+    }, [setPathType]);
     
     return (<>
         <div className={'backgroundGrey'}></div>

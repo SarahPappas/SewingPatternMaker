@@ -12,13 +12,13 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
 
     if (hasChildren) {
         return (
-            <div onClick={props.action} className={props.button.className}>
+            <div onPointerDown={(e) => {props.action();}} className={props.button.className}>
                 {props.children}
             </div>
         );
     } else {
         return(
-            <div onClick={props.action} className={props.button.className}>
+            <div onPointerDown={(e) => {props.action();}} className={props.button.className}>
                 <Button label={props.button.label} className='actionButton'></Button>
             </div>
         );

@@ -1,5 +1,6 @@
 import { Point } from '../Geometry/Point';
 import { PatternPath } from 'canvas/PatternPaths/PatternPath';
+import { SnapRadius } from 'canvas/Enums';
 
 export abstract class TracingPath implements ITracingPath {
     protected _points: Point[];
@@ -119,7 +120,7 @@ export abstract class TracingPath implements ITracingPath {
     private _snapEndPoints = (patternPaths: PatternPath[], index: number): boolean => {
         const point = this._points[index];
         // Radius to check within to see if we should snap to point.
-        const radius = 10;
+        const radius = SnapRadius.mobile;
 
         for (let i = 0; i < patternPaths.length; i++) {
             const patternPath = patternPaths[i];

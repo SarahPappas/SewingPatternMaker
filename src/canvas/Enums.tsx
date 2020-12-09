@@ -15,3 +15,7 @@ export enum ModalType {
     Instruction,
     Warning
 }
+
+export enum SnapRadius {
+    mobile = 20
+}

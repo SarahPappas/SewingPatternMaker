@@ -3,7 +3,7 @@ import { Document } from './Document';
 import { PathSelection } from './PathSelection';
 import { Point } from './Geometry/Point';
 import { PatternPathColor } from './PatternPaths/PatternPathColor';
-import { PatternPathType, ToolType } from './Enums';
+import { PatternPathType, ToolType, SnapRadius } from './Enums';
 import { StraightLinePath } from './TracingPaths/StraightLinePath';
 import { FreeLinePath } from './TracingPaths/FreeLinePath';
 import { PathIntersection } from './PathIntersection';
@@ -91,10 +91,10 @@ export class Renderer implements IRenderer {
 
                     const pathCrossedStartPoint = intersection.pathCrossed.getStart();
                     const pathCrossedEndpoint = intersection.pathCrossed.getEnd();
-                    if (intersection.point.isWithinRadius(pathCrossedEndpoint, 10)) {
+                    if (intersection.point.isWithinRadius(pathCrossedEndpoint, SnapRadius.mobile)) {
                         this._endTracing(pathCrossedEndpoint, false);
                         return;
-                    } else if (intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
+                    } else if (intersection.point.isWithinRadius(pathCrossedStartPoint, SnapRadius.mobile)) {
                         this._endTracing(pathCrossedStartPoint, false);
                         return;
                     }
@@ -178,9 +178,9 @@ export class Renderer implements IRenderer {
         const intersection = PathIntersection.findPointIntersectAlongPatternPaths(point, paths);
         
         if (intersection) {
-            if (intersection.pathCrossed.getStart().isWithinRadius(intersection.point, 10)) {
+            if (intersection.pathCrossed.getStart().isWithinRadius(intersection.point, SnapRadius.mobile)) {
                 return intersection.pathCrossed.getStart();
-            } else if (intersection.pathCrossed.getEnd().isWithinRadius(intersection.point, 10)) {
+            } else if (intersection.pathCrossed.getEnd().isWithinRadius(intersection.point, SnapRadius.mobile)) {
                 return intersection.pathCrossed.getEnd();                
             } else { // the intersection is along the path, not close to the  
                      // endpoints, so we can split safely

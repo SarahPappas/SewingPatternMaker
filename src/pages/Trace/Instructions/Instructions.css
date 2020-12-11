@@ -46,7 +46,7 @@
     width: 33.333%;
 }
 
-@media (max-width: 420px) {
+@media (max-height: 800px) {
     .instructionsContainer {
         width: 100%;
         height: 60%;

@@ -23,22 +23,21 @@ body {
     position:absolute;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 1020px) {
     .pageContainer {
         width: 100vw;
-        height: 86vh;
+        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);;
         position: absolute;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding-bottom: 12vh;
     }
-}
 
-@media (max-width: 1020px) {
     .mainContainer {
         width: 100vw;
         height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);;
         display: flex;
         align-items: center;
         justify-content: space-around;

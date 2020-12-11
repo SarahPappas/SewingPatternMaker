@@ -5,8 +5,8 @@ body {
 }
 
 .pageContainer {
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     position: absolute;
     display: flex;
     align-items: center;
@@ -21,4 +21,28 @@ body {
     justify-content: space-around;
     flex-direction: column;
     position:absolute;
+}
+
+@media (max-width: 500px) {
+    .pageContainer {
+        width: 100vw;
+        height: 86vh;
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 12vh;
+    }
+}
+
+@media (max-width: 1020px) {
+    .mainContainer {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        flex-direction: column;
+        position:absolute;
+    }
 }

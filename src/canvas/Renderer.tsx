@@ -144,7 +144,7 @@ export class Renderer implements IRenderer {
     measurementInit = (): void  => {
         const patternPaths = this._document.getPatternPaths();
         
-        this._canvas.onmousedown = (e) => {
+        this._canvas.onpointerdown = (e) => {
             for (let i = 0; i < patternPaths.length; i++) {
                 if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
                     this._pathSelection.setSelectedPath(patternPaths[i]);
@@ -153,7 +153,7 @@ export class Renderer implements IRenderer {
             }
         };
 
-        this._canvas.onmousemove = (e) => {
+        this._canvas.onpointermove = (e) => {
             this._pathSelection.setHighlightedPath(null);
             for (let i = 0; i < patternPaths.length; i++) {
                 if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
@@ -163,8 +163,8 @@ export class Renderer implements IRenderer {
             }
         };
 
-        this._canvas.onmouseup = null;
-        this._canvas.onmouseout = null;
+        this._canvas.onpointerup = null;
+        this._canvas.onpointerout = null;
     };
 
     /**

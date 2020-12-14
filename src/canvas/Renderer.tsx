@@ -20,6 +20,7 @@ export class Renderer implements IRenderer {
     private _pathType: PatternPathType;
     private _toolType: ToolType;
     private _pathSelection: PathSelection;
+    private _isInited: boolean;
 
     constructor (documentModel: Document, pathSelectionModel: PathSelection) {
         this._canvas = document.createElement('canvas');
@@ -30,6 +31,7 @@ export class Renderer implements IRenderer {
             throw new Error("Could not create 2D context for canvas.");
         }
 
+        this._isInited = false;
         this._context = contextOrNull;
         this._document = documentModel;
         this._isTracing = false;
@@ -41,6 +43,14 @@ export class Renderer implements IRenderer {
     }
 
     init = (): HTMLCanvasElement => {
+        // If we have already run init, do not run again!
+        if (this._isInited) {
+            this._tick();
+            return this._canvas;
+        }
+
+        this._isInited = true;
+
         this._tick();
 
         this._canvas.onpointerdown = (e) => {
@@ -167,6 +177,7 @@ export class Renderer implements IRenderer {
 
         this._canvas.onpointerup = null;
         this._canvas.onpointerout = null;
+        this._canvas.onpointerleave = null;
     };
 
     /**

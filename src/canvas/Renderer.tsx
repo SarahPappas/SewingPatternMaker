@@ -340,6 +340,7 @@ export class Renderer implements IRenderer {
         this._canvas.width =  dpr * elWidth;
         this._canvas.height = dpr * elHeight;
         this._context.scale(dpr, dpr);
+        // TODO: Recalculate paths after canvas size is updated
     };
 
     private _undoPathReplacementsInTracingSession = (pathsRemovedThisTracingSession: IPatternPathTrash[]): void => {

@@ -23,12 +23,12 @@ export const Review: React.FC = () => {
     const handleRemovePath = () => {
         canvasRef.current?.dispatchEvent(removePath);
     };
-    const deleteButotonAction: Button = {label: ''};
+    const deleteButtonAction: Button = {label: ''};
     
     return (<>
         <div className={'reviewButtonsConatainer'}>
             <NavButton button={keepButton} to={'/Trace/Instructions'}/>
-            <ActionButton button={deleteButotonAction} action={handleRemovePath}>
+            <ActionButton button={deleteButtonAction} action={handleRemovePath}>
                 <NavButton button={deleteButtonNav} to='/Trace/Instructions'/>
             </ActionButton>
         </div>

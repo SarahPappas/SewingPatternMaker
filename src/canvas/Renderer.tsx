@@ -23,8 +23,7 @@ export class Renderer implements IRenderer {
 
     constructor (documentModel: Document, pathSelectionModel: PathSelection) {
         this._canvas = document.createElement('canvas');
-        this._canvas.width = 300;
-        this._canvas.height = 400;
+        this._canvas.setAttribute('id', 'tracingCanvas');
 
         const contextOrNull = this._canvas.getContext('2d');
         if (!contextOrNull) {
@@ -138,15 +137,18 @@ export class Renderer implements IRenderer {
             this._undoPathReplacementsInTracingSession(pathsRemovedThisTracingSession);
         }) as EventListener);
 
+        window.addEventListener('resize', () => this._updateCanvasSize());
+
         return this._canvas;
     };
 
     measurementInit = (): void  => {
+        const dpr = window.devicePixelRatio;
         const patternPaths = this._document.getPatternPaths();
         
         this._canvas.onmousedown = (e) => {
             for (let i = 0; i < patternPaths.length; i++) {
-                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
+                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX * dpr, e.offsetY * dpr)) {
                     this._pathSelection.setSelectedPath(patternPaths[i]);
                     break;
                 }
@@ -156,7 +158,7 @@ export class Renderer implements IRenderer {
         this._canvas.onmousemove = (e) => {
             this._pathSelection.setHighlightedPath(null);
             for (let i = 0; i < patternPaths.length; i++) {
-                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
+                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX * dpr, e.offsetY * dpr)) {
                     this._pathSelection.setHighlightedPath(patternPaths[i]);
                     break;
                 }
@@ -315,10 +317,29 @@ export class Renderer implements IRenderer {
     };
 
     private _tick = (): void => {
-        // this._update();
+        if (this._canvas.width === 300 && this._canvas.height === 150) {
+            this._updateCanvasSize();
+        }
+
         this._draw();
     
         requestAnimationFrame(this._tick);
+    };
+
+    private _updateCanvasSize = (): void => {
+        const canvasEl = document.getElementById('tracingCanvas');
+        
+        if (!canvasEl) {
+            return;
+        }
+
+        const elWidth = canvasEl.getBoundingClientRect().width;
+        const elHeight = canvasEl.getBoundingClientRect().height;
+        const dpr = window.devicePixelRatio || 1;
+
+        this._canvas.width =  dpr * elWidth;
+        this._canvas.height = dpr * elHeight;
+        this._context.scale(dpr, dpr);
     };
 
     private _undoPathReplacementsInTracingSession = (pathsRemovedThisTracingSession: IPatternPathTrash[]): void => {

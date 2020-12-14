@@ -3,6 +3,7 @@
     display: flex;
     justify-content: center;
     flex-direction: row;
+    padding-bottom: 3vh;
 }
 
 @media (max-height: 800px) {
@@ -11,7 +12,6 @@
         display: flex;
         justify-content: center;
         flex-direction: row;
-        padding-bottom: 50px;
-
+        padding-bottom: 10vh;
     }
 }

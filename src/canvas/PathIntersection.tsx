@@ -3,6 +3,7 @@ import { PatternPath } from 'canvas/PatternPaths/PatternPath';
 import { BoundingBox } from './Geometry/BoundingBox';
 import { Point } from './Geometry/Point';
 import { TracingPath } from './TracingPaths/TracingPath';
+import { SnapRadius } from 'canvas/Enums';
 
 export class PathIntersection {
     /**
@@ -52,7 +53,7 @@ export class PathIntersection {
             let intersectionPoint = null;
             let segmentIndex;
             for (segmentIndex = 0; !intersectionPoint && segmentIndex < thatPathSegments.length; segmentIndex++) {
-                intersectionPoint = thatPathSegments[segmentIndex].isPointNearSegment(point, 10);
+                intersectionPoint = thatPathSegments[segmentIndex].isPointNearSegment(point, SnapRadius.mobile);
             }
 
             if (intersectionPoint) {

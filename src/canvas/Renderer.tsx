@@ -3,7 +3,7 @@ import { Document } from './Document';
 import { PathSelection } from './PathSelection';
 import { Point } from './Geometry/Point';
 import { PatternPathColor } from './PatternPaths/PatternPathColor';
-import { PatternPathType, ToolType } from './Enums';
+import { PatternPathType, ToolType, SnapRadius } from './Enums';
 import { StraightLinePath } from './TracingPaths/StraightLinePath';
 import { FreeLinePath } from './TracingPaths/FreeLinePath';
 import { PathIntersection } from './PathIntersection';
@@ -44,7 +44,7 @@ export class Renderer implements IRenderer {
     init = (): HTMLCanvasElement => {
         this._tick();
 
-        this._canvas.onmousedown = (e) => {
+        this._canvas.onpointerdown = (e) => {
             if (!this._pathType) {
                 throw new Error("Path type not set");
             }
@@ -76,7 +76,7 @@ export class Renderer implements IRenderer {
             }
         };
 
-        this._canvas.onmousemove = (e) => {
+        this._canvas.onpointermove = (e) => {
             if (this._isTracing && this._currPath) {
                 const position = new Point(e.offsetX, e.offsetY);
                 this._currPath.addPoint(position);
@@ -91,10 +91,10 @@ export class Renderer implements IRenderer {
 
                     const pathCrossedStartPoint = intersection.pathCrossed.getStart();
                     const pathCrossedEndpoint = intersection.pathCrossed.getEnd();
-                    if (intersection.point.isWithinRadius(pathCrossedEndpoint, 10)) {
+                    if (intersection.point.isWithinRadius(pathCrossedEndpoint, SnapRadius.mobile)) {
                         this._endTracing(pathCrossedEndpoint, false);
                         return;
-                    } else if (intersection.point.isWithinRadius(pathCrossedStartPoint, 10)) {
+                    } else if (intersection.point.isWithinRadius(pathCrossedStartPoint, SnapRadius.mobile)) {
                         this._endTracing(pathCrossedStartPoint, false);
                         return;
                     }
@@ -105,20 +105,20 @@ export class Renderer implements IRenderer {
             }
         };
         
-        this._canvas.onmouseup = (e) => {
-            const position = new Point(e.offsetX, e.offsetY);
-            if (this._isTracing) {
-                // Moved this._isTracing = false out of _resetTracing beecause onmouseup and onmouseout are both fired.
-                // This means that _endTracing was called multiple times.
-                this._isTracing = false;
-                this._endTracing(position, true);
-            }
+        this._canvas.onpointerup = (e) => {
+            endInteraction(e.offsetX, e.offsetY);
         };
 
         // If the user draws off the canvas, we will stop adding to the path.
-        this._canvas.onmouseout = (e) => {
-            const position = new Point(e.offsetX, e.offsetY);
-            if(this._isTracing) {
+        this._canvas.onpointerleave = (e) => {
+            endInteraction(e.offsetX, e.offsetY);
+        };
+
+        const endInteraction = (x: number, y: number) => {
+            const position = new Point(x, y);
+            if (this._isTracing) {
+                // Moved this._isTracing = false out of _resetTracing beecause onmouseup and onmouseout are both fired.
+                // This means that _endTracing was called multiple times.
                 this._isTracing = false;
                 this._endTracing(position, true);
             }
@@ -144,7 +144,7 @@ export class Renderer implements IRenderer {
     measurementInit = (): void  => {
         const patternPaths = this._document.getPatternPaths();
         
-        this._canvas.onmousedown = (e) => {
+        this._canvas.onpointerdown = (e) => {
             for (let i = 0; i < patternPaths.length; i++) {
                 if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
                     this._pathSelection.setSelectedPath(patternPaths[i]);
@@ -153,7 +153,7 @@ export class Renderer implements IRenderer {
             }
         };
 
-        this._canvas.onmousemove = (e) => {
+        this._canvas.onpointermove = (e) => {
             this._pathSelection.setHighlightedPath(null);
             for (let i = 0; i < patternPaths.length; i++) {
                 if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
@@ -163,8 +163,8 @@ export class Renderer implements IRenderer {
             }
         };
 
-        this._canvas.onmouseup = null;
-        this._canvas.onmouseout = null;
+        this._canvas.onpointerup = null;
+        this._canvas.onpointerout = null;
     };
 
     /**
@@ -178,9 +178,9 @@ export class Renderer implements IRenderer {
         const intersection = PathIntersection.findPointIntersectAlongPatternPaths(point, paths);
         
         if (intersection) {
-            if (intersection.pathCrossed.getStart().isWithinRadius(intersection.point, 10)) {
+            if (intersection.pathCrossed.getStart().isWithinRadius(intersection.point, SnapRadius.mobile)) {
                 return intersection.pathCrossed.getStart();
-            } else if (intersection.pathCrossed.getEnd().isWithinRadius(intersection.point, 10)) {
+            } else if (intersection.pathCrossed.getEnd().isWithinRadius(intersection.point, SnapRadius.mobile)) {
                 return intersection.pathCrossed.getEnd();                
             } else { // the intersection is along the path, not close to the  
                      // endpoints, so we can split safely

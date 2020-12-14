@@ -23,7 +23,8 @@ body {
     position:absolute;
 }
 
-@media (max-width: 1020px) {
+/* @media (max-width: 1020px) or (max-height: 800px) { */
+@media screen and (max-width: 1020px) , screen and (max-height: 800px) {
     .pageContainer {
         width: 100vw;
         height: 100vh;

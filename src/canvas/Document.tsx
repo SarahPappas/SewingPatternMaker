@@ -72,6 +72,14 @@ export class Document implements IDocument {
 
     };
 
+    clearDocument = (): void =>  {
+        this._patternPaths = new Array<PatternPath>();
+        this._patternPathsTrash = [];
+        this._pixelsPerInch = null;
+        this._patternPieces = null;
+        this._allowanceSizes = null;
+    };
+
     emptyPatternPathsTrash = (): void => {
         this._patternPathsTrash = [];
     };

@@ -45,6 +45,7 @@ export class Renderer implements IRenderer {
     init = (): HTMLCanvasElement => {
         // If we have already run init, do not run again!
         if (this._isInited) {
+            this._clearCanvas();
             this._tick();
             return this._canvas;
         }
@@ -312,6 +313,16 @@ export class Renderer implements IRenderer {
         // update the intersection to hold the splitting point
         intersection.point = splitPaths[1].getStart();
         this._document.replacePatternPath(intersection.pathCrossed, splitPaths);
+    };
+
+    private _clearCanvas = (): void => {
+        this._document.clearDocument();
+        this._isTracing = false;
+        this._currPath = null;
+        this._pathType = PatternPathType.UNDEFINED;
+        // The default tool type is a straight line tool.
+        this._toolType = ToolType.StraightLine;
+        this._pathSelection.clear();
     };
 
     private _resetTracing = (): void => {

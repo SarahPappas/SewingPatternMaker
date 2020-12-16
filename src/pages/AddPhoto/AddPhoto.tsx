@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './AddPhoto.css';
 import { NavButton } from 'components/NavButton/NavButton';
 import { UploadPhoto } from 'components/UploadPhoto/UploadPhoto';
@@ -11,7 +11,16 @@ interface AddPhotoProps {
 }
 
 export const AddPhoto: React.FC<AddPhotoProps> = ({ setUploadedFileData, uploadedFileData }) => {
-    const isVisible = uploadedFileData !== "";
+    const [isVisible, setIsVisible] = useState(false);
+
+    // Reset file data to empty string if user uses back button
+    useEffect(() => {
+        setUploadedFileData("");
+    }, [setUploadedFileData]);
+
+    useEffect(() => {
+        setIsVisible(uploadedFileData !== "");
+    }, [uploadedFileData]);
     
     return (<>
         <UploadPhoto setUploadedFileData={setUploadedFileData}></UploadPhoto>

@@ -1,22 +1,11 @@
 .canvasContainer {
-    width: 350px;
-    height: 400px;
+    width: 80vw;
+    height: 60vh;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     /* background-color: red; */
-}
 
-@media screen and (max-width: 1020px) , screen and (max-height: 800px) {
-    .canvasContainer {
-        width: 80vw;
-        height: 60vh;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-        /* background-color: red; */
-
-    }
 }
 
 #tracingCanvas {

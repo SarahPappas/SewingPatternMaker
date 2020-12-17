@@ -7,6 +7,7 @@ body {
 .pageContainer {
     width: 100vw;
     height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);;
     position: absolute;
     display: flex;
     align-items: center;
@@ -14,35 +15,12 @@ body {
 }
 
 .mainContainer {
-    width: 400px;
-    height: 800px;
+    width: 100vw;
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);;
     display: flex;
     align-items: center;
     justify-content: space-around;
     flex-direction: column;
-    position:absolute;
-}
-
-/* @media (max-width: 1020px) or (max-height: 800px) { */
-@media screen and (max-width: 1020px) , screen and (max-height: 800px) {
-    .pageContainer {
-        width: 100vw;
-        height: 100vh;
-        height: calc(var(--vh, 1vh) * 100);;
-        position: absolute;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .mainContainer {
-        width: 100vw;
-        height: 100vh;
-        height: calc(var(--vh, 1vh) * 100);;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        flex-direction: column;
-        position: absolute;
-    }
+    position: absolute;
 }

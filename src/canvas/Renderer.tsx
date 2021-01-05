@@ -157,7 +157,7 @@ export class Renderer implements IRenderer {
 
         this._canvas.addEventListener('updateCanvasSize', ((e: CustomEvent) => {
             // Update the canvas size from the default size it is initialized to.
-            this._updateCanvasSize(true);
+            this._initializeCanvasSize();
         }) as EventListener);
 
         window.addEventListener('resize', () => {
@@ -365,7 +365,11 @@ export class Renderer implements IRenderer {
         requestAnimationFrame(this._tick);
     };
 
-    private _updateCanvasSize = (first: boolean): void => {
+    /* 
+     * Sets the canvas width and height, the context scale, origWidth and origHight in this._canvasSizeData.
+     * Should only be called when the canvas is initialized.
+     */
+    private _initializeCanvasSize = (): void => {
         const canvasEl = document.getElementById('tracingCanvas');
         
         if (!canvasEl) {
@@ -375,17 +379,15 @@ export class Renderer implements IRenderer {
         const elWidth = canvasEl.getBoundingClientRect().width;
         const elHeight = canvasEl.getBoundingClientRect().height;
         const dpr = window.devicePixelRatio || 1;
-
-        // If it is the first time we are updating the canvas size after it is initialized. Set the canvas size 
-        // original width and height.
-        if (first) {
-            this._canvasSizeData.origWidth = elWidth;
-            this._canvasSizeData.origHeight = elHeight;
-        }
             
         this._canvas.width =  dpr * elWidth;
         this._canvas.height = dpr * elHeight;
         this._context.scale(dpr, dpr);
+
+        // Since we are initilizing the canvas size from the defualt size, we also set the canvas size 
+        // original width and height.
+        this._canvasSizeData.origWidth = elWidth;
+        this._canvasSizeData.origHeight = elHeight;
     };
 
     private _undoPathReplacementsInTracingSession = (pathsRemovedThisTracingSession: IPatternPathTrash[]): void => {

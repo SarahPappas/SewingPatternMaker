@@ -13,6 +13,9 @@ export const CanvasContainer: React.FC<CanvasContainerProps> = ({ uploadedFileDa
     const canvas = App.renderer.init();
     if (canvasContainerRef.current) {
       canvasContainerRef.current.appendChild(canvas);
+      // Update the canvas size from the default size it is initalized to, to the actual size.
+      const updateCanvasSize = new CustomEvent('updateCanvasSize');
+      canvas.dispatchEvent(updateCanvasSize);
     }
 
     //Prevent default touch events on canvas container so that the touch event can pass through to the canvas.

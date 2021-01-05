@@ -155,6 +155,11 @@ export class Renderer implements IRenderer {
             this._undoPathReplacementsInTracingSession(pathsRemovedThisTracingSession);
         }) as EventListener);
 
+        this._canvas.addEventListener('updateCanvasSize', ((e: CustomEvent) => {
+            // Update the canvas size from the default size it is initialized to.
+            this._updateCanvasSize(true);
+        }) as EventListener);
+
         window.addEventListener('resize', () => {
             const canvasEl = document.getElementById('tracingCanvas');
         
@@ -355,13 +360,6 @@ export class Renderer implements IRenderer {
     };
 
     private _tick = (): void => {
-        // Check if canvas size is the default size that a canvas is initialiszed at and update.
-        // We have to check here and not in init because the canvas element does not necessarily
-        // exist when init is run.
-        if (this._canvas.width === 300 && this._canvas.height === 150) {
-            this._updateCanvasSize(true);
-        }
-
         this._draw();
     
         requestAnimationFrame(this._tick);

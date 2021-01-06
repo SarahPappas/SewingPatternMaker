@@ -12,7 +12,21 @@ export class Exporter {
         this._documentModel = documentModel;
     }
 
-    save = (): void => {
+    savePDF = (): void => {
+        this._createPDF();
+        this.doc?.save("bobbinLab_pattern.pdf");
+    }
+
+    getPDF = (): Blob => {
+        this._createPDF();
+        if (this.doc) {
+            return this.doc.output('blob');
+        }
+
+        throw new Error("The PDF was not created correctly");
+    }
+
+    _createPDF = (): void => {
         this.doc = new jsPDF('p', 'in', 'letter');
         // Delete the first page, which is automatically added when a new jsPDF is created.
         this.doc.deletePage(1);
@@ -95,8 +109,6 @@ export class Exporter {
                 }
             }
         });
-        
-        this.doc.save("test.pdf");
     };
 
     private _scaleAndRealign = (patternPiece: PatternPiece, scalar: number): void => {

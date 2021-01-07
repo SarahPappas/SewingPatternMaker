@@ -13,18 +13,20 @@ export class Exporter {
     }
 
     savePDF = (): void => {
-        this._createPDF();
-        this.doc?.save("bobbinLab_pattern.pdf");
-    }
-
-    getPDF = (): Blob => {
-        this._createPDF();
-        if (this.doc) {
-            return this.doc.output('blob');
+        if (!this.doc) {
+            this._createPDF();
         }
 
-        throw new Error("The PDF was not created correctly");
-    }
+        this.doc?.save("bobbinLab_pattern.pdf");
+    };
+
+    getPDF = (): Blob => {
+        if (!this.doc) {
+            this._createPDF();
+        }
+    
+        return this.doc?.output('blob') || new Blob([]);
+    };
 
     _createPDF = (): void => {
         this.doc = new jsPDF('p', 'in', 'letter');

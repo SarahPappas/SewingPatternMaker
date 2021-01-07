@@ -13,6 +13,11 @@ export const CanvasContainer: React.FC<CanvasContainerProps> = ({ uploadedFileDa
     const canvas = App.renderer.init();
     if (canvasContainerRef.current) {
       canvasContainerRef.current.appendChild(canvas);
+
+      // Fix size of canvas container
+      // TODO: Eventually we would like to dynamically resize the canvas and container.
+      canvasContainerRef.current.style.width = String(canvasContainerRef.current.clientWidth) + "px";
+      canvasContainerRef.current.style.height = String(canvasContainerRef.current.clientHeight) + "px";
       // Update the canvas size from the default size it is initalized to, to the actual size.
       const initializeCanvasSize = new CustomEvent('initializeCanvasSize');
       canvas.dispatchEvent(initializeCanvasSize);

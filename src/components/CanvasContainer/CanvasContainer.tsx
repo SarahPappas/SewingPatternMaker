@@ -14,6 +14,11 @@ export const CanvasContainer: React.FC<CanvasContainerProps> = ({ uploadedFileDa
     if (canvasContainerRef.current) {
       canvasContainerRef.current.appendChild(canvas);
     }
+
+    //Prevent default touch events on canvas container so that the touch event can pass through to the canvas.
+    document.querySelectorAll('.canvasContainer')[0].addEventListener('touchstart', (e) => {
+      e.preventDefault();
+    });
   }, [canvasContainerRef]);
 
   // We keep setting up the background image in a separate useEffect 

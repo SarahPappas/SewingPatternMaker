@@ -2,6 +2,8 @@ import { jsPDF } from 'jspdf';
 import { Document } from './Document';
 import { Vector } from './Geometry/Vector';
 import { PatternPiece } from './PatternPiece';
+import { PDFName } from 'canvas/Enums';
+
 
 export class Exporter {
     doc: jsPDF | null;
@@ -17,7 +19,7 @@ export class Exporter {
             this._createPDF();
         }
 
-        this.doc?.save("bobbinLab_pattern.pdf");
+        this.doc?.save(PDFName.name);
     };
 
     getPDF = (): Blob => {

@@ -2,7 +2,7 @@ import React from 'react';
 import { App } from 'canvas/AppController';
 import { ActionButton } from 'components/ActionButton/ActionButton';
 import { Modal } from 'components/Modal/Modal';
-import { ModalType } from 'canvas/Enums';
+import { ModalType, PDFName } from 'canvas/Enums';
 import './Export.css';
 
 export const Export: React.FC = () => {
@@ -42,7 +42,7 @@ export const Export: React.FC = () => {
                 const link = document.createElement('a');
                 link.href = blobUrl;
                 link.target = '_blank';
-                const fileName = "bobbinLab_pattern.pdf";
+                const fileName = PDFName.name;
                 link.download = fileName;
                 link.click();
             } else {

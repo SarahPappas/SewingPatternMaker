@@ -19,3 +19,7 @@ export enum ModalType {
 export enum SnapRadius {
     mobile = 20
 }
+
+export enum PDFName {
+    name = 'bobbinLab_pattern.pdf'
+}

@@ -1,0 +1,9 @@
+@media (max-height: 700px) {
+    .uploadButton {
+        margin-top: 3vh;
+    }
+
+    .startTracingButton {
+        margin-bottom: 3vh;
+    }
+} 

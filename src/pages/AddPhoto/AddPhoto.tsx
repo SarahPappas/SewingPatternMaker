@@ -24,7 +24,7 @@ export const AddPhoto: React.FC<AddPhotoProps> = ({ setUploadedFileData, uploade
     
     return (<>
         <UploadPhoto setUploadedFileData={setUploadedFileData}></UploadPhoto>
-        <div style={{visibility: isVisible ? 'visible' : 'hidden'}}>
+        <div style={{visibility: isVisible ? 'visible' : 'hidden'}} className={'startTracingButton'}>
             <NavButton button={button} to="/trace/instructions"></NavButton>
         </div>
     </>);

@@ -173,19 +173,33 @@ export class PatternPath implements IPatternPath {
     };
 
     private _splitSegments = (point: Point, segmentIndex: number): Segment[][] => {
-        const segmentToSplit = this._segments[segmentIndex];
-        const splitSegments = segmentToSplit.split(point);
-        if (splitSegments.length !== 2) {
-            throw new Error("Split did not return correct number of segments");
-        }
-        
+        const segmentThatContainsPoint = this._segments[segmentIndex];
         const segmentsBeforePoint = [];
+        const segmentsAfterPoint = [];
+
+        // Add all segments before the segment that contains the point
         for (let i = 0; i < segmentIndex; i++) {
             segmentsBeforePoint.push(this._segments[i]);
         }
-        segmentsBeforePoint.push(splitSegments[0]);
 
-        const segmentsAfterPoint = [splitSegments[1]];
+        // Add the segment that contains the point to the right array, 
+        // splitting it into 2 segments if necessary
+        if (segmentThatContainsPoint.getStart().equals(point)) {
+            segmentsAfterPoint.push(segmentThatContainsPoint);
+        } else if (segmentThatContainsPoint.getEnd().equals(point)) {
+            segmentsBeforePoint.push(segmentThatContainsPoint);
+        } else {
+            // The point is along the segment
+            const splitSegments = segmentThatContainsPoint.split(point);
+            if (splitSegments.length !== 2) {
+                throw new Error("Split did not return correct number of segments");
+            }
+            
+            segmentsBeforePoint.push(splitSegments[0]);
+            segmentsAfterPoint.push(splitSegments[1]);
+        }
+
+        // Add all segments after the segment that contains the point
         for (let i = segmentIndex + 1; i < this._segments.length; i++) {
             segmentsAfterPoint.push(this._segments[i]);
         }

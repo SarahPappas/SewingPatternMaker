@@ -20,17 +20,18 @@ export class Renderer implements IRenderer {
     private _pathType: PatternPathType;
     private _toolType: ToolType;
     private _pathSelection: PathSelection;
+    private _isInited: boolean;
 
     constructor (documentModel: Document, pathSelectionModel: PathSelection) {
         this._canvas = document.createElement('canvas');
-        this._canvas.width = 300;
-        this._canvas.height = 400;
+        this._canvas.setAttribute('id', 'tracingCanvas');
 
         const contextOrNull = this._canvas.getContext('2d');
         if (!contextOrNull) {
             throw new Error("Could not create 2D context for canvas.");
         }
 
+        this._isInited = false;
         this._context = contextOrNull;
         this._document = documentModel;
         this._isTracing = false;
@@ -42,6 +43,15 @@ export class Renderer implements IRenderer {
     }
 
     init = (): HTMLCanvasElement => {
+        // If we have already run init, do not run again!
+        if (this._isInited) {
+            this._clearCanvas();
+            this._tick();
+            return this._canvas;
+        }
+
+        this._isInited = true;
+
         this._tick();
 
         this._canvas.onpointerdown = (e) => {
@@ -138,15 +148,21 @@ export class Renderer implements IRenderer {
             this._undoPathReplacementsInTracingSession(pathsRemovedThisTracingSession);
         }) as EventListener);
 
+        this._canvas.addEventListener('initializeCanvasSize', ((e: CustomEvent) => {
+            // Update the canvas size from the default size it is initialized to.
+            this._initializeCanvasSize();
+        }) as EventListener);
+
         return this._canvas;
     };
 
     measurementInit = (): void  => {
+        const dpr = window.devicePixelRatio;
         const patternPaths = this._document.getPatternPaths();
         
         this._canvas.onpointerdown = (e) => {
             for (let i = 0; i < patternPaths.length; i++) {
-                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
+                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX * dpr, e.offsetY * dpr)) {
                     this._pathSelection.setSelectedPath(patternPaths[i]);
                     break;
                 }
@@ -156,7 +172,7 @@ export class Renderer implements IRenderer {
         this._canvas.onpointermove = (e) => {
             this._pathSelection.setHighlightedPath(null);
             for (let i = 0; i < patternPaths.length; i++) {
-                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX, e.offsetY)) {
+                if (this._context.isPointInStroke(patternPaths[i].getPath2D(), e.offsetX * dpr, e.offsetY * dpr)) {
                     this._pathSelection.setHighlightedPath(patternPaths[i]);
                     break;
                 }
@@ -165,6 +181,7 @@ export class Renderer implements IRenderer {
 
         this._canvas.onpointerup = null;
         this._canvas.onpointerout = null;
+        this._canvas.onpointerleave = null;
     };
 
     /**
@@ -301,6 +318,16 @@ export class Renderer implements IRenderer {
         this._document.replacePatternPath(intersection.pathCrossed, splitPaths);
     };
 
+    private _clearCanvas = (): void => {
+        this._document.clearDocument();
+        this._isTracing = false;
+        this._currPath = null;
+        this._pathType = PatternPathType.UNDEFINED;
+        // The default tool type is a straight line tool.
+        this._toolType = ToolType.StraightLine;
+        this._pathSelection.clear();
+    };
+
     private _resetTracing = (): void => {
         this._currPath = null;
         this._toolType = ToolType.StraightLine;
@@ -315,10 +342,29 @@ export class Renderer implements IRenderer {
     };
 
     private _tick = (): void => {
-        // this._update();
         this._draw();
     
         requestAnimationFrame(this._tick);
+    };
+
+    /* 
+     * Sets the canvas width and height and the context scale.
+     * Should only be called when the canvas is initialized.
+     */
+    private _initializeCanvasSize = (): void => {
+        const canvasEl = document.getElementById('tracingCanvas');
+        
+        if (!canvasEl) {
+            return;
+        }
+
+        const elWidth = canvasEl.getBoundingClientRect().width;
+        const elHeight = canvasEl.getBoundingClientRect().height;
+        const dpr = window.devicePixelRatio || 1;
+            
+        this._canvas.width =  dpr * elWidth;
+        this._canvas.height = dpr * elHeight;
+        this._context.scale(dpr, dpr);
     };
 
     private _undoPathReplacementsInTracingSession = (pathsRemovedThisTracingSession: IPatternPathTrash[]): void => {

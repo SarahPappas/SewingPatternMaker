@@ -5,8 +5,9 @@ body {
 }
 
 .pageContainer {
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
     position: absolute;
     display: flex;
     align-items: center;
@@ -14,11 +15,12 @@ body {
 }
 
 .mainContainer {
-    width: 400px;
-    height: 800px;
+    width: 100vw;
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
     display: flex;
     align-items: center;
     justify-content: space-around;
     flex-direction: column;
-    position:absolute;
+    position: absolute;
 }

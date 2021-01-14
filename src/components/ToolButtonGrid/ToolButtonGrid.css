@@ -3,4 +3,15 @@
     display: flex;
     justify-content: center;
     flex-direction: row;
+    padding-bottom: 3vh;
+}
+
+@media (max-height: 800px) {
+    .toolBar {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        flex-direction: row;
+        padding-bottom: 10vh;
+    }
 }

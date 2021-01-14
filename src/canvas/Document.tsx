@@ -22,10 +22,6 @@ export class Document implements IDocument {
         this._allowanceSizes = null;
     }
 
-    getPatternPaths = (): PatternPath[] => {
-        return [...this._patternPaths];
-    };
-
     addPatternPath = (patternPath: PatternPath): boolean => {
         const originalPatternPathslength = this._patternPaths.length;
         
@@ -34,52 +30,6 @@ export class Document implements IDocument {
         }
 
         return false;  
-    };
-
-    emptyPatternPathsTrash = (): void => {
-        this._patternPathsTrash = [];
-    };
-
-    getPatternPathsTrash = (): IPatternPathTrash[] => {
-        return [...this._patternPathsTrash];
-    };
-
-    // Removes the most recently added Pattern Path and adds it to the patterPathTrash.
-    removePatternPath = (): boolean => {
-        if (!this._patternPaths.length) {
-            throw new Error("Tried to remove path from document, but there are no paths to remove");
-        }
-
-        const removedPath = this._patternPaths.pop();
-        if (removedPath) {
-            this._patternPathsTrash.push({path: removedPath, replacement: []});
-        }
-
-        return Boolean(removedPath);
-    };
-
-    // Removes a specific Pattern Path and adds it to the patterPathTrash.
-    removeSpecificPatternPath = (path: PatternPath): number => {
-        const find = (p: PatternPath) => p === path;
-        const pathIndex = this._patternPaths.findIndex(find);
-        if (pathIndex >= 0) {
-            this._patternPathsTrash.push({path: this._patternPaths[pathIndex], replacement: []});
-            this._patternPaths.splice(pathIndex, 1);
-            return pathIndex;
-        }
-
-        return -1;
-    };
-
-    replacePatternPath = (pathToReplace: PatternPath, pathsToInsert: PatternPath[]): void => {
-        const find = (p: PatternPath) => p === pathToReplace;
-        const pathIndex = this._patternPaths.findIndex(find);
-        if (pathIndex >= 0) {
-            const trash = {path: this._patternPaths[pathIndex], replacement: pathsToInsert};
-            this._patternPathsTrash.push(trash);
-
-            this._patternPaths.splice(pathIndex, 1, ...pathsToInsert);
-        }
     };
 
     arePatternPiecesEnclosed = (): boolean => {
@@ -122,22 +72,33 @@ export class Document implements IDocument {
 
     };
 
-    isEmpty = (): boolean => {
-        return !this._patternPaths.length;
-    };
- 
-    // Sets the pixels per inch ratio according to the input measurement.
-    setSizeRatio = (inputMeasurementInInches: number, selectedPath: PatternPath): void => {
-        // The size ratio is the # of pixels per inch.
-        this._pixelsPerInch = selectedPath.getLengthInPixels() / inputMeasurementInInches;
+    clearDocument = (): void =>  {
+        this._patternPaths = new Array<PatternPath>();
+        this._patternPathsTrash = [];
+        this._pixelsPerInch = null;
+        this._patternPieces = null;
+        this._allowanceSizes = null;
     };
 
-    getSizeRatio = (): number => {
-        if (!this._pixelsPerInch) {
-            console.log('error: the resizing ratio is not defined.');
-            return -1;
-        } 
-        return this._pixelsPerInch;        
+    emptyPatternPathsTrash = (): void => {
+        this._patternPathsTrash = [];
+    };
+
+    // Precondition: arePatternPiecesEnclosed returned true 
+    findPatternPieces = (): void => {
+        const allowanceSizes = this._allowanceSizes;
+        if (allowanceSizes === null) {
+            throw new Error("The allowance sizes were not defined yet for this pattern");
+        }
+        
+        const faces = FaceFinder.FindFaces(this._patternPaths);
+        
+        this._patternPieces = faces.map(face => (
+            new PatternPiece(face, AllowanceFinder.computeAllowancePaths(face, allowanceSizes))
+        ));
+
+        // Temporary step to inspect pattern pieces and allowances on final review page while developping.
+        this._patternPaths = this._spreadPatternPieces(this._patternPieces);
     };
 
     getAllowanceSize = (type: PatternPathType): number => {
@@ -149,6 +110,68 @@ export class Document implements IDocument {
             throw new Error("Could not find allowance for this path type.");
         }
         return allowance;
+    };
+
+    getPatternPaths = (): PatternPath[] => {
+        return [...this._patternPaths];
+    };
+
+    getPatternPathsTrash = (): IPatternPathTrash[] => {
+        return [...this._patternPathsTrash];
+    };
+
+    getPatternPieces = (): PatternPiece[] | null => {
+        return this._patternPieces;
+    };
+
+    getSizeRatio = (): number => {
+        if (!this._pixelsPerInch) {
+            console.log('error: the resizing ratio is not defined.');
+            return -1;
+        } 
+        return this._pixelsPerInch;        
+    };
+
+    isEmpty = (): boolean => {
+        return !this._patternPaths.length;
+    };
+
+    // Removes the most recently added Pattern Path and adds it to the patterPathTrash.
+    removePatternPath = (): boolean => {
+        if (!this._patternPaths.length) {
+            throw new Error("Tried to remove path from document, but there are no paths to remove");
+        }
+
+        const removedPath = this._patternPaths.pop();
+        if (removedPath) {
+            this._patternPathsTrash.push({path: removedPath, replacement: []});
+        }
+
+        return Boolean(removedPath);
+    };
+
+    // Removes a specific Pattern Path and adds it to the patterPathTrash.
+    removeSpecificPatternPath = (path: PatternPath): number => {
+        const find = (p: PatternPath) => p === path;
+        const pathIndex = this._patternPaths.findIndex(find);
+        if (pathIndex >= 0) {
+            this._patternPathsTrash.push({path: this._patternPaths[pathIndex], replacement: []});
+            this._patternPaths.splice(pathIndex, 1);
+            return pathIndex;
+        }
+
+        return -1;
+    };
+
+    replacePatternPath = (pathToReplace: PatternPath, pathsToInsert: PatternPath[]): void => {
+        const find = (p: PatternPath) => p === pathToReplace;
+        const pathIndex = this._patternPaths.findIndex(find);
+        if (pathIndex >= 0) {
+            const trash = {path: this._patternPaths[pathIndex], replacement: pathsToInsert};
+            this._patternPathsTrash.push(trash);
+
+            this._patternPaths.splice(pathIndex, 1, ...pathsToInsert);
+        }
     };
 
     /**
@@ -174,21 +197,10 @@ export class Document implements IDocument {
         this._allowanceSizes.set(PatternPathType.Seam, (seamAllowance || 0.625) * this._pixelsPerInch);
     };
 
-    // Precondition: arePatternPiecesEnclosed returned true 
-    findPatternPieces = (): void => {
-        const allowanceSizes = this._allowanceSizes;
-        if (allowanceSizes === null) {
-            throw new Error("The allowance sizes were not defined yet for this pattern");
-        }
-        
-        const faces = FaceFinder.FindFaces(this._patternPaths);
-        
-        this._patternPieces = faces.map(face => (
-            new PatternPiece(face, AllowanceFinder.computeAllowancePaths(face, allowanceSizes))
-        ));
-
-        // Temporary step to inspect pattern pieces and allowances on final review page while developping.
-        this._patternPaths = this._spreadPatternPieces(this._patternPieces);
+    // Sets the pixels per inch ratio according to the input measurement.
+    setSizeRatio = (inputMeasurementInInches: number, selectedPath: PatternPath): void => {
+        // The size ratio is the # of pixels per inch.
+        this._pixelsPerInch = selectedPath.getLengthInPixels() / inputMeasurementInInches;
     };
 
     /**
@@ -203,9 +215,5 @@ export class Document implements IDocument {
         }
 
         return result;
-    };
-
-    getPatternPieces = (): PatternPiece[] | null => {
-        return this._patternPieces;
     };
 }

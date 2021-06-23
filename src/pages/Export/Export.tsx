@@ -39,7 +39,7 @@ export const Export: React.FC = () => {
             if (mobileAndTabletCheck()) {
                 const reader = new FileReader();
                 const out = new Blob([pdf], {type: 'application/pdf'});
-                reader.onload = function(e){
+                reader.onload = (e) => {
                     if (reader.result)
                     {
                         window.location.href = reader.result.toString();

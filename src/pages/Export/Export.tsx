@@ -2,7 +2,7 @@ import React from 'react';
 import { App } from 'canvas/AppController';
 import { ActionButton } from 'components/ActionButton/ActionButton';
 import { Modal } from 'components/Modal/Modal';
-import { ModalType, PDFName } from 'canvas/Enums';
+import { ModalType } from 'canvas/Enums';
 import './Export.css';
 
 export const Export: React.FC = () => {
@@ -35,18 +35,20 @@ export const Export: React.FC = () => {
 
         setTimeout(() => {
             const pdf = App.exporter.getPDF();
-            const blobUrl = URL.createObjectURL(pdf);
 
             if (mobileAndTabletCheck()) {
-                window.location.href = blobUrl;
-                const link = document.createElement('a');
-                link.href = blobUrl;
-                link.target = '_blank';
-                const fileName = PDFName.name;
-                link.download = fileName;
-                link.click();
+                const reader = new FileReader();
+                const out = new Blob([pdf], {type: 'application/pdf'});
+                reader.onload = function(e){
+                    if (reader.result)
+                    {
+                        window.location.href = reader.result.toString();
+                    }
+                };
+                reader.readAsDataURL(out);
             } else {
                 App.exporter.savePDF();
+                const blobUrl = URL.createObjectURL(pdf);
                 window.open(blobUrl, '_blank');
             }
             

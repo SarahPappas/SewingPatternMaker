@@ -2,6 +2,8 @@ import { jsPDF } from 'jspdf';
 import { Document } from './Document';
 import { Vector } from './Geometry/Vector';
 import { PatternPiece } from './PatternPiece';
+import { PDFName } from 'canvas/Enums';
+
 
 export class Exporter {
     doc: jsPDF | null;
@@ -12,7 +14,23 @@ export class Exporter {
         this._documentModel = documentModel;
     }
 
-    save = (): void => {
+    savePDF = (): void => {
+        if (!this.doc) {
+            this._createPDF();
+        }
+
+        this.doc?.save(PDFName.name);
+    };
+
+    getPDF = (): Blob => {
+        if (!this.doc) {
+            this._createPDF();
+        }
+    
+        return this.doc?.output('blob') || new Blob([]);
+    };
+
+    _createPDF = (): void => {
         this.doc = new jsPDF('p', 'in', 'letter');
         // Delete the first page, which is automatically added when a new jsPDF is created.
         this.doc.deletePage(1);
@@ -95,8 +113,6 @@ export class Exporter {
                 }
             }
         });
-        
-        this.doc.save("test.pdf");
     };
 
     private _scaleAndRealign = (patternPiece: PatternPiece, scalar: number): void => {

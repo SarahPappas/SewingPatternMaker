@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { NavButton } from 'components/NavButton/NavButton';
 import { ActionButton } from 'components/ActionButton/ActionButton';
+import { UseBackButton } from 'components/UseBackButton/UseBackButton';
 import './Review.css';
 
 export const Review: React.FC = () => {
@@ -31,6 +32,7 @@ export const Review: React.FC = () => {
             <ActionButton button={deleteButtonAction} action={handleRemovePath}>
                 <NavButton button={deleteButtonNav} to='/Trace/Instructions'/>
             </ActionButton>
+            <UseBackButton handler={handleRemovePath}/>
         </div>
     </>);
 };

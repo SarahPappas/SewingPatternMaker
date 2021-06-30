@@ -5,6 +5,7 @@ import { PatternPathType } from 'canvas/Enums';
 import { ToolButtonGrid } from 'components/ToolButtonGrid/ToolButtonGrid';
 import { ReactComponent as ExitIcon } from '../../../assets/x-icon.svg';
 import { NavButton } from 'components/NavButton/NavButton';
+import { UseBackButton } from 'components/UseBackButton/UseBackButton';
 import './AddPath.css';
 
 interface AddPathProps {
@@ -28,6 +29,10 @@ export const AddPath: React.FC<AddPathProps> = ({curPathType, setPathType}) => {
     
     const history = useHistory();
 
+    const backButtonHandler = () => {
+        history.push('/Trace/Instructions');
+    };
+
     canvasRef.current?.addEventListener("endTracing", () => {
         history.push('/Trace/Review');
     });
@@ -41,5 +46,6 @@ export const AddPath: React.FC<AddPathProps> = ({curPathType, setPathType}) => {
         </div>
         <ToolButtonGrid curPathType={curPathType}/>
         <PathTypeButtonGrid isEnabled={false} curPathType={curPathType} setPathType={setPathType}/>
+        <UseBackButton handler={backButtonHandler}/>
     </>);
 };

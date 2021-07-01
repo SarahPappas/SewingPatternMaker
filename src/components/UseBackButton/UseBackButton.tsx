@@ -17,11 +17,12 @@ export const UseBackButton: React.FC<UseBackButtonProps> = ({handler}) => {
             outsidePage = true;
         };
 
-        const handlePopState = () => {
+        const handlePopState = (e: PopStateEvent) => {
+            console.log("popstateev", e);
+
             if (outsidePage)
             {
-                alert("You message");
-                handler();
+                handler(e);
             }
         };
 

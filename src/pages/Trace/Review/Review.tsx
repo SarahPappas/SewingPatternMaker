@@ -24,6 +24,12 @@ export const Review: React.FC = () => {
     const handleRemovePath = () => {
         canvasRef.current?.dispatchEvent(removePath);
     };
+    const handleBackButton = () => {
+        if (window.location.hash === "#/Trace/AddPath")
+        {
+            handleRemovePath();
+        }
+    };
     const deleteButtonAction: Button = {label: ''};
     
     return (<>
@@ -32,7 +38,7 @@ export const Review: React.FC = () => {
             <ActionButton button={deleteButtonAction} action={handleRemovePath}>
                 <NavButton button={deleteButtonNav} to='/Trace/Instructions'/>
             </ActionButton>
-            <UseBackButton handler={handleRemovePath}/>
+            <UseBackButton handler={handleBackButton}/>
         </div>
     </>);
 };

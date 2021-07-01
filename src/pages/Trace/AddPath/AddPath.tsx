@@ -30,7 +30,10 @@ export const AddPath: React.FC<AddPathProps> = ({curPathType, setPathType}) => {
     const history = useHistory();
 
     const backButtonHandler = () => {
-        history.push('/Trace/Instructions');
+        if (window.location.hash === "#/trace/instructions")
+        {
+            history.push('/Trace/Instructions');
+        }
     };
 
     canvasRef.current?.addEventListener("endTracing", () => {

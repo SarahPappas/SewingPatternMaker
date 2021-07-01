@@ -1,10 +1,12 @@
 import React, { useRef, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { App } from '../../../canvas/AppController';
 import { NavButton } from 'components/NavButton/NavButton';
 import { Modal } from 'components/Modal/Modal';
 import { PathTypeButtonGrid } from 'components/PathTypeButtonGrid/PathTypeButtonGrid';
 import { PatternPathType, ModalType } from 'canvas/Enums';
 import { ActionButton } from 'components/ActionButton/ActionButton';
+import { UseBackButton } from 'components/UseBackButton/UseBackButton';
 import './Instructions.css';
 
 
@@ -57,6 +59,20 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
         // Reset the path type.
         setPathType(PatternPathType.UNDEFINED);
     }, [setPathType]);
+
+    const history = useHistory();
+    const handleBackButton = () => {
+        if (window.location.hash === "#/Trace/AddPath" ||
+            window.location.hash === "#/Trace/Review")
+        {
+            if (confirm("Are you sure you want to go back? Going back will delete all of your work so far."))//eslint-disable-line no-restricted-globals
+            {
+                history.push('/AddPhoto');
+            } else {
+                history.push('/Trace/Instructions');
+            }
+        }
+    };
     
     return (<>
         <div className={'backgroundGrey'}></div>
@@ -78,5 +94,6 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
         <NavButton button={addPathButton} to={'AddPath'}>
             <PathTypeButtonGrid isEnabled={true} curPathType={curPathType} setPathType={setPathType}/>
         </NavButton>
+        <UseBackButton handler={handleBackButton}/>
     </>);
 };

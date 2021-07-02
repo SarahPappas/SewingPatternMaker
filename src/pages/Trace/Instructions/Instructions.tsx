@@ -18,7 +18,7 @@ interface InstructionsProps {
 export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathType}) => {
     const navButton: Button = {label: 'DONE'};
     const addPathButton: Button = {label:''};
-    const warning: Modal = {text: ['Your pattern is incomplete. Please add another line.', 'Your pattern will be complete when it is fully enclosed.'], type: ModalType.Warning};
+    const warning: Modal = {text: ['Your pattern is incomplete. Please add another line.'], type: ModalType.Warning};
     const instruction: Modal = {text: ['Choose seam, fold, or edge to add to your pattern'], type: ModalType.Instruction};
     
     const [showWarning, setShowWarning] = React.useState<boolean>(false);

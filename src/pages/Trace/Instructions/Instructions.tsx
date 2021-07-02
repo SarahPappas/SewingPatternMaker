@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { App } from '../../../canvas/AppController';
 import { NavButton } from 'components/NavButton/NavButton';
@@ -18,17 +18,17 @@ interface InstructionsProps {
 export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathType}) => {
     const navButton: Button = {label: 'DONE'};
     const addPathButton: Button = {label:''};
-    const warning: Modal = {text: ['Your pattern is incomplete. Please add another line.'], type: ModalType.Warning};
+    const warning: Modal = {text: ['Your pattern is incomplete. Please add another line.', 'Your pattern will be complete when it is fully enclosed.'], type: ModalType.Warning};
     const instruction: Modal = {text: ['Choose seam, fold, or edge to add to your pattern'], type: ModalType.Instruction};
     
     const [showWarning, setShowWarning] = React.useState<boolean>(false);
-    let doneContainer = <></>;
-    const showDoneButton = useRef(false);
-    const arePatternsEnclosed = useRef(false);
+    const doneContainer = useRef(<></>);
+    const [showDoneButton, setShowDoneButton] = useState(false);
+    const [arePatternsEnclosed, setArePatternsEnclosed] = useState(false);
 
     useEffect(() => {
-        showDoneButton.current = !App.document.isEmpty();
-        arePatternsEnclosed.current = App.document.arePatternPiecesEnclosed();
+        setShowDoneButton(!App.document.isEmpty());
+        setArePatternsEnclosed(App.document.arePatternPiecesEnclosed());
     }, [arePatternsEnclosed, showDoneButton]);
 
     const handleClickDone = (): void => {
@@ -36,16 +36,17 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     };
 
     const warningButton: Button = {label: 'DONE', className: 'navButton'};
-    if (showDoneButton.current && !showWarning) {
-        doneContainer = <ActionButton button={warningButton} action={handleClickDone}></ActionButton>;
+ 
+    if (showDoneButton && !showWarning) {
+        doneContainer.current = <ActionButton button={warningButton} action={handleClickDone}></ActionButton>;
     }
 
-    if (showDoneButton.current && arePatternsEnclosed.current) {
-        doneContainer = <NavButton button={navButton} to={'AddMeasurement'}/>;
+    if (showDoneButton && arePatternsEnclosed) {
+        doneContainer.current = <NavButton button={navButton} to={'AddMeasurement'}/>;
     }
 
     if (showWarning) {
-        doneContainer =  <Modal modal={warning}/>;
+        doneContainer.current =  <Modal modal={warning}/>;
     }
 
     const canvasRef = useRef(document.getElementsByClassName('canvasContainer')[0]);
@@ -77,7 +78,7 @@ export const Instructions: React.FC<InstructionsProps> = ({curPathType, setPathT
     return (<>
         <div className={'backgroundGrey'}></div>
         <div className={'instructionsContainer'}>
-            {doneContainer}
+            {doneContainer.current}
             <div className={'alignBottom'}><Modal modal={instruction}/></div>
         </div>
         <div className='arrowFlexGrid'>

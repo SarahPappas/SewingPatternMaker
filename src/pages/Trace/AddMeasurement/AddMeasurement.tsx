@@ -6,6 +6,8 @@ import { Input } from 'components/Input/Input';
 import { NavButton } from 'components/NavButton/NavButton';
 import { ActionButton } from 'components/ActionButton/ActionButton';
 import { ModalType } from 'canvas/Enums';
+import { UseBackButton } from 'components/UseBackButton/UseBackButton';
+import { useHistory } from 'react-router-dom';
 import './AddMeasurement.css';
 
 interface AddMeasurementProps {
@@ -63,6 +65,14 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
     const navButton: Button = {label: ''};
     
     const actionButton: Button = {label: ''};
+
+    const history = useHistory();
+    const handleBackButton = () => {
+        if (window.location.hash === "#/Trace/Instructions")
+        {
+            history.push('/Trace/Instructions');
+        }
+    };
     
     return (
         <>
@@ -86,6 +96,7 @@ export const AddMeasurement: React.FC<AddMeasurementProps> = ({ setUploadedFileD
                             <img className='submitIcon' src={checkIcon} alt='submit'/>
                         </ActionButton>
                     </NavButton>
+                    <UseBackButton handler={handleBackButton}/>
                 </div>
             </div>
         </>
